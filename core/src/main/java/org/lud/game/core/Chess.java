@@ -15,13 +15,14 @@ public class Chess extends GameFrame {
         this.service = new ServiceFactory(this);
         service.getAudioService().playMusic();
         Colors.setTheme(Theme.LEGACY);
-        setScreen(new IntroScreen(this, service.getGameService()));
+        setScreen(new IntroScreen(this,
+            service.getGameService(), service.getAudioService()));
     }
 
     @Override
     public void render() {
         float delta = Gdx.graphics.getDeltaTime();
-        service.getAudioService().update(delta);
+        service.getAudioService().setMusicVolume(delta);
         super.render();
     }
 }

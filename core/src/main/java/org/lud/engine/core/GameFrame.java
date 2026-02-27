@@ -6,10 +6,12 @@ import com.badlogic.gdx.Screen;
 import org.lud.game.input.Coordinator;
 
 public class GameFrame extends Game {
-    private final Coordinator coordinator = new Coordinator();
+    private Coordinator coordinator;
 
     @Override public void create() {
+        this.coordinator = new Coordinator();
         Gdx.input.setInputProcessor(coordinator);
+
     }
     @Override public void render() {
         super.render();

@@ -29,12 +29,13 @@ public class GameService {
     public GameService(GameFrame gameFrame, ServiceFactory service) {
         this.gameFrame = gameFrame;
         this.service = service;
+        AudioService audio = service.getAudioService();
 
-        this.mainMenu = new MainMenu(this);
-        this.settingsMenu = new SettingsMenu(this);
-        this.achievementsMenu = new AchievementsMenu(this);
-        this.langMenu = new LangMenu(this);
-        this.boardScreen = new BoardScreen(this);
+        this.mainMenu = new MainMenu(this, audio);
+        this.settingsMenu = new SettingsMenu(this, audio);
+        this.achievementsMenu = new AchievementsMenu(this, audio);
+        this.langMenu = new LangMenu(this, audio);
+        this.boardScreen = new BoardScreen(this, audio);
 
         activeMenu = mainMenu;
     }

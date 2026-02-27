@@ -11,6 +11,7 @@ import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.enums.UIButton;
+import org.lud.game.service.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class MainMenu extends Menu {
 
     private Map<Button, String> tooltips;
     private final GameService gameService;
+    private final AudioService audioService;
     private List<ButtonData> data;
     private Texture logo;
     private Texture baseButton;
@@ -35,8 +37,9 @@ public class MainMenu extends Menu {
     private boolean isPlayButton;
     private Tooltip tooltip;
 
-    public MainMenu(GameService gameService) {
-        super(gameService);
+    public MainMenu(GameService gameService, AudioService audioService) {
+        super(gameService, audioService);
+        this.audioService = audioService;
         this.tooltips = new LinkedHashMap<>();
         this.gameService = gameService;
         this.data = new ArrayList<>();
@@ -54,11 +57,11 @@ public class MainMenu extends Menu {
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
 
-        data.add(new ButtonData(UIButton.PLAY, gameService::newGame, getFx(0)));
-        data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, getFx(0)));
-        data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, getFx(0)));
-        data.add(new ButtonData(UIButton.LANG, gameService::showLang, getFx(0)));
-        data.add(new ButtonData(UIButton.EXIT, gameService::exit, getFx(0)));
+        data.add(new ButtonData(UIButton.PLAY, gameService::newGame, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.LANG, gameService::showLang, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.EXIT, gameService::exit, audioService.playFX(0)));
     }
 
     @Override

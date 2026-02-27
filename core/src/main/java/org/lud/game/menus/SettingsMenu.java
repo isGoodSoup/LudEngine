@@ -8,6 +8,7 @@ import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
+import org.lud.game.service.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -15,13 +16,15 @@ import java.util.List;
 
 public class SettingsMenu extends Menu {
     private final GameService gameService;
+    private final AudioService audioService;
     private final List<ButtonData> data;
     private Texture baseButton;
     private Texture frame;
 
-    public SettingsMenu(GameService gameService) {
-        super(gameService);
+    public SettingsMenu(GameService gameService, AudioService audioService) {
+        super(gameService, audioService);
         this.gameService = gameService;
+        this.audioService = audioService;
         this.data = new ArrayList<>();
         addMenu(this);
         loadSprites();
@@ -31,7 +34,7 @@ public class SettingsMenu extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
-        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, getFx(0)));
+        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, audioService.playFX(0)));
     }
 
     @Override
@@ -41,8 +44,9 @@ public class SettingsMenu extends Menu {
         float y = 50f;
 
         for(ButtonData data : data) {
-            Texture icon = new Texture("button_" + data.type().getSuffix() + ".png");
-            Texture highlighted = new Texture("button_" + data.type().getSuffix() + "_highlighted.png");
+            String defaultPath = "buttons/";
+            Texture icon = new Texture(defaultPath + "button_" + data.type().getSuffix() + ".png");
+            Texture highlighted = new Texture(defaultPath + "button_" + data.type().getSuffix() + "_highlighted.png");
 
             Button b = new Button(startX, y,
                 baseButton.getWidth(), baseButton.getHeight(),

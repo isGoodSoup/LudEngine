@@ -3,7 +3,6 @@ package org.lud.engine.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
 import org.lud.game.input.Coordinator;
+import org.lud.game.service.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ import java.util.List;
 @SuppressWarnings("ALL")
 public abstract class Menu implements Screen {
     private final GameService gameService;
+    private final AudioService audioService;
     private final SpriteBatch batch;
     private final ShapeRenderer shaper;
     private final List<Menu> menus;
@@ -30,22 +31,14 @@ public abstract class Menu implements Screen {
     private int selectionIndexY;
     private int selectionIndexX;
 
-    public Menu(GameService gameService) {
+    public Menu(GameService gameService, AudioService audioService) {
         this.gameService = gameService;
+        this.audioService = audioService;
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
         this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
         this.batch = new SpriteBatch();
         this.shaper = new ShapeRenderer();
-    }
-
-    public Sound getFx(int index) {
-        String defaultPath = "sounds/";
-        return switch(index) {
-            case 0 -> Gdx.audio.newSound(Gdx.files.internal(defaultPath + "piece-fx" + ".wav"));
-            case 1 -> Gdx.audio.newSound(Gdx.files.internal(defaultPath + "menu-select" + ".wav"));
-            default -> throw new IllegalStateException("Unexpected value: " + index);
-        };
     }
 
     public void addMenu(Menu... menus) {
@@ -102,12 +95,12 @@ public abstract class Menu implements Screen {
     public void globalInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
             gameService.showMainMenu();
-            getFx(1);
+            audioService.playFX(0);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)
             && Gdx.input.isKeyJustPressed(Input.Keys.T)) {
             Colors.nextTheme();
-            getFx(0);
+            audioService.playFX(1);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)
             && Gdx.input.isKeyPressed(Input.Keys.Q)) {
@@ -122,19 +115,19 @@ public abstract class Menu implements Screen {
         switch(dir) {
             case UP -> {
                 selectionIndexY = Math.max(0, selectionIndexY - 1);
-                getFx(1).play();
+                audioService.playFX(1);
             }
             case DOWN -> {
                 selectionIndexY = Math.min(maxIndex, selectionIndexY + 1);
-                getFx(1).play();
+                audioService.playFX(1);
             }
             case LEFT -> {
                 selectionIndexX = Math.max(0, selectionIndexX - 1);
-                getFx(1).play();
+                audioService.playFX(1);
             }
             case RIGHT -> {
                 selectionIndexX = Math.min(maxIndex, selectionIndexX + 1);
-                getFx(1).play();
+                audioService.playFX(1);
             }
         }
     }
@@ -147,7 +140,7 @@ public abstract class Menu implements Screen {
 
         if(selected != null) {
             selected.getAction().run();
-            getFx(0);
+            audioService.playFX(0);
         }
     }
 

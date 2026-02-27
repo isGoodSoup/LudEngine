@@ -9,6 +9,7 @@ import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
+import org.lud.game.service.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -16,24 +17,27 @@ import java.util.List;
 
 public class BoardScreen extends Menu {
     private final GameService gameService;
+    private final AudioService audioService;
     private ShapeRenderer shaper;
     private final List<ButtonData> data;
     private Texture baseButton;
     private Texture frame;
 
-    public BoardScreen(GameService gameService) {
-        super(gameService);
+    public BoardScreen(GameService gameService, AudioService audioService) {
+        super(gameService, audioService);
         this.gameService = gameService;
+        this.audioService = audioService;
         this.data = new ArrayList<>();
         addMenu(this);
         loadSprites();
     }
 
     public void loadSprites() {
-        this.baseButton = new Texture("button_small.png");
-        this.frame = new Texture("button_small_highlighted.png");
-        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, getFx(0)));
-        data.add(new ButtonData(UIButton.RESET, gameService::newGame, getFx(0)));
+        String defaultPath = "buttons/";
+        this.baseButton = new Texture(defaultPath + "button_small.png");
+        this.frame = new Texture(defaultPath + "button_small_highlighted.png");
+        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.RESET, gameService::newGame, audioService.playFX(0)));
     }
 
     @Override
