@@ -5,6 +5,7 @@ import org.lud.game.entities.Piece;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class PieceService {
     private final ServiceFactory service;
     private final List<Piece> pieces;
