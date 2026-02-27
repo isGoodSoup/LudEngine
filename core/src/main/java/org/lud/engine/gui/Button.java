@@ -23,7 +23,7 @@ public class Button implements Clickable {
 
     public Button(float x, float y, float width, float height,
                   Texture texture, Texture icon, Texture frame,
-                  Texture iconHighlighted, String sound, Runnable action) {
+                  Texture iconHighlighted, Sound sound, Runnable action) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -34,8 +34,8 @@ public class Button implements Clickable {
         this.iconHighlighted = iconHighlighted;
         this.action = action;
 
-        if(sound != null && !sound.isEmpty()) {
-            this.sound = Gdx.audio.newSound(Gdx.files.internal(sound));
+        if(sound != null) {
+            this.sound = sound;
         }
     }
 
@@ -50,6 +50,17 @@ public class Button implements Clickable {
 
     public float getHeight() { return height; }
     public void setHeight(float height) { this.height = height; }
+
+    public Runnable getAction() {
+        return action;
+    }
+
+    public boolean isHovered() {
+        return isHovered;
+    }
+    public void setHovered(boolean hovered) {
+        isHovered = hovered;
+    }
 
     @Override
     public void onClick() {
@@ -76,14 +87,9 @@ public class Button implements Clickable {
         isHovered = mouseX >= x && mouseX <= x + width &&
             mouseY >= y && mouseY <= y + height;
 
-        if(isHovered && Gdx.input.justTouched()
-            && Gdx.input.isButtonPressed(Buttons.LEFT)) {
+        if (isHovered && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
             onClick();
         }
-    }
-
-    public boolean isHovered() {
-        return isHovered;
     }
 
     public void dispose() {

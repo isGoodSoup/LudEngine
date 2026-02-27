@@ -1,6 +1,8 @@
 package org.lud.game.core;
 
 import org.lud.engine.core.GameFrame;
+import org.lud.engine.enums.Theme;
+import org.lud.engine.gui.Colors;
 import org.lud.engine.screen.IntroScreen;
 import org.lud.game.service.ServiceFactory;
 
@@ -9,7 +11,8 @@ public class Chess extends GameFrame {
 
     @Override
     public void create() {
-        this.service = new ServiceFactory();
-        setScreen(new IntroScreen(this));
+        this.service = new ServiceFactory(this);
+        Colors.setTheme(Theme.LEGACY);
+        setScreen(new IntroScreen(this, service.getGameService()));
     }
 }

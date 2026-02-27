@@ -2,23 +2,18 @@ package org.lud.engine.core;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import org.lud.game.service.GameService;
 
 public class GameFrame extends Game {
-    @Override
-    public void create() {}
 
-    @Override
-    public void render() {
+    @Override public void create() {}
+    @Override public void render() {
         super.render();
     }
-
-    @Override
-    public void dispose() {
+    @Override public void dispose() {
         getScreen().dispose();
     }
-
-    @Override
-    public void setScreen(Screen screen) {
+    @Override public void setScreen(Screen screen) {
         super.setScreen(screen);
     }
 }
