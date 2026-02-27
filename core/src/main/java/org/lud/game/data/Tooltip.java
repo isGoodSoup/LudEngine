@@ -10,7 +10,7 @@ public class Tooltip {
     private String text;
     private final BitmapFont font;
     private final Color bgColor;
-    private final float padding = 5f;
+    private final float padding = 15f;
     private float x, y;
     private boolean visible = false;
     private float timer = 0f;
@@ -44,17 +44,17 @@ public class Tooltip {
         }
     }
 
-    public void render(SpriteBatch batch, ShapeRenderer shapeRenderer) {
+    public void render(SpriteBatch batch, ShapeRenderer shaper) {
         if(!visible) { return; }
 
         GlyphLayout layout = new GlyphLayout(font, text);
-        float width = layout.width + 2*padding;
-        float height = layout.height + 2*padding;
+        float width = layout.width + 2 * padding;
+        float height = layout.height + 2 * padding;
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(bgColor);
-        shapeRenderer.rect(x, y - height, width, height);
-        shapeRenderer.end();
+        shaper.begin(ShapeRenderer.ShapeType.Filled);
+        shaper.setColor(bgColor);
+        shaper.rect(x, y - height, width, height);
+        shaper.end();
 
         batch.begin();
         font.draw(batch, layout, x + padding, y - padding);

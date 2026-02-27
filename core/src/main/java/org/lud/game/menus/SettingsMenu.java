@@ -2,7 +2,6 @@ package org.lud.game.menus;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
