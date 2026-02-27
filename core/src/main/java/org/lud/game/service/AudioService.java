@@ -29,6 +29,14 @@ public class AudioService {
         return Gdx.audio.newMusic(Gdx.files.internal("sounds/" + file + format));
     }
 
+    public void toggleMusic() {
+        if(music.isPlaying()) {
+            stopMusic();
+        } else {
+            playMusic();
+        }
+    }
+
     public void playMusic() {
         if(music == null) {
             music = loadMusic("main-theme", ".ogg");
@@ -70,6 +78,7 @@ public class AudioService {
 
     public void setMusicVolume(float slider) {
         musicGain = dbToLinear(sliderToDb(slider));
+        apply();
     }
 
     public void setSfxVolume(float slider) {

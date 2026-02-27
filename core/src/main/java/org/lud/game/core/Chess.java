@@ -1,6 +1,5 @@
 package org.lud.game.core;
 
-import com.badlogic.gdx.Gdx;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Theme;
 import org.lud.engine.gui.Colors;
@@ -21,8 +20,7 @@ public class Chess extends GameFrame {
 
     @Override
     public void render() {
-        float delta = Gdx.graphics.getDeltaTime();
-        service.getAudioService().setMusicVolume(delta);
+        service.getAudioService().setMusicVolume(0.5f);
         super.render();
     }
 }

@@ -15,12 +15,12 @@ import org.lud.game.input.Coordinator;
 import org.lud.game.service.AudioService;
 import org.lud.game.service.GameService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @SuppressWarnings("ALL")
 public abstract class Menu implements Screen {
+    private Map<Integer, Runnable> actions;
+    private Map<Integer, Runnable> combos;
     private final GameService gameService;
     private final AudioService audioService;
     private final SpriteBatch batch;
@@ -36,6 +36,8 @@ public abstract class Menu implements Screen {
     public Menu(GameService gameService, AudioService audioService) {
         this.gameService = gameService;
         this.audioService = audioService;
+        this.actions = new LinkedHashMap<>();
+        this.combos = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
         this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
@@ -99,19 +101,45 @@ public abstract class Menu implements Screen {
     public abstract void setup();
     public abstract void checkInput();
 
-    public void globalInput() {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+    public void loadKeys() {
+        actions.put(Input.Keys.ESCAPE, () -> {
             gameService.showMainMenu();
             audioService.playFX(0);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)
-            && Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+        });
+        actions.put(Input.Keys.UP, () -> cursor(Direction.UP));
+        actions.put(Input.Keys.DOWN, () -> cursor(Direction.DOWN));
+        actions.put(Input.Keys.M, () -> audioService.toggleMusic());
+
+        combos.put(Input.Keys.K, () -> {
+            audioService.setMusicVolume(0.1f);
+            audioService.playFX(1);
+        });
+        combos.put(Input.Keys.L, () -> {
+            audioService.setMusicVolume(-0.1f);
+            audioService.playFX(1);
+        });
+        combos.put(Input.Keys.T, () -> {
             Colors.nextTheme();
             audioService.playFX(1);
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)
-            && Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            Gdx.app.exit();
+        });
+        combos.put(Input.Keys.Q, Gdx.app::exit);
+    }
+
+    public void globalInput() {
+        loadKeys();
+        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+            for(var entry : combos.entrySet()) {
+                if(Gdx.input.isKeyJustPressed(entry.getKey())) {
+                    entry.getValue().run();
+                    return;
+                }
+            }
+        } else {
+            for(var entry : actions.entrySet()) {
+                if(Gdx.input.isKeyJustPressed(entry.getKey())) {
+                    entry.getValue().run();
+                }
+            }
         }
     }
 
