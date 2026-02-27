@@ -3,12 +3,14 @@ package org.lud.engine.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
+import org.lud.game.data.ButtonData;
 import org.lud.game.input.Coordinator;
 import org.lud.game.service.AudioService;
 import org.lud.game.service.GameService;
@@ -39,6 +41,11 @@ public abstract class Menu implements Screen {
         this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
         this.batch = new SpriteBatch();
         this.shaper = new ShapeRenderer();
+    }
+
+    public Texture getButton(ButtonData data, boolean isHighlighted) {
+        String suffix = isHighlighted ? "_highlighted.png" : ".png";
+        return new Texture(Gdx.files.internal("buttons/button_" + data.type().getSuffix() + suffix));
     }
 
     public void addMenu(Menu... menus) {

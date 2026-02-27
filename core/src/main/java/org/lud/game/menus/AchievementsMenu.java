@@ -34,7 +34,8 @@ public class AchievementsMenu extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
-        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu,
+            () -> audioService.playFX(0)));
     }
 
     @Override
@@ -44,12 +45,10 @@ public class AchievementsMenu extends Menu {
         float y = 50f;
 
         for(ButtonData data : data) {
-            String defaultPath = "buttons/";
-            Texture icon = new Texture(defaultPath + "button_" + data.type().getSuffix() + ".png");
-            Texture highlighted = new Texture(defaultPath + "button_" + data.type().getSuffix() + "_highlighted.png");
+            Texture icon = getButton(data, false);
+            Texture highlighted = getButton(data, true);
 
-            Button b = new Button(startX, y,
-                baseButton.getWidth(), baseButton.getHeight(),
+            Button b = new Button(startX, y, baseButton.getWidth(), baseButton.getHeight(),
                 baseButton, icon, frame, highlighted, data.soundPath(), data.action());
 
             addButton(b);

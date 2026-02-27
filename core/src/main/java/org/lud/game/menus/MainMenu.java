@@ -57,11 +57,11 @@ public class MainMenu extends Menu {
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
 
-        data.add(new ButtonData(UIButton.PLAY, gameService::newGame, audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.LANG, gameService::showLang, audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.EXIT, gameService::exit, audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.PLAY, gameService::newGame, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.LANG, gameService::showLang, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.EXIT, gameService::exit, () -> audioService.playFX(0)));
     }
 
     @Override
@@ -78,9 +78,8 @@ public class MainMenu extends Menu {
         float y = 200f;
 
         for(ButtonData data : data) {
-            String defaultPath = "buttons/";
-            Texture icon = new Texture(defaultPath + "button_" + data.type().getSuffix() + ".png");
-            Texture highlighted = new Texture(defaultPath + "button_" + data.type().getSuffix() + "_highlighted.png");
+            Texture icon = getButton(data, false);
+            Texture highlighted = getButton(data, true);
 
             if(!isPlayButton && data.type().getSuffix().equals("play")) {
                 isPlayButton = true;
@@ -90,7 +89,8 @@ public class MainMenu extends Menu {
 
             Button b = new Button(startX, y - baseButton.getHeight()/2f,
                 baseButton.getWidth(), baseButton.getHeight(),
-                isPlayButton ? altButton : baseButton, icon, frame, highlighted, data.soundPath(), data.action());
+                isPlayButton ? altButton : baseButton, icon, frame, highlighted,
+                data.soundPath(), data.action());
 
             tooltips.put(b, Localization.lang.t("tooltip." + data.type().getSuffix()));
             addButton(b);
@@ -102,7 +102,8 @@ public class MainMenu extends Menu {
     public void render(float delta) {
         super.render(delta);
         getBatch().begin();
-        getBatch().draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2, Gdx.graphics.getHeight()/2);
+        getBatch().draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2,
+            Gdx.graphics.getHeight()/2);
         getBatch().end();
 
         globalInput();

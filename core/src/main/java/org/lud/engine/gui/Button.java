@@ -2,7 +2,6 @@ package org.lud.engine.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.enums.LastInput;
@@ -20,12 +19,12 @@ public class Button implements Clickable {
     private Texture icon;
     private Texture iconHighlighted;
     private Texture frame;
-    private Sound sound;
+    private Runnable sound;
     private boolean isHovered = false;
 
     public Button(float x, float y, float width, float height,
                   Texture texture, Texture icon, Texture frame,
-                  Texture iconHighlighted, Sound sound, Runnable action) {
+                  Texture iconHighlighted, Runnable sound, Runnable action) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -68,7 +67,7 @@ public class Button implements Clickable {
     public void onClick() {
         action.run();
         if(sound != null) {
-            sound.play();
+            sound.run();
         }
     }
 
@@ -102,6 +101,5 @@ public class Button implements Clickable {
 
     public void dispose() {
         texture.dispose();
-        if(sound != null) { sound.dispose(); }
     }
 }
