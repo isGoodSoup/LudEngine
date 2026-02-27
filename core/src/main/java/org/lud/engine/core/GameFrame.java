@@ -1,13 +1,9 @@
 package org.lud.engine.core;
 
 import com.badlogic.gdx.Game;
-import org.lud.engine.gui.Menu;
-
-import java.util.function.Supplier;
+import com.badlogic.gdx.Screen;
 
 public class GameFrame extends Game {
-    private Supplier<Menu> menu;
-
     @Override
     public void create() {}
 
@@ -21,11 +17,8 @@ public class GameFrame extends Game {
         getScreen().dispose();
     }
 
-    public Supplier<Menu> getMenu() {
-        return menu;
-    }
-
-    public void setNextMenu(Supplier<Menu> menu) {
-        this.menu = menu;
+    @Override
+    public void setScreen(Screen screen) {
+        super.setScreen(screen);
     }
 }

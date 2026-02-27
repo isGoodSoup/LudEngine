@@ -9,11 +9,11 @@ public class Intro {
     private int logoSize = 0;
     private int logoDelta = 2;
     private float alpha = 0f;
-    private boolean fadingIn = true;
+    private boolean isFadingIn = true;
     private final float FADE_SPEED = 0.01f;
     private Texture logo;
     private float timer = 0f;
-    private final float DURATION = 60.0f;
+    private final float DURATION = 3.0f;
     private final int MIN_SIZE = 25;
     private final int MAX_SIZE = 100;
 
@@ -32,11 +32,11 @@ public class Intro {
             logoSize = MIN_SIZE;
         }
 
-        if(fadingIn) {
+        if(isFadingIn) {
             alpha += FADE_SPEED;
             if(alpha >= 1f) {
                 alpha = 1f;
-                fadingIn = false;
+                isFadingIn = false;
             }
         } else if (timer > 1.5f) {
             alpha -= FADE_SPEED;

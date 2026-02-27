@@ -6,14 +6,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.core.Intro;
+import org.lud.game.gui.MainMenu;
 
 public class IntroScreen implements Screen {
-    private final GameFrame game;
+    private final GameFrame gameFrame;
     private final Intro intro;
     private SpriteBatch batch;
 
-    public IntroScreen(GameFrame game) {
-        this.game = game;
+    public IntroScreen(GameFrame gameFrame) {
+        this.gameFrame = gameFrame;
         this.intro = new Intro();
     }
 
@@ -31,23 +32,16 @@ public class IntroScreen implements Screen {
         intro.draw(batch, delta, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
-        if(intro.isFinished() && game.getMenu() != null) {
-            game.setScreen(game.getMenu().get());
+        if(intro.isFinished()) {
+            gameFrame.setScreen(new MainMenu(gameFrame));
             dispose();
         }
     }
 
-    @Override
-    public void resize(int width, int height) {}
-
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void hide() {}
+    @Override public void resize(int width, int height) {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 
     @Override
     public void dispose() {

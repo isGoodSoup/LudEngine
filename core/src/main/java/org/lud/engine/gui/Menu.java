@@ -3,18 +3,19 @@ package org.lud.engine.gui;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import org.lud.engine.enums.MenuType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Menu implements Screen {
-    protected final SpriteBatch batch;
-    protected final List<Button> buttons;
-    protected MenuType menu;
+    private final SpriteBatch batch;
+    private final List<Menu> menus;
+    private final List<Button> buttons;
     private boolean isInit;
 
     public Menu() {
+        this.menus = new ArrayList<>();
         this.batch = new SpriteBatch();
         this.buttons = new ArrayList<>();
     }
@@ -49,15 +50,19 @@ public abstract class Menu implements Screen {
         for(Button b : buttons) { b.dispose(); }
     }
 
-    public void addButton(Button b) {
-        buttons.add(b);
+    public void addMenu(Menu... menus) {
+        this.menus.addAll(Arrays.asList(menus));
     }
 
-    public MenuType getMenuType() {
-        return menu;
+    public List<Menu> getMenus() {
+        return menus;
     }
 
-    public void setMenuType(MenuType menu) {
-        this.menu = menu;
+    public void addButton(Button... buttons) {
+        this.buttons.addAll(Arrays.asList(buttons));
+    }
+
+    public List<Button> getButtons() {
+        return buttons;
     }
 }
