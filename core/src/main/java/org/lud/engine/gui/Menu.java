@@ -3,6 +3,7 @@ package org.lud.engine.gui;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import org.lud.engine.enums.Direction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,9 +21,19 @@ public abstract class Menu implements Screen {
         this.buttons = new ArrayList<>();
     }
 
-    public abstract void setup();
-    public abstract void render(SpriteBatch batch);
-    public abstract void checkInput();
+    public void addMenu(Menu... menus) {
+        this.menus.addAll(Arrays.asList(menus));
+    }
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
+    public void addButton(Button... buttons) {
+        this.buttons.addAll(Arrays.asList(buttons));
+    }
+    public List<Button> getButtons() {
+        return buttons;
+    }
 
     @Override public void show() {
         if(!isInit) {
@@ -51,19 +62,8 @@ public abstract class Menu implements Screen {
         for(Button b : buttons) { b.dispose(); }
     }
 
-    public void addMenu(Menu... menus) {
-        this.menus.addAll(Arrays.asList(menus));
-    }
-
-    public List<Menu> getMenus() {
-        return menus;
-    }
-
-    public void addButton(Button... buttons) {
-        this.buttons.addAll(Arrays.asList(buttons));
-    }
-
-    public List<Button> getButtons() {
-        return buttons;
-    }
+    public abstract void setup();
+    public abstract void render(SpriteBatch batch);
+    public abstract void checkInput();
+    public abstract void cursor(Direction dir);
 }

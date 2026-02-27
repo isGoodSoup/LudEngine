@@ -3,6 +3,7 @@ package org.lud.game.gui;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.core.GameFrame;
+import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
@@ -60,6 +61,11 @@ public class AchievementsMenu extends Menu {
 
     @Override
     public void checkInput() {
+
+    }
+
+    @Override
+    public void cursor(Direction dir) {
 
     }
 

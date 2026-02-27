@@ -1,10 +1,12 @@
 package org.lud.game.gui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import org.lud.engine.core.GameFrame;
+import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
@@ -113,7 +115,17 @@ public class MainMenu extends Menu {
 
     @Override
     public void checkInput() {
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            cursor(Direction.UP);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            cursor(Direction.UP);
+        }
+    }
 
+    @Override
+    public void cursor(Direction dir) {
+        
     }
 
     @Override
