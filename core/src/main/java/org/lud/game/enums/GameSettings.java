@@ -2,7 +2,7 @@ package org.lud.game.enums;
 
 import org.lud.engine.interfaces.Clickable;
 import org.lud.game.service.BooleanService;
-import org.lud.game.service.Localization;
+import org.lud.engine.gui.Localization;
 
 public enum GameSettings implements Clickable {
     AI_OPPONENT("settings.ai_opponent") {

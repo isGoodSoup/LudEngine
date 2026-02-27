@@ -1,6 +1,6 @@
 package org.lud.game.enums;
 
-import org.lud.game.service.Localization;
+import org.lud.engine.gui.Localization;
 
 public enum Achievements {
     FIRST_CAPTURE           (1001L, "a01_first_steps",            "achievement.first_steps.title",        "achievement.first_steps.desc"),
