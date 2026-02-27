@@ -1,4 +1,4 @@
-package org.lud.game.entities;
+package org.lud.game.data;
 
 import org.lud.engine.enums.Turn;
 import org.lud.game.enums.TypeID;
