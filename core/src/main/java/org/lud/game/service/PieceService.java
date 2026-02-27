@@ -1,6 +1,6 @@
 package org.lud.game.service;
 
-import org.lud.game.entities.Piece;
+import org.lud.game.data.Piece;
 
 import java.util.ArrayList;
 import java.util.List;

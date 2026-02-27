@@ -65,10 +65,12 @@ public class BoardScreen extends Menu {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         shaper.begin(ShapeRenderer.ShapeType.Filled);
+
         int tileSize = 64;
         int boardSize = tileSize * 8;
-        float startX = (Gdx.graphics.getWidth() - boardSize) / 2f;
-        float startY = (Gdx.graphics.getHeight() - boardSize) / 2f;
+        int padding = 20;
+        float startX = (Gdx.graphics.getWidth() - boardSize)/2f;
+        float startY = (Gdx.graphics.getHeight() - boardSize)/2f;
 
         for(int row = 0; row < 8; row++) {
             for(int col = 0; col < 8; col++) {
@@ -78,12 +80,14 @@ public class BoardScreen extends Menu {
                     shaper.setColor(Colors.getForeground());
                 }
 
+                shaper.rect(startX - padding,startY - padding,
+                    boardSize + padding, boardSize + padding);
+
                 shaper.rect(startX + col * tileSize,
                     startY + row * tileSize,
                     tileSize, tileSize);
             }
         }
-
         shaper.end();
 
         super.render(delta);

@@ -7,6 +7,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
+import org.lud.engine.enums.LastInput;
+import org.lud.game.input.Coordinator;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -66,9 +68,11 @@ public abstract class Menu implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Colors.getBackground());
         for(Button b : getButtons()) { b.update(); }
-        for(int i = 0; i < getButtons().size(); i++) {
-            Button b = getButtons().get(i);
-            b.setHovered(i == selectionIndexY);
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+            for(int i = 0; i < getButtons().size(); i++) {
+                Button b = getButtons().get(i);
+                b.setHovered(i == selectionIndexY);
+            }
         }
 
         batch.begin();
@@ -103,6 +107,7 @@ public abstract class Menu implements Screen {
 
     public void cursor(Direction dir) {
         int maxIndex = getButtons().size() - 1;
+        Coordinator.setLastInput(LastInput.KEYBOARD);
 
         switch(dir) {
             case UP -> {
@@ -132,6 +137,7 @@ public abstract class Menu implements Screen {
 
         if(selected != null) {
             selected.getAction().run();
+            getFx(0);
         }
     }
 

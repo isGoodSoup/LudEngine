@@ -1,5 +1,7 @@
 package org.lud.game.entities;
 
+import org.lud.game.data.Piece;
+
 public class Board {
     private static final int SIZE = 8;
     private final Piece[][] pieces;

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
-import org.lud.game.entities.Piece;
+import org.lud.game.data.Piece;
 import org.lud.game.menus.AchievementsMenu;
 import org.lud.game.menus.LangMenu;
 import org.lud.game.menus.MainMenu;

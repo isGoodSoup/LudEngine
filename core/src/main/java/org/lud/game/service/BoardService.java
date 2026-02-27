@@ -1,7 +1,7 @@
 package org.lud.game.service;
 
 import org.lud.game.entities.Board;
-import org.lud.game.entities.Piece;
+import org.lud.game.data.Piece;
 
 public class BoardService {
     private final Board board;

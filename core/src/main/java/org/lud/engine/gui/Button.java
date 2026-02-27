@@ -5,7 +5,9 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import org.lud.engine.enums.LastInput;
 import org.lud.engine.interfaces.Clickable;
+import org.lud.game.input.Coordinator;
 
 @SuppressWarnings("ALL")
 public class Button implements Clickable {
@@ -84,10 +86,16 @@ public class Button implements Clickable {
     public void update() {
         float mouseX = Gdx.input.getX();
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
-        isHovered = mouseX >= x && mouseX <= x + width &&
+
+        boolean currentlyHovered = mouseX >= x && mouseX <= x + width &&
             mouseY >= y && mouseY <= y + height;
 
-        if (isHovered && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
+        if(currentlyHovered) {
+            Coordinator.setLastInput(LastInput.MOUSE);
+        }
+
+        isHovered = currentlyHovered || (Coordinator.getLastInput() == LastInput.KEYBOARD && isHovered);
+        if(isHovered && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
             onClick();
         }
     }
