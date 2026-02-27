@@ -49,6 +49,8 @@ public class SettingsMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
+
+        // TODO toggles
     }
 
     @Override
