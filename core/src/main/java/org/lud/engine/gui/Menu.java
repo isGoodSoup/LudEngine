@@ -22,6 +22,7 @@ public abstract class Menu implements Screen {
 
     public abstract void setup();
     public abstract void render(SpriteBatch batch);
+    public abstract void checkInput();
 
     @Override public void show() {
         if(!isInit) {

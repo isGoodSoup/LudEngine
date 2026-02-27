@@ -56,6 +56,12 @@ public class SettingsMenu extends Menu {
     @Override
     public void render(SpriteBatch batch) {
         for(Button b : getButtons()) { b.render(batch); }
+        checkInput();
+    }
+
+    @Override
+    public void checkInput() {
+
     }
 
     @Override

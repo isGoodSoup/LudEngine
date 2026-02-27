@@ -49,13 +49,18 @@ public class AchievementsMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
-
         // TODO Achievements menu
     }
 
     @Override
     public void render(SpriteBatch batch) {
         for(Button b : getButtons()) { b.render(batch); }
+        checkInput();
+    }
+
+    @Override
+    public void checkInput() {
+
     }
 
     @Override

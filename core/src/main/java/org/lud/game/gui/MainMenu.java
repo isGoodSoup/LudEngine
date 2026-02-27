@@ -89,6 +89,8 @@ public class MainMenu extends Menu {
         batch.draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2, Gdx.graphics.getHeight()/2);
         for(Button b : getButtons()) { b.render(batch); }
 
+        checkInput();
+
         if(!isFadeShown) {
             if(fadeAlpha > 0f) {
                 fadeAlpha -= FADE_SPEED * Gdx.graphics.getDeltaTime();
@@ -107,6 +109,11 @@ public class MainMenu extends Menu {
                 batch.begin();
             }
         }
+    }
+
+    @Override
+    public void checkInput() {
+
     }
 
     @Override
