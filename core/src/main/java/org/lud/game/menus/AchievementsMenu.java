@@ -28,8 +28,9 @@ public class AchievementsMenu extends Menu {
     }
 
     public void loadSprites() {
-        this.baseButton = new Texture("button_small.png");
-        this.frame = new Texture("button_small_highlighted.png");
+        String defaultPath = "buttons/";
+        this.baseButton = new Texture(defaultPath + "button_small.png");
+        this.frame = new Texture(defaultPath + "button_small_highlighted.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, getFx(0)));
     }
 
@@ -40,8 +41,9 @@ public class AchievementsMenu extends Menu {
         float y = 50f;
 
         for(ButtonData data : data) {
-            Texture icon = new Texture("button_" + data.type().getSuffix() + ".png");
-            Texture highlighted = new Texture("button_" + data.type().getSuffix() + "_highlighted.png");
+            String defaultPath = "buttons/";
+            Texture icon = new Texture(defaultPath + "button_" + data.type().getSuffix() + ".png");
+            Texture highlighted = new Texture(defaultPath + "button_" + data.type().getSuffix() + "_highlighted.png");
 
             Button b = new Button(startX, y,
                 baseButton.getWidth(), baseButton.getHeight(),

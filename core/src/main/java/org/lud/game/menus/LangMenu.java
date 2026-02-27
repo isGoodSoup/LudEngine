@@ -28,8 +28,9 @@ public class LangMenu extends Menu {
     }
 
     public void loadSprites() {
-        this.baseButton = new Texture("button_small.png");
-        this.frame = new Texture("button_small_highlighted.png");
+        String defaultPath = "buttons/";
+        this.baseButton = new Texture(defaultPath + "button_small.png");
+        this.frame = new Texture(defaultPath + "button_small_highlighted.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, getFx(0)));
     }
 

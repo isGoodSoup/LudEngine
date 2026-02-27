@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
@@ -19,8 +21,10 @@ import java.util.List;
 public abstract class Menu implements Screen {
     private final GameService gameService;
     private final SpriteBatch batch;
+    private final ShapeRenderer shaper;
     private final List<Menu> menus;
     private final List<Button> buttons;
+    private final BitmapFont font;
     private boolean isInit;
 
     private int selectionIndexY;
@@ -29,8 +33,10 @@ public abstract class Menu implements Screen {
     public Menu(GameService gameService) {
         this.gameService = gameService;
         this.menus = new ArrayList<>();
-        this.batch = new SpriteBatch();
         this.buttons = new ArrayList<>();
+        this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
+        this.batch = new SpriteBatch();
+        this.shaper = new ShapeRenderer();
     }
 
     public Sound getFx(int index) {
@@ -54,6 +60,10 @@ public abstract class Menu implements Screen {
     }
     public List<Button> getButtons() {
         return buttons;
+    }
+
+    public BitmapFont getFont() {
+        return font;
     }
 
     @Override public void show() {
@@ -145,9 +155,15 @@ public abstract class Menu implements Screen {
         return batch;
     }
 
+    public ShapeRenderer getShaper() {
+        return shaper;
+    }
+
     @Override
     public void dispose() {
         batch.dispose();
+        shaper.dispose();
         for(Button b : buttons) { b.dispose(); }
+        font.dispose();
     }
 }

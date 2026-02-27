@@ -6,18 +6,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
+import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
+import org.lud.game.data.Tooltip;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 public class MainMenu extends Menu {
     private static boolean isFadeShown;
 
+    private Map<Button, String> tooltips;
     private final GameService gameService;
     private List<ButtonData> data;
     private Texture logo;
@@ -28,20 +33,26 @@ public class MainMenu extends Menu {
     private float fadeAlpha = 1f;
     private final float FADE_SPEED = 0.5f;
     private boolean isPlayButton;
+    private Tooltip tooltip;
 
     public MainMenu(GameService gameService) {
         super(gameService);
+        this.tooltips = new LinkedHashMap<>();
         this.gameService = gameService;
         this.data = new ArrayList<>();
+
+        this.tooltip = new Tooltip("", getFont());
+
         addMenu(this);
         loadSprites();
     }
 
     public void loadSprites() {
+        String defaultPath = "buttons/";
         this.logo = new Texture("logo_chess.png");
-        this.altButton = new Texture("button.png");
-        this.baseButton = new Texture("button_small.png");
-        this.frame = new Texture("button_small_highlighted.png");
+        this.altButton = new Texture(defaultPath + "button.png");
+        this.baseButton = new Texture(defaultPath + "button_small.png");
+        this.frame = new Texture(defaultPath + "button_small_highlighted.png");
 
         data.add(new ButtonData(UIButton.PLAY, gameService::newGame, getFx(0)));
         data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, getFx(0)));
@@ -64,8 +75,9 @@ public class MainMenu extends Menu {
         float y = 200f;
 
         for(ButtonData data : data) {
-            Texture icon = new Texture("button_" + data.type().getSuffix() + ".png");
-            Texture highlighted = new Texture("button_" + data.type().getSuffix() + "_highlighted.png");
+            String defaultPath = "buttons/";
+            Texture icon = new Texture(defaultPath + "button_" + data.type().getSuffix() + ".png");
+            Texture highlighted = new Texture(defaultPath + "button_" + data.type().getSuffix() + "_highlighted.png");
 
             if(!isPlayButton && data.type().getSuffix().equals("play")) {
                 isPlayButton = true;
@@ -77,6 +89,7 @@ public class MainMenu extends Menu {
                 baseButton.getWidth(), baseButton.getHeight(),
                 isPlayButton ? altButton : baseButton, icon, frame, highlighted, data.soundPath(), data.action());
 
+            tooltips.put(b, Localization.lang.t("tooltip." + data.type().getSuffix()));
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
@@ -92,6 +105,21 @@ public class MainMenu extends Menu {
         globalInput();
         checkInput();
 
+        float mouseX = Gdx.input.getX();
+        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
+        boolean hovering = false;
+
+        for (Button b : getButtons()) {
+            if (b.isHovered()) {
+                tooltip.setText(tooltips.get(b));
+                hovering = true;
+                break;
+            }
+        }
+
+        tooltip.update(delta, hovering, mouseX, mouseY);
+        tooltip.render(getBatch(), getShaper());
+
         if(!isFadeShown) {
             if(fadeAlpha > 0f) {
                 fadeAlpha -= FADE_SPEED * Gdx.graphics.getDeltaTime();
@@ -100,12 +128,10 @@ public class MainMenu extends Menu {
                     isFadeShown = true;
                 }
 
-                ShapeRenderer shape = new ShapeRenderer();
-                shape.begin(ShapeRenderer.ShapeType.Filled);
-                shape.setColor(0, 0, 0, fadeAlpha);
-                shape.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                shape.end();
-                shape.dispose();
+                getShaper().begin(ShapeRenderer.ShapeType.Filled);
+                getShaper().setColor(0, 0, 0, fadeAlpha);
+                getShaper().rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                getShaper().end();
             }
         }
     }
@@ -126,5 +152,6 @@ public class MainMenu extends Menu {
     @Override
     public void dispose() {
         super.dispose();
+        tooltip.getFont().dispose();
     }
 }
