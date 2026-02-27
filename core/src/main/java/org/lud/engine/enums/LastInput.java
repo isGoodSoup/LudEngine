@@ -1,4 +1,4 @@
-package org.lud.game.enums;
+package org.lud.engine.enums;
 
 public enum LastInput {
     MOUSE, KEYBOARD

@@ -1,6 +1,6 @@
-package org.lud.game.enums;
+package org.lud.engine.enums;
 
-import org.lud.game.service.Localization;
+import org.lud.engine.gui.Localization;
 
 import java.util.Locale;
 

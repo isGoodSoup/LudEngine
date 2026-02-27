@@ -1,4 +1,4 @@
-package org.lud.game.service;
+package org.lud.engine.gui;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
