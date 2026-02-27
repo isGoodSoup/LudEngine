@@ -1,11 +1,10 @@
-package org.lud.game.screens;
+package org.lud.game.menus;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
-import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
@@ -14,14 +13,13 @@ import org.lud.game.service.GameService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoardScreen extends Menu {
+public class SettingsMenu extends Menu {
     private final GameService gameService;
-    private ShapeRenderer shaper;
     private final List<ButtonData> data;
     private Texture baseButton;
     private Texture frame;
 
-    public BoardScreen(GameService gameService) {
+    public SettingsMenu(GameService gameService) {
         super(gameService);
         this.gameService = gameService;
         this.data = new ArrayList<>();
@@ -33,7 +31,6 @@ public class BoardScreen extends Menu {
         this.baseButton = new Texture("button_small.png");
         this.frame = new Texture("button_small_highlighted.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, getFx(0)));
-        data.add(new ButtonData(UIButton.RESET, gameService::newGame, getFx(0)));
     }
 
     @Override
@@ -53,39 +50,12 @@ public class BoardScreen extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
-        // TODO Board buttons
-    }
 
-    @Override
-    public void show() {
-        this.shaper = new ShapeRenderer();
+        // TODO toggles
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        shaper.begin(ShapeRenderer.ShapeType.Filled);
-        int tileSize = 64;
-        int boardSize = tileSize * 8;
-        float startX = (Gdx.graphics.getWidth() - boardSize) / 2f;
-        float startY = (Gdx.graphics.getHeight() - boardSize) / 2f;
-
-        for(int row = 0; row < 8; row++) {
-            for(int col = 0; col < 8; col++) {
-                if ((row + col) % 2 == 0) {
-                    shaper.setColor(Colors.getBackground());
-                } else {
-                    shaper.setColor(Colors.getForeground());
-                }
-
-                shaper.rect(startX + col * tileSize,
-                    startY + row * tileSize,
-                    tileSize, tileSize);
-            }
-        }
-
-        shaper.end();
-
         super.render(delta);
 
         globalInput();
@@ -94,12 +64,19 @@ public class BoardScreen extends Menu {
 
     @Override
     public void checkInput() {
-
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            activate();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            cursor(Direction.UP);
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            cursor(Direction.DOWN);
+        }
     }
 
     @Override
     public void dispose() {
-        shaper.dispose();
+        super.dispose();
     }
-
 }

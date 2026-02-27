@@ -1,17 +1,15 @@
-package org.lud.game.gui;
+package org.lud.game.menus;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
-import org.lud.game.screens.BoardScreen;
+import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.List;
 public class MainMenu extends Menu {
     private static boolean isFadeShown;
 
-    private final GameFrame gameFrame;
+    private final GameService gameService;
     private List<ButtonData> data;
     private Texture logo;
     private Texture baseButton;
@@ -31,9 +29,9 @@ public class MainMenu extends Menu {
     private final float FADE_SPEED = 0.5f;
     private boolean isPlayButton;
 
-    public MainMenu(GameFrame gameFrame) {
-        super();
-        this.gameFrame = gameFrame;
+    public MainMenu(GameService gameService) {
+        super(gameService);
+        this.gameService = gameService;
         this.data = new ArrayList<>();
         addMenu(this);
         loadSprites();
@@ -45,13 +43,11 @@ public class MainMenu extends Menu {
         this.baseButton = new Texture("button_small.png");
         this.frame = new Texture("button_small_highlighted.png");
 
-        data.add(new ButtonData(UIButton.PLAY, () -> gameFrame.setScreen
-            (new BoardScreen(gameFrame)), "sounds/piece-fx.wav"));
-        data.add(new ButtonData(UIButton.SETTINGS, () -> gameFrame.setScreen
-            (new SettingsMenu(gameFrame)), "sounds/piece-fx.wav"));
-        data.add(new ButtonData(UIButton.ACHIEVEMENTS, () -> gameFrame.setScreen
-            (new AchievementsMenu(gameFrame)), "sounds/piece-fx.wav"));
-        data.add(new ButtonData(UIButton.EXIT, Gdx.app::exit, "sounds/piece-fx.wav"));
+        data.add(new ButtonData(UIButton.PLAY, gameService::newGame, getFx(0)));
+        data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, getFx(0)));
+        data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, getFx(0)));
+        data.add(new ButtonData(UIButton.LANG, gameService::showLang, getFx(0)));
+        data.add(new ButtonData(UIButton.EXIT, gameService::exit, getFx(0)));
     }
 
     @Override
@@ -79,7 +75,7 @@ public class MainMenu extends Menu {
 
             Button b = new Button(startX, y - baseButton.getHeight()/2f,
                 baseButton.getWidth(), baseButton.getHeight(),
-                isPlayButton ? altButton : baseButton, icon, frame, highlighted, data.sound(), data.action());
+                isPlayButton ? altButton : baseButton, icon, frame, highlighted, data.soundPath(), data.action());
 
             addButton(b);
             startX += baseButton.getWidth() + spacing;
@@ -87,10 +83,13 @@ public class MainMenu extends Menu {
     }
 
     @Override
-    public void render(SpriteBatch batch) {
-        batch.draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2, Gdx.graphics.getHeight()/2);
-        for(Button b : getButtons()) { b.render(batch); }
+    public void render(float delta) {
+        super.render(delta);
+        getBatch().begin();
+        getBatch().draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2, Gdx.graphics.getHeight()/2);
+        getBatch().end();
 
+        globalInput();
         checkInput();
 
         if(!isFadeShown) {
@@ -101,31 +100,27 @@ public class MainMenu extends Menu {
                     isFadeShown = true;
                 }
 
-                batch.end();
                 ShapeRenderer shape = new ShapeRenderer();
                 shape.begin(ShapeRenderer.ShapeType.Filled);
                 shape.setColor(0, 0, 0, fadeAlpha);
                 shape.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 shape.end();
                 shape.dispose();
-                batch.begin();
             }
         }
     }
 
     @Override
     public void checkInput() {
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            activate();
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             cursor(Direction.UP);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            cursor(Direction.UP);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            cursor(Direction.DOWN);
         }
-    }
-
-    @Override
-    public void cursor(Direction dir) {
-        
     }
 
     @Override

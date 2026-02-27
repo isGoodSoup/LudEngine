@@ -6,15 +6,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.core.Intro;
-import org.lud.game.gui.MainMenu;
+import org.lud.game.menus.MainMenu;
+import org.lud.game.service.GameService;
 
 public class IntroScreen implements Screen {
     private final GameFrame gameFrame;
+    private final GameService gameService;
     private final Intro intro;
     private SpriteBatch batch;
 
-    public IntroScreen(GameFrame gameFrame) {
+    public IntroScreen(GameFrame gameFrame, GameService gameService) {
         this.gameFrame = gameFrame;
+        this.gameService = gameService;
         this.intro = new Intro();
     }
 
@@ -33,7 +36,7 @@ public class IntroScreen implements Screen {
         batch.end();
 
         if(intro.isFinished()) {
-            gameFrame.setScreen(new MainMenu(gameFrame));
+            gameFrame.setScreen(new MainMenu(gameService));
             dispose();
         }
     }
