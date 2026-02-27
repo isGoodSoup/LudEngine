@@ -44,8 +44,9 @@ public class LangMenu extends Menu {
         float y = 50f;
 
         for(ButtonData data : data) {
-            Texture icon = new Texture("button_" + data.type().getSuffix() + ".png");
-            Texture highlighted = new Texture("button_" + data.type().getSuffix() + "_highlighted.png");
+            String defaultPath = "buttons/";
+            Texture icon = new Texture(defaultPath + "button_" + data.type().getSuffix() + ".png");
+            Texture highlighted = new Texture(defaultPath + "button_" + data.type().getSuffix() + "_highlighted.png");
 
             Button b = new Button(startX, y,
                 baseButton.getWidth(), baseButton.getHeight(),
