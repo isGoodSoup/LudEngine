@@ -5,7 +5,6 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.lud.engine.core.AudioService;
-import org.lud.engine.enums.Turn;
 import org.lud.game.entities.Board;
 import org.lud.game.entities.Piece;
 import org.lud.game.service.BoardService;
@@ -59,42 +58,18 @@ public class BoardInput extends InputAdapter {
                 break;
             }
         }
-
         return true;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if(piece != null) {
-            mousePos.set(screenX, screenY, 0);
-            board.getCamera().unproject(mousePos);
-            piece.setX((int)(mousePos.x - offsetX));
-            piece.setY((int)(mousePos.y - offsetY));
-        }
+        // TODO
         return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(button != Input.Buttons.LEFT || piece == null) { return false; }
-
-        mousePos.set(screenX, screenY, 0);
-        board.getCamera().unproject(mousePos);
-
-        int col = (int)((mousePos.x - startX) / Board.getSQUARE());
-        int row = (int)((mousePos.y - startY) / Board.getSQUARE());
-        col = Math.max(0, Math.min(7, col));
-        row = Math.max(0, Math.min(7, row));
-        row = 7 - row;
-
-        float[] xy = PieceService.toPixels(col, row);
-        Piece newPiece = new Piece(piece.getTypeID(), piece.getColor(), col, row);
-        newPiece.setX((int)xy[0]);
-        newPiece.setY((int)xy[1]);
-
-        pieceService.replacePiece(piece, newPiece);
-        piece = null;
-        Turn.nextTurn(gameService);
-        return true;
+        // TODO
+        return false;
     }
 }
