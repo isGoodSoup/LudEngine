@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
@@ -28,6 +29,7 @@ public abstract class Menu implements Screen {
     private final List<Menu> menus;
     private final List<Button> buttons;
     private final BitmapFont font;
+    private final FreeTypeFontGenerator generator;
     private boolean isInit;
 
     private int selectionIndexY;
@@ -40,7 +42,16 @@ public abstract class Menu implements Screen {
         this.combos = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
-        this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
+//        this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
+//        this.font = new BitmapFont(Gdx.files.internal("fonts/Monocraft.fnt"));
+
+        this.generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BoldPixels.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter params = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        params.size = 32;
+        params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
+        font = generator.generateFont(params);
+        generator.dispose();
+
         this.batch = new SpriteBatch();
         this.shaper = new ShapeRenderer();
     }

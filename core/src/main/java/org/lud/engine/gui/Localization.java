@@ -21,7 +21,7 @@ public class Localization {
     public void setLocale(Locale locale) {
         this.locale = locale;
         FileHandle baseFile = Gdx.files.internal("i18n/lang");
-        bundle = I18NBundle.createBundle(baseFile, locale, "UTF-8");
+        bundle = I18NBundle.createBundle(baseFile, locale, "ISO-8859-1");
     }
 
     public String t(String key) {
