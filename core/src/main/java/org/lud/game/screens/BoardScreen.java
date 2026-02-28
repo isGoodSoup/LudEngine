@@ -15,7 +15,7 @@ import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.entities.Piece;
 import org.lud.game.enums.UIButton;
-import org.lud.game.input.Coordinator;
+import org.lud.engine.input.Coordinator;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
@@ -30,7 +30,7 @@ public class BoardScreen extends Menu {
 
     private Stage stage;
     private Coordinator coordinator;
-    private BoardInput boardInput;
+    private final BoardInput boardInput;
     private InputMultiplexer multiplexer;
 
     private final BoardService boardService;
@@ -60,6 +60,9 @@ public class BoardScreen extends Menu {
 
         this.startX = (Gdx.graphics.getWidth() - BOARD_SIZE)/2f;
         this.startY = (Gdx.graphics.getHeight() - BOARD_SIZE)/2f;
+
+        this.boardInput = new BoardInput(pieceService, gameService, boardService,
+            audioService, startX, startY, TILE_SIZE);
 
         addMenu(this);
         loadSprites();
@@ -101,9 +104,7 @@ public class BoardScreen extends Menu {
 
         stage = new Stage();
         coordinator = new Coordinator();
-        boardInput = new BoardInput(boardService, stage, pieceService,
-            audioService, gameService);
-        multiplexer = new InputMultiplexer(coordinator, stage, boardInput);
+        multiplexer = new InputMultiplexer(coordinator, stage);
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -114,6 +115,9 @@ public class BoardScreen extends Menu {
 
         drawBoard();
         drawPieces();
+
+        boardInput.update();
+
         drawTooltip(delta);
     }
 
@@ -142,8 +146,16 @@ public class BoardScreen extends Menu {
         getBatch().begin();
         for(Piece p : pieceService.getPieces()) {
             Texture tex = pieceService.getSprite(p);
-            float x = startX + p.getCol() * TILE_SIZE;
-            float y = startY + p.getRow() * TILE_SIZE;
+            float x, y;
+
+            if(boardInput.getPiece() == p) {
+                x = p.getX();
+                y = p.getY();
+            } else {
+                x = startX + p.getCol() * TILE_SIZE;
+                y = startY + p.getRow() * TILE_SIZE;
+            }
+
             getBatch().draw(tex, x, y, TILE_SIZE, TILE_SIZE);
         }
         getBatch().end();

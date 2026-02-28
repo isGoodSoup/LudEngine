@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.enums.LastInput;
 import org.lud.engine.interfaces.Clickable;
-import org.lud.game.input.Coordinator;
+import org.lud.engine.input.Coordinator;
 
 @SuppressWarnings("ALL")
 public class Button implements Clickable {

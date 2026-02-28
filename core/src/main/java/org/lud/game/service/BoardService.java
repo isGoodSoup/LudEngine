@@ -54,7 +54,7 @@ public class BoardService {
     }
 
     public boolean attemptMove(Piece piece, int targetCol, int targetRow) {
-        if(!isWithinBoard(targetCol, targetRow)) return false;
+        if(!isWithinBoard(targetCol, targetRow)) { return false; }
 
         // TODO: implement special logic for pawns, kings, castling, en-passant
 
@@ -103,7 +103,7 @@ public class BoardService {
     private void executeEnPassant(Piece pa, int targetCol, int targetRow) {}
 
     public float getBoardStartX() {
-        return (Gdx.graphics.getWidth() - Board.getSIZE()) / 2f;
+        return (Gdx.graphics.getWidth() - Board.getSIZE())/2f;
     }
 
     public float getBoardStartY() {

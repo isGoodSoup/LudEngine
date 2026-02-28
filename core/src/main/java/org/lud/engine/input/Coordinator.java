@@ -1,4 +1,4 @@
-package org.lud.game.input;
+package org.lud.engine.input;
 
 import com.badlogic.gdx.InputAdapter;
 import org.lud.engine.enums.LastInput;

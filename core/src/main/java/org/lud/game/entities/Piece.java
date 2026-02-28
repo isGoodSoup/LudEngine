@@ -45,4 +45,17 @@ public class Piece {
 
     public boolean hasMoved() { return hasMoved; }
     public void setHasMoved(boolean hasMoved) { this.hasMoved = hasMoved; }
+
+    @Override
+    public String toString() {
+        return "Piece{" +
+            "typeID=" + typeID +
+            ", color=" + color +
+            ", x=" + x +
+            ", y=" + y +
+            ", col=" + col +
+            ", row=" + row +
+            ", hasMoved=" + hasMoved +
+            '}';
+    }
 }

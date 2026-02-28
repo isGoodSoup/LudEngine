@@ -33,7 +33,7 @@ public class GameService {
         this.mainMenu = new MainMenu(this, audio);
         this.settingsMenu = new SettingsMenu(this, audio);
         this.achievementsMenu = new AchievementsMenu(this, audio);
-        this.boardScreen = new BoardScreen(this, piece, audio);
+        this.boardScreen = new BoardScreen(service.getBoardService(), this, piece, audio);
 
         activeMenu = mainMenu;
     }
@@ -48,7 +48,7 @@ public class GameService {
     }
     public void newGame() {
         showBoard();
-
+        setTurn(Turn.LIGHT);
     }
     public void showSettings() {
         activeMenu = settingsMenu;

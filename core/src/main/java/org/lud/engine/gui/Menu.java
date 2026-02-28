@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
 import org.lud.game.data.ButtonData;
-import org.lud.game.input.Coordinator;
+import org.lud.engine.input.Coordinator;
 import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
