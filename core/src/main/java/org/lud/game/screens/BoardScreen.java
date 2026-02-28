@@ -51,6 +51,8 @@ public class BoardScreen extends Menu {
     private final float startX;
     private final float startY;
 
+    private boolean isCursorActive;
+
     public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
         super(gameService, audioService);
@@ -122,7 +124,9 @@ public class BoardScreen extends Menu {
 
         boardInput.update();
         checkInput();
-        globalInput();
+        if(!isCursorActive) {
+            globalInput();
+        }
     }
 
     private void drawBoard() {
@@ -143,7 +147,8 @@ public class BoardScreen extends Menu {
             }
         }
 
-        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD &&
+            isCursorActive) {
             shaper.setColor(Colors.getHighlight());
             shaper.rect(startX + getMoveX() * TILE_SIZE,
                 startY + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -193,11 +198,19 @@ public class BoardScreen extends Menu {
 
     @Override
     public void checkInput() {
-        if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) { select(); }
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) { isCursorActive ^= true; }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            if (isCursorActive) {
+                select();
+            } else {
+                activate();
+            }
+        }
+        if(!isCursorActive) { return; }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
     }
 
     @Override

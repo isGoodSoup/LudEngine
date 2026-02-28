@@ -89,13 +89,13 @@ public class GameService {
         switch(p.getTypeID()) {
             case PAWN -> {
                 int direction = (p.getColor() == Turn.LIGHT) ? 1 : -1;
-                Piece pieceAtTarget = service.getBoardService().getPieceAt(targetCol, targetRow);
+                Piece pieceAtTarget = BoardService.getPieceAt(targetCol, targetRow);
 
                 if(targetCol == p.getCol() && targetRow == p.getRow() + direction) {
                     return pieceAtTarget == null;
                 }
                 if(targetCol == p.getCol() && targetRow == p.getRow() + 2 * direction
-                    && !p.hasMoved() && service.getBoardService().isPathClear(p, targetCol, targetRow)) {
+                    && !p.hasMoved() && BoardService.isPathClear(p, targetCol, targetRow)) {
                     return pieceAtTarget == null;
                 }
                 if(Math.abs(targetCol - p.getCol()) == 1 && targetRow == p.getRow() + direction) {
@@ -107,19 +107,77 @@ public class GameService {
                 }
             }
             case KNIGHT -> {
+                int colDiff = Math.abs(targetCol - p.getCol());
+                int rowDiff = Math.abs(targetRow - p.getRow());
 
+                if((colDiff == 2 && rowDiff == 1) || (colDiff == 1 && rowDiff == 2)) {
+                    return BoardService.isValidSquare(p, targetCol, targetRow,
+                        service.getPieceService().getPieces());
+                }
             }
             case BISHOP -> {
+                int colDiff = targetCol - p.getCol();
+                int rowDiff = targetRow - p.getRow();
 
+                if(Math.abs(colDiff) != Math.abs(rowDiff)) {
+                    return false;
+                }
+
+                if(!BoardService.isPathClear(p, targetCol, targetRow)) {
+                    return false;
+                }
+
+                Piece target = null;
+                for(Piece piece : service.getPieceService().getPieces()) {
+                    if(piece.getCol() == targetCol && piece.getRow() == targetRow) {
+                        target = piece;
+                        break;
+                    }
+                }
+                return target == null || target.getColor() != p.getColor();
             }
             case ROOK -> {
-
+                if(targetCol == p.getPreCol() || targetRow == p.getPreRow()) {
+                    return BoardService.isValidSquare(p, targetCol, targetRow,
+                        service.getPieceService().getPieces())
+                        && BoardService.isPathClear(p, targetCol, targetRow);
+                }
             }
             case QUEEN -> {
+                if(targetCol == p.getPreCol() || targetRow == p.getPreRow()) {
+                    return BoardService.isValidSquare(p, targetCol, targetRow,
+                        service.getPieceService().getPieces())
+                        && BoardService.isPathClear(p, targetCol, targetRow);
+                }
 
+                int colDiff = targetCol - p.getCol();
+                int rowDiff = targetRow - p.getRow();
+
+                if(Math.abs(colDiff) != Math.abs(rowDiff)) {
+                    return false;
+                }
+
+                if(!BoardService.isPathClear(p, targetCol, targetRow)) {
+                    return false;
+                }
+
+                Piece target = null;
+                for(Piece piece : service.getPieceService().getPieces()) {
+                    if(piece.getCol() == targetCol && piece.getRow() == targetRow) {
+                        target = piece;
+                        break;
+                    }
+                }
+                return target == null || target.getColor() != p.getColor();
             }
             case KING -> {
+                int colDiff = Math.abs(targetCol - p.getCol());
+                int rowDiff = Math.abs(targetRow - p.getRow());
 
+                if((colDiff + rowDiff == 1) || (colDiff * rowDiff == 1)) {
+                    return BoardService.isValidSquare(p, targetCol, targetRow,
+                        service.getPieceService().getPieces());
+                }
             }
         }
         return false;

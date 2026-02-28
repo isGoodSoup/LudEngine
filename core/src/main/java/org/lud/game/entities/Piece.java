@@ -8,6 +8,7 @@ public class Piece {
     private TypeID typeID;
     private Turn color;
     private int x, y;
+    private int preCol, preRow;
     private int col, row;
 
     private boolean hasMoved;
@@ -18,6 +19,8 @@ public class Piece {
         this.color = color;
         this.col = col;
         this.row = row;
+        this.preCol = col;
+        this.preRow = row;
         this.x = col * Board.getSQUARE();
         this.y = row * Board.getSQUARE();
     }
@@ -45,6 +48,12 @@ public class Piece {
         this.row = row;
         this.y = row * Board.getSQUARE();
     }
+
+    public int getPreCol() { return preCol; }
+    public void setPreCol(int preCol) { this.preCol = preCol; }
+
+    public int getPreRow() { return preRow; }
+    public void setPreRow(int preRow) { this.preRow = preRow; }
 
     public boolean hasMoved() { return hasMoved; }
     public void setHasMoved(boolean hasMoved) { this.hasMoved = hasMoved; }

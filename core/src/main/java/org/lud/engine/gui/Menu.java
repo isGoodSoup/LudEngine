@@ -213,7 +213,7 @@ public abstract class Menu implements Screen {
 
         switch(dir) {
             case UP -> {
-                moveY = Math.max(0, moveY - 1);
+                moveY = Math.min(7, moveY + 1);
                 audioService.playFX(1);
             }
             case LEFT -> {
@@ -221,11 +221,11 @@ public abstract class Menu implements Screen {
                 audioService.playFX(1);
             }
             case DOWN -> {
-                moveY = Math.max(7, moveY + 1);
+                moveY = Math.max(0, moveY - 1);
                 audioService.playFX(1);
             }
             case RIGHT -> {
-                moveX = Math.max(7, moveX + 1);
+                moveX = Math.min(7, moveX + 1);
                 audioService.playFX(1);
             }
         }

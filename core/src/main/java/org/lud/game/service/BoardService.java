@@ -15,7 +15,7 @@ import java.util.List;
 @SuppressWarnings("ALL")
 public class BoardService {
     private static final Logger log = LoggerFactory.getLogger(BoardService.class);
-    private final Board board;
+    private static Board board;
     private final ServiceFactory service;
     private final OrthographicCamera camera;
     private final List<Move> moves;
@@ -23,7 +23,7 @@ public class BoardService {
     public BoardService(ServiceFactory service, OrthographicCamera camera) {
         this.camera = camera;
         this.service = service;
-        this.board = new Board();
+        board = new Board();
         this.moves = new ArrayList<>();
     }
 
@@ -50,7 +50,7 @@ public class BoardService {
         }
     }
 
-    public Piece getPieceAt(int col, int row) {
+    public static Piece getPieceAt(int col, int row) {
         if(isWithinBoard(col, row)) {
             return board.getPieces()[row][col];
         }
@@ -100,7 +100,7 @@ public class BoardService {
         return true;
     }
 
-    public boolean isPathClear(Piece piece, int targetCol, int targetRow) {
+    public static boolean isPathClear(Piece piece, int targetCol, int targetRow) {
         int colDiff = targetCol - piece.getCol();
         int rowDiff = targetRow - piece.getRow();
 
