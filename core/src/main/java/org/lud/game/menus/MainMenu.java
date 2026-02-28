@@ -19,15 +19,17 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @SuppressWarnings("ALL")
 public class MainMenu extends Menu {
     private static boolean isFadeShown;
 
-    private Map<Button, String> tooltips;
+    private Map<Button, Supplier<String>> tooltips;
     private final GameService gameService;
     private final AudioService audioService;
     private List<ButtonData> data;
+    private Tooltip tooltip;
     private Texture logo;
     private Texture baseButton;
     private Texture altButton;
@@ -36,7 +38,6 @@ public class MainMenu extends Menu {
     private float fadeAlpha = 1f;
     private final float FADE_SPEED = 0.5f;
     private boolean isPlayButton;
-    private Tooltip tooltip;
 
     public MainMenu(GameService gameService, AudioService audioService) {
         super(gameService, audioService);
@@ -93,7 +94,7 @@ public class MainMenu extends Menu {
                 isPlayButton ? altButton : baseButton, icon, frame, highlighted,
                 data.soundPath(), data.action());
 
-            tooltips.put(b, Localization.lang.t("tooltip." + data.type().getSuffix()));
+            tooltips.put(b, () -> Localization.lang.t("tooltip." + data.type().getSuffix()));
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
@@ -116,7 +117,8 @@ public class MainMenu extends Menu {
 
         for (Button b : getButtons()) {
             if (b.isHovered()) {
-                tooltip.setText(tooltips.get(b));
+                Supplier<String> supplier = tooltips.get(b);
+                tooltip.setText(supplier.get());
                 hovering = true;
                 break;
             }
