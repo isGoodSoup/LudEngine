@@ -1,13 +1,16 @@
 package org.lud.engine.gui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.I18NBundle;
+
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 public class Localization {
-    private ResourceBundle bundle;
+    private I18NBundle bundle;
     private Locale locale;
-    public static Localization lang = new Localization(Locale.forLanguageTag("en"));
+    public static Localization lang =
+        new Localization(Locale.forLanguageTag("en"));
 
     public Localization(Locale locale) {
         setLocale(locale);
@@ -15,20 +18,24 @@ public class Localization {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
-        bundle = ResourceBundle.getBundle("lang", locale);
+        FileHandle baseFile = Gdx.files.internal("i18n/lang");
+        bundle = I18NBundle.createBundle(baseFile, locale);
     }
 
     public String t(String key) {
         try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
+            return bundle.get(key);
+        } catch (Exception e) {
             return key;
         }
     }
 
     public String f(String key, Object... args) {
-        String pattern = t(key);
-        return java.text.MessageFormat.format(pattern, args);
+        try {
+            return bundle.format(key, args);
+        } catch (Exception e) {
+            return key;
+        }
     }
 
     public Locale getLocale() {
