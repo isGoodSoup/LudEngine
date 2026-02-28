@@ -9,8 +9,11 @@ import org.lud.game.menus.AchievementsMenu;
 import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
 import org.lud.game.screens.BoardScreen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameService {
+    private static final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameFrame gameFrame;
     private final ServiceFactory service;
     private Turn turn;
@@ -59,6 +62,7 @@ public class GameService {
         gameFrame.setScreen(activeMenu);
     }
     public void exit() {
+        log.info("EoS (End of session)");
         Gdx.app.exit();
     }
 

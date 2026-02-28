@@ -8,15 +8,19 @@ import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.screen.IntroScreen;
 import org.lud.game.service.ServiceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
 public class Chess extends GameFrame {
+    private static final Logger log = LoggerFactory.getLogger(Chess.class);
     private ServiceFactory service;
     private OrthographicCamera camera;
 
     @Override
     public void create() {
+        log.info("SoS (Start of Session)");
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(),
             Gdx.graphics.getHeight());
