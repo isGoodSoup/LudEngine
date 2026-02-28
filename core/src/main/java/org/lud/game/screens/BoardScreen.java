@@ -9,8 +9,8 @@ import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
-import org.lud.game.data.Piece;
 import org.lud.game.data.Tooltip;
+import org.lud.game.entities.Piece;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
@@ -28,7 +28,6 @@ public class BoardScreen extends Menu {
     private final AudioService audioService;
 
     private final List<ButtonData> data;
-
     private final Tooltip tooltip;
     private ShapeRenderer shaper;
 
@@ -72,17 +71,9 @@ public class BoardScreen extends Menu {
             Texture icon = getButton(data, false);
             Texture highlighted = getButton(data, true);
 
-            Button b = new Button(
-                buttonX,
-                buttonY,
-                baseButton.getWidth(),
-                baseButton.getHeight(),
-                baseButton,
-                icon,
-                frame,
-                highlighted,
-                data.soundPath(),
-                data.action()
+            Button b = new Button(buttonX, buttonY, baseButton.getWidth(),
+                baseButton.getHeight(), baseButton, icon, frame,
+                highlighted, data.soundPath(), data.action()
             );
 
             addButton(b);
@@ -104,9 +95,6 @@ public class BoardScreen extends Menu {
         drawBoard();
         drawPieces();
         drawTooltip(delta);
-
-        globalInput();
-        checkInput();
     }
 
     private void drawBoard() {
@@ -122,15 +110,8 @@ public class BoardScreen extends Menu {
 
         for(int row = 0; row < 8; row++) {
             for(int col = 0; col < 8; col++) {
-                if((row + col) % 2 == 0) {
-                    shaper.setColor(Colors.getBackground());
-                } else {
-                    shaper.setColor(Colors.getForeground());
-                }
-
-                shaper.rect( startX + col * TILE_SIZE,
-                    startY + row * TILE_SIZE, TILE_SIZE, TILE_SIZE
-                );
+                shaper.setColor((row + col) % 2 == 0 ? Colors.getBackground() : Colors.getForeground());
+                shaper.rect(startX + col * TILE_SIZE, startY + row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             }
         }
 
@@ -141,50 +122,39 @@ public class BoardScreen extends Menu {
         getBatch().begin();
         for(Piece p : pieceService.getPieces()) {
             Texture tex = pieceService.getSprite(p);
-            float x = startX + p.col() * TILE_SIZE;
-            float y = startY + p.row() * TILE_SIZE;
+            float x = startX + p.getCol() * TILE_SIZE;
+            float y = startY + p.getRow() * TILE_SIZE;
             getBatch().draw(tex, x, y, TILE_SIZE, TILE_SIZE);
         }
         getBatch().end();
     }
-
 
     private void drawTooltip(float delta) {
         float mouseX = Gdx.input.getX();
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
         Piece hoveredPiece = null;
         for(Piece p : pieceService.getPieces()) {
-            float px = startX + p.col() * TILE_SIZE;
-            float py = startY + p.row() * TILE_SIZE;
-            boolean inside =
-                mouseX >= px &&
-                    mouseX <= px + TILE_SIZE &&
-                    mouseY >= py &&
-                    mouseY <= py + TILE_SIZE;
-
-            if(inside) {
+            float px = startX + p.getCol() * TILE_SIZE;
+            float py = startY + p.getRow() * TILE_SIZE;
+            if(mouseX >= px && mouseX <= px + TILE_SIZE && mouseY >= py && mouseY <= py + TILE_SIZE) {
                 hoveredPiece = p;
                 break;
             }
         }
 
-        boolean isHovered = hoveredPiece != null;
-        if(isHovered) {
-            tooltip.setText("tooltip." + hoveredPiece.type().getLabelKey());
+        if(hoveredPiece != null) {
+            tooltip.setText("tooltip." + hoveredPiece.getTypeID().getLabelKey());
         }
 
-        tooltip.update(delta, isHovered, mouseX, mouseY);
+        tooltip.update(delta, hoveredPiece != null, mouseX, mouseY);
         tooltip.render(getBatch(), shaper);
     }
 
     @Override
-    public void checkInput() {
-
-    }
+    public void checkInput() {}
 
     @Override
     public void dispose() {
         shaper.dispose();
     }
-
 }

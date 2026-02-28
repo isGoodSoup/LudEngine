@@ -5,23 +5,36 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.lud.engine.core.AudioService;
-import org.lud.game.actors.PieceActor;
+import org.lud.engine.enums.Turn;
 import org.lud.game.entities.Board;
+import org.lud.game.entities.Piece;
 import org.lud.game.service.BoardService;
+import org.lud.game.service.GameService;
+import org.lud.game.service.PieceService;
 
 public class BoardInput extends InputAdapter {
     private final BoardService board;
-    private final Stage stage;
+    private final PieceService pieceService;
     private final AudioService audioService;
+    private final GameService gameService;
+    private final Stage stage;
 
     private final Vector3 mousePos;
-    private PieceActor piece;
+    private Piece piece;
     private float offsetX, offsetY;
 
-    public BoardInput(BoardService board, Stage stage, AudioService audioService) {
+    private final float startX;
+    private final float startY;
+
+    public BoardInput(BoardService board, Stage stage, PieceService pieceService,
+                      AudioService audioService, GameService gameService) {
         this.board = board;
         this.stage = stage;
+        this.pieceService = pieceService;
         this.audioService = audioService;
+        this.gameService = gameService;
+        this.startX = board.getBoardStartX();
+        this.startY = board.getBoardStartY();
         this.mousePos = new Vector3();
     }
 
@@ -32,17 +45,22 @@ public class BoardInput extends InputAdapter {
         mousePos.set(screenX, screenY, 0);
         board.getCamera().unproject(mousePos);
 
-        int col = (int)(mousePos.x / Board.getSIZE());
-        int row = (int)(mousePos.y / Board.getSIZE());
+        int col = (int)((mousePos.x - startX) / Board.getSQUARE());
+        int row = (int)((mousePos.y - startY) / Board.getSQUARE());
+        col = Math.max(0, Math.min(7, col));
+        row = Math.max(0, Math.min(7, row));
+        row = 7 - row;
 
-        piece = board.getPieceAt(col, row);
-        if(piece != null) {
-            offsetX = mousePos.x - piece.getX();
-            offsetY = mousePos.y - piece.getY();
-            return true;
+        for(Piece p : pieceService.getPieces()) {
+            if(p.getColor() == gameService.getTurn() && p.getCol() == col && p.getRow() == row) {
+                piece = p;
+                offsetX = mousePos.x - p.getX();
+                offsetY = mousePos.y - p.getY();
+                break;
+            }
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -50,35 +68,33 @@ public class BoardInput extends InputAdapter {
         if(piece != null) {
             mousePos.set(screenX, screenY, 0);
             board.getCamera().unproject(mousePos);
-            piece.setPosition(mousePos.x - offsetX, mousePos.y - offsetY);
-            return true;
+            piece.setX((int)(mousePos.x - offsetX));
+            piece.setY((int)(mousePos.y - offsetY));
         }
-        return false;
+        return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(button != Input.Buttons.LEFT) { return false; }
+        if(button != Input.Buttons.LEFT || piece == null) { return false; }
 
-        if(piece != null) {
-            mousePos.set(screenX, screenY, 0);
-            board.getCamera().unproject(mousePos);
+        mousePos.set(screenX, screenY, 0);
+        board.getCamera().unproject(mousePos);
 
-            int targetCol = (int) (mousePos.x/Board.getSIZE());
-            int targetRow = (int) (mousePos.y/Board.getSIZE());
-            board.attemptMove(piece, targetCol, targetRow);
-            audioService.playFX(0);
-            piece = null;
-            return true;
-        }
+        int col = (int)((mousePos.x - startX) / Board.getSQUARE());
+        int row = (int)((mousePos.y - startY) / Board.getSQUARE());
+        col = Math.max(0, Math.min(7, col));
+        row = Math.max(0, Math.min(7, row));
+        row = 7 - row;
 
-        stage.touchUp(screenX, screenY, pointer, button);
-        return false;
-    }
+        float[] xy = PieceService.toPixels(col, row);
+        Piece newPiece = new Piece(piece.getTypeID(), piece.getColor(), col, row);
+        newPiece.setX((int)xy[0]);
+        newPiece.setY((int)xy[1]);
 
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        stage.mouseMoved(screenX, screenY);
-        return false;
+        pieceService.replacePiece(piece, newPiece);
+        piece = null;
+        Turn.nextTurn(gameService);
+        return true;
     }
 }

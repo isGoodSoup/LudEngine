@@ -27,18 +27,22 @@ public class Chess extends GameFrame {
     @Override
     public void create() {
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.setToOrtho(false, Gdx.graphics.getWidth(),
+            Gdx.graphics.getHeight());
         camera.update();
         service = new ServiceFactory(this, camera);
         stage = new Stage();
         coordinator = new Coordinator();
-        boardInput = new BoardInput(service.getBoardService(), stage, service.getAudioService());
+        boardInput = new BoardInput(service.getBoardService(), stage,
+            service.getPieceService(), service.getAudioService(),
+            service.getGameService());
         multiplexer = new InputMultiplexer(boardInput, coordinator, stage);
         Gdx.input.setInputProcessor(multiplexer);
         service.getAudioService().playMusic();
         Localization.lang.setLocale(Locale.forLanguageTag("en"));
         Colors.setTheme(Theme.LEGACY);
-        setScreen(new IntroScreen(this, service.getGameService(), service.getAudioService()));
+        setScreen(new IntroScreen(this, service.getGameService(),
+            service.getAudioService()));
     }
 
     @Override

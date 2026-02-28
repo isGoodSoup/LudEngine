@@ -1,20 +1,23 @@
 package org.lud.game.entities;
 
-import org.lud.game.actors.PieceActor;
-
 public class Board {
     private static final int SIZE = 8;
-    private final PieceActor[][] pieces;
+    private static final int SQUARE = SIZE * 8;
+    private final Piece[][] pieces;
 
     public Board() {
-        this.pieces = new PieceActor[SIZE][SIZE];
+        this.pieces = new Piece[SIZE][SIZE];
+    }
+
+    public static int getSQUARE() {
+        return SQUARE;
     }
 
     public static int getSIZE() {
         return SIZE;
     }
 
-    public PieceActor[][] getPieces() {
+    public Piece[][] getPieces() {
         return pieces;
     }
 }
