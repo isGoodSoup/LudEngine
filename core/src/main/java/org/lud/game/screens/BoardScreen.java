@@ -1,17 +1,22 @@
 package org.lud.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
+import org.lud.engine.input.BoardInput;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.entities.Piece;
 import org.lud.game.enums.UIButton;
+import org.lud.game.input.Coordinator;
+import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
 
@@ -23,6 +28,12 @@ public class BoardScreen extends Menu {
     private static final int BOARD_SIZE = TILE_SIZE * 8;
     private static final int PADDING = 32;
 
+    private Stage stage;
+    private Coordinator coordinator;
+    private BoardInput boardInput;
+    private InputMultiplexer multiplexer;
+
+    private final BoardService boardService;
     private final GameService gameService;
     private final PieceService pieceService;
     private final AudioService audioService;
@@ -37,9 +48,10 @@ public class BoardScreen extends Menu {
     private final float startX;
     private final float startY;
 
-    public BoardScreen(GameService gameService, PieceService pieceService,
+    public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
         super(gameService, audioService);
+        this.boardService = boardService;
         this.gameService = gameService;
         this.pieceService = pieceService;
         this.audioService = audioService;
@@ -83,8 +95,16 @@ public class BoardScreen extends Menu {
 
     @Override
     public void show() {
+        super.show();
         this.shaper = getShaper();
         pieceService.setPieces();
+
+        stage = new Stage();
+        coordinator = new Coordinator();
+        boardInput = new BoardInput(boardService, stage, pieceService,
+            audioService, gameService);
+        multiplexer = new InputMultiplexer(coordinator, stage, boardInput);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
