@@ -1,20 +1,20 @@
 package org.lud.game.entities;
 
-import org.lud.game.data.Piece;
+import org.lud.game.actors.PieceActor;
 
 public class Board {
     private static final int SIZE = 8;
-    private final Piece[][] pieces;
+    private final PieceActor[][] pieces;
 
     public Board() {
-        this.pieces = new Piece[SIZE][SIZE];
+        this.pieces = new PieceActor[SIZE][SIZE];
     }
 
     public static int getSIZE() {
         return SIZE;
     }
 
-    public Piece[][] getPieces() {
+    public PieceActor[][] getPieces() {
         return pieces;
     }
 }

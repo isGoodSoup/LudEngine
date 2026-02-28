@@ -1,5 +1,6 @@
 package org.lud.game.service;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
 
@@ -7,15 +8,17 @@ public class ServiceFactory {
     private final GameFrame gameFrame;
     private final AudioService audioService;
     private final BoardService boardService;
-    private final GameService gameService;
     private final PieceService pieceService;
+    private final GameService gameService;
+    private final OrthographicCamera camera;
 
-    public ServiceFactory(GameFrame gameFrame) {
+    public ServiceFactory(GameFrame gameFrame, OrthographicCamera camera) {
         this.gameFrame = gameFrame;
+        this.camera = camera;
         this.audioService = new AudioService();
-        this.boardService = new BoardService(this);
-        this.gameService = new GameService(gameFrame, this);
+        this.boardService = new BoardService(this, camera);
         this.pieceService = new PieceService(this);
+        this.gameService = new GameService(gameFrame, this);
     }
 
     public AudioService getAudioService() {
@@ -24,10 +27,10 @@ public class ServiceFactory {
     public BoardService getBoardService() {
         return boardService;
     }
-    public GameService getGameService() {
-        return gameService;
-    }
     public PieceService getPieceService() {
         return pieceService;
+    }
+    public GameService getGameService() {
+        return gameService;
     }
 }

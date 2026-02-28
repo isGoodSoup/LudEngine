@@ -42,8 +42,6 @@ public abstract class Menu implements Screen {
         this.combos = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
-//        this.font = new BitmapFont(Gdx.files.internal("fonts/BoldPixels.fnt"));
-//        this.font = new BitmapFont(Gdx.files.internal("fonts/Monocraft.fnt"));
 
         this.generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BoldPixels.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter params = new FreeTypeFontGenerator.FreeTypeFontParameter();

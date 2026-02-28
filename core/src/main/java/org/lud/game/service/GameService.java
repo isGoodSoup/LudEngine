@@ -11,6 +11,8 @@ import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
 import org.lud.game.screens.BoardScreen;
 
+import javax.swing.*;
+
 public class GameService {
     private final GameFrame gameFrame;
     private final ServiceFactory service;
@@ -29,11 +31,12 @@ public class GameService {
         this.gameFrame = gameFrame;
         this.service = service;
         AudioService audio = service.getAudioService();
+        PieceService piece = service.getPieceService();
 
         this.mainMenu = new MainMenu(this, audio);
         this.settingsMenu = new SettingsMenu(this, audio);
         this.achievementsMenu = new AchievementsMenu(this, audio);
-        this.boardScreen = new BoardScreen(this, audio);
+        this.boardScreen = new BoardScreen(this, piece, audio);
 
         activeMenu = mainMenu;
     }
@@ -80,7 +83,7 @@ public class GameService {
         isLegal = legal;
     }
 
-    public boolean isCheckmate(Piece piece) {
+    private boolean isCheckmate() {
         return false;
     }
 }

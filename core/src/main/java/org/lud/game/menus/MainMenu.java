@@ -115,8 +115,8 @@ public class MainMenu extends Menu {
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
         boolean hovering = false;
 
-        for (Button b : getButtons()) {
-            if (b.isHovered()) {
+        for(Button b : getButtons()) {
+            if(b.isHovered()) {
                 Supplier<String> supplier = tooltips.get(b);
                 tooltip.setText(supplier.get());
                 hovering = true;

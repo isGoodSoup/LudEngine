@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import org.lud.engine.gui.Localization;
 
 public class Tooltip {
     private String text;
@@ -49,7 +50,7 @@ public class Tooltip {
     public void render(SpriteBatch batch, ShapeRenderer shaper) {
         if(!visible) { return; }
 
-        GlyphLayout layout = new GlyphLayout(font, text);
+        GlyphLayout layout = new GlyphLayout(font, Localization.lang.t(text));
         float width = layout.width + 2 * padding;
         float height = layout.height + 2 * padding;
 
