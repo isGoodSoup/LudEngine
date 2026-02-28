@@ -5,13 +5,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import org.lud.engine.enums.Direction;
+import org.lud.engine.enums.Lang;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.enums.UIButton;
-import org.lud.game.service.AudioService;
+import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class MainMenu extends Menu {
         data.add(new ButtonData(UIButton.PLAY, gameService::newGame, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.LANG, gameService::showLang, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.LANG, Lang::nextLang, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.EXIT, gameService::exit, () -> audioService.playFX(0)));
     }
 

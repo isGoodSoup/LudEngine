@@ -12,7 +12,7 @@ import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
 import org.lud.game.data.ButtonData;
 import org.lud.game.input.Coordinator;
-import org.lud.game.service.AudioService;
+import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.*;
@@ -46,8 +46,17 @@ public abstract class Menu implements Screen {
     }
 
     public Texture getButton(ButtonData data, boolean isHighlighted) {
-        String suffix = isHighlighted ? "_highlighted.png" : ".png";
-        return new Texture(Gdx.files.internal("buttons/button_" + data.type().getSuffix() + suffix));
+        String iconPath = "";
+        if(data.lang() != null) {
+            iconPath = "buttons/button_" + data.type().getSuffix(data.lang()) + ".png";
+        } else {
+            if(isHighlighted) {
+                iconPath = "buttons/button_" + data.type().getSuffix() + "_highlighted.png";
+            } else {
+                iconPath = "buttons/button_" + data.type().getSuffix() + ".png";
+            }
+        }
+        return new Texture(iconPath);
     }
 
     public void addMenu(Menu... menus) {
@@ -110,13 +119,14 @@ public abstract class Menu implements Screen {
         actions.put(Input.Keys.DOWN, () -> cursor(Direction.DOWN));
         actions.put(Input.Keys.M, () -> audioService.toggleMusic());
 
-        combos.put(Input.Keys.K, () -> {
-            audioService.setMusicVolume(0.1f);
-            audioService.playFX(1);
+        combos.put(Input.Keys.W, () -> {
+            audioService.setMusicVolume(Math.max(1,
+                audioService.getMusicGain() + 0.1f));
         });
-        combos.put(Input.Keys.L, () -> {
-            audioService.setMusicVolume(-0.1f);
-            audioService.playFX(1);
+
+        combos.put(Input.Keys.S, () -> {
+            audioService.setMusicVolume(Math.max(0,
+                audioService.getMusicGain() - 0.1f));
         });
         combos.put(Input.Keys.T, () -> {
             Colors.nextTheme();
@@ -126,7 +136,9 @@ public abstract class Menu implements Screen {
     }
 
     public void globalInput() {
-        loadKeys();
+        if(combos.isEmpty() || actions.isEmpty()) {
+            loadKeys();
+        }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
             for(var entry : combos.entrySet()) {
                 if(Gdx.input.isKeyJustPressed(entry.getKey())) {

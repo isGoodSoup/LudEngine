@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.core.Intro;
 import org.lud.game.menus.MainMenu;
-import org.lud.game.service.AudioService;
+import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
 public class IntroScreen implements Screen {

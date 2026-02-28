@@ -1,5 +1,6 @@
 package org.lud.game.service;
 
+import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
 
 public class ServiceFactory {

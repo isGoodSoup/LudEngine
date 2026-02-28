@@ -9,7 +9,7 @@ import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
-import org.lud.game.service.AudioService;
+import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;

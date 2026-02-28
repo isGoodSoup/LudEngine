@@ -1,5 +1,7 @@
 package org.lud.game.enums;
 
+import org.lud.engine.enums.Lang;
+
 public enum UIButton {
     PLAY("play"),
     SETTINGS("settings"),
@@ -21,6 +23,13 @@ public enum UIButton {
     }
 
     public String getSuffix() {
+        return suffix;
+    }
+
+    public String getSuffix(Lang lang) {
+        if(this == LANG) {
+            return "lang_" + lang.name().toLowerCase();
+        }
         return suffix;
     }
 }

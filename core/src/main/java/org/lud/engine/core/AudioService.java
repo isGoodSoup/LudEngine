@@ -1,4 +1,4 @@
-package org.lud.game.service;
+package org.lud.engine.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -13,6 +13,10 @@ public class AudioService {
 
     public AudioService() {
         loadFx();
+    }
+
+    public float getMusicGain() {
+        return musicGain;
     }
 
     public void loadFx() {
@@ -41,7 +45,7 @@ public class AudioService {
         if(music == null) {
             music = loadMusic("main-theme", ".ogg");
             music.setLooping(true);
-            music.setVolume(0.5f);
+            music.setVolume(musicGain);
         }
         music.play();
     }
@@ -54,12 +58,8 @@ public class AudioService {
 
     private void apply() {
         if (music != null) {
-            music.setVolume(effectiveMusicVolume());
+            music.setVolume(musicGain);
         }
-    }
-
-    private float effectiveMusicVolume() {
-        return masterGain * musicGain;
     }
 
     private float sliderToDb(float slider) {
@@ -74,6 +74,7 @@ public class AudioService {
 
     public void setMasterVolume(float slider) {
         masterGain = dbToLinear(sliderToDb(slider));
+        apply();
     }
 
     public void setMusicVolume(float slider) {
@@ -83,6 +84,7 @@ public class AudioService {
 
     public void setSfxVolume(float slider) {
         sfxGain = dbToLinear(sliderToDb(slider));
+        apply();
     }
 
     public void stopMusic() {

@@ -1,12 +1,12 @@
 package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
+import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.Piece;
 import org.lud.game.menus.AchievementsMenu;
-import org.lud.game.menus.LangMenu;
 import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
 import org.lud.game.screens.BoardScreen;
@@ -20,7 +20,6 @@ public class GameService {
     private final Menu mainMenu;
     private final Menu settingsMenu;
     private final Menu achievementsMenu;
-    private final Menu langMenu;
 
     private final BoardScreen boardScreen;
 
@@ -34,7 +33,6 @@ public class GameService {
         this.mainMenu = new MainMenu(this, audio);
         this.settingsMenu = new SettingsMenu(this, audio);
         this.achievementsMenu = new AchievementsMenu(this, audio);
-        this.langMenu = new LangMenu(this, audio);
         this.boardScreen = new BoardScreen(this, audio);
 
         activeMenu = mainMenu;
@@ -58,10 +56,6 @@ public class GameService {
     }
     public void showAchievements() {
         activeMenu = achievementsMenu;
-        gameFrame.setScreen(activeMenu);
-    }
-    public void showLang() {
-        activeMenu = langMenu;
         gameFrame.setScreen(activeMenu);
     }
     public void exit() {
