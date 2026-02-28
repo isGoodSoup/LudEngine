@@ -30,4 +30,8 @@ public enum Lang {
 //        log.debug("Language changed to {}",
 //                Localization.lang.getLocale().toString().toUpperCase());
     }
+
+    public String getLangKey() {
+        return langKey;
+    }
 }
