@@ -70,14 +70,14 @@ public class PieceService {
         getSprite(p);
     }
 
-    public void replacePiece(Piece oldPiece, Piece newPiece) {
-        int index = pieces.indexOf(oldPiece);
+    public void replacePiece(Piece pold, Piece pnew) {
+        int index = pieces.indexOf(pold);
         if (index != -1) {
-            pieces.set(index, newPiece);
+            pieces.set(index, pnew);
         }
-        service.getBoardService().removePiece(oldPiece);
-        service.getBoardService().addPiece(newPiece);
-        getSprite(newPiece);
+        service.getBoardService().removePiece(pold);
+        service.getBoardService().addPiece(pnew);
+        getSprite(pnew);
     }
 
     public void removePiece(Piece p) {

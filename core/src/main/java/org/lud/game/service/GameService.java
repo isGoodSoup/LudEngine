@@ -5,6 +5,7 @@ import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
+import org.lud.game.entities.Piece;
 import org.lud.game.menus.AchievementsMenu;
 import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
@@ -82,6 +83,46 @@ public class GameService {
     }
     public void setLegal(boolean legal) {
         isLegal = legal;
+    }
+
+    public boolean canMove(Piece p, int targetCol, int targetRow) {
+        switch(p.getTypeID()) {
+            case PAWN -> {
+                int direction = (p.getColor() == Turn.LIGHT) ? 1 : -1;
+                Piece pieceAtTarget = service.getBoardService().getPieceAt(targetCol, targetRow);
+
+                if(targetCol == p.getCol() && targetRow == p.getRow() + direction) {
+                    return pieceAtTarget == null;
+                }
+                if(targetCol == p.getCol() && targetRow == p.getRow() + 2 * direction
+                    && !p.hasMoved() && service.getBoardService().isPathClear(p, targetCol, targetRow)) {
+                    return pieceAtTarget == null;
+                }
+                if(Math.abs(targetCol - p.getCol()) == 1 && targetRow == p.getRow() + direction) {
+                    if(pieceAtTarget != null && pieceAtTarget.getColor() != p.getColor()) {
+                        return true;
+                    }
+                    return service.getBoardService().canEnPassant(p, targetCol, targetRow,
+                        service.getPieceService().getPieces());
+                }
+            }
+            case KNIGHT -> {
+
+            }
+            case BISHOP -> {
+
+            }
+            case ROOK -> {
+
+            }
+            case QUEEN -> {
+
+            }
+            case KING -> {
+
+            }
+        }
+        return false;
     }
 
     private boolean isCheckmate() {

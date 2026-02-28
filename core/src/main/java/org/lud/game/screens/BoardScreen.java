@@ -1,21 +1,24 @@
 package org.lud.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import org.lud.engine.core.AudioService;
+import org.lud.engine.enums.Direction;
+import org.lud.engine.enums.LastInput;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.input.BoardInput;
+import org.lud.engine.input.Coordinator;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.entities.Piece;
 import org.lud.game.enums.UIButton;
-import org.lud.engine.input.Coordinator;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
@@ -115,10 +118,11 @@ public class BoardScreen extends Menu {
 
         drawBoard();
         drawPieces();
+        drawTooltip(delta);
 
         boardInput.update();
-
-        drawTooltip(delta);
+        checkInput();
+        globalInput();
     }
 
     private void drawBoard() {
@@ -139,6 +143,11 @@ public class BoardScreen extends Menu {
             }
         }
 
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+            shaper.setColor(Colors.getHighlight());
+            shaper.rect(startX + getMoveX() * TILE_SIZE,
+                startY + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        }
         shaper.end();
     }
 
@@ -183,7 +192,13 @@ public class BoardScreen extends Menu {
     }
 
     @Override
-    public void checkInput() {}
+    public void checkInput() {
+        if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) { select(); }
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
+    }
 
     @Override
     public void dispose() {

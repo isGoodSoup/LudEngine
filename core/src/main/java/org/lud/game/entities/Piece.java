@@ -4,11 +4,14 @@ import org.lud.engine.enums.Turn;
 import org.lud.game.enums.TypeID;
 
 public class Piece {
+    private Piece other;
     private TypeID typeID;
     private Turn color;
     private int x, y;
     private int col, row;
+
     private boolean hasMoved;
+    private boolean isTwoStepsAhead;
 
     public Piece(TypeID typeID, Turn color, int col, int row) {
         this.typeID = typeID;
@@ -46,16 +49,9 @@ public class Piece {
     public boolean hasMoved() { return hasMoved; }
     public void setHasMoved(boolean hasMoved) { this.hasMoved = hasMoved; }
 
-    @Override
-    public String toString() {
-        return "Piece{" +
-            "typeID=" + typeID +
-            ", color=" + color +
-            ", x=" + x +
-            ", y=" + y +
-            ", col=" + col +
-            ", row=" + row +
-            ", hasMoved=" + hasMoved +
-            '}';
-    }
+    public Piece getOther() { return other; }
+    public void setOther(Piece other) { this.other = other; }
+
+    public boolean isTwoStepsAhead() { return isTwoStepsAhead; }
+    public void setTwoStepsAhead(boolean twoStepsAhead) { isTwoStepsAhead = twoStepsAhead; }
 }

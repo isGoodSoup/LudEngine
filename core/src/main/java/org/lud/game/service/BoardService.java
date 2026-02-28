@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.game.entities.Board;
 import org.lud.game.entities.Piece;
+import org.lud.game.enums.TypeID;
 import org.lud.game.moves.Move;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,9 @@ public class BoardService {
 
         // TODO: implement special logic for pawns, kings, castling, en-passant
 
-        if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
+        if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces()) &&
+            service.getGameService().canMove(piece, targetCol, targetRow)) {
+
             Piece captured = getPieceAt(targetCol, targetRow);
             if(captured != null) {
                 service.getPieceService().removePiece(captured);
@@ -70,12 +73,13 @@ public class BoardService {
             moves.add(new Move(piece, piece.getCol(), piece.getRow(),
                 targetCol, targetRow, piece.getColor(), captured));
 
+            piece.setCol(targetCol);
+            piece.setRow(targetRow);
+            piece.setHasMoved(true);
+
             log.info("{} {}: {} to {}", piece.getColor(), piece.getTypeID(),
                 board.getSquareNameAt(piece.getCol(), piece.getRow()),
                 board.getSquareNameAt(targetCol, targetRow));
-
-            piece.setCol(targetCol);
-            piece.setRow(targetRow);
 
             return true;
         }
@@ -94,6 +98,50 @@ public class BoardService {
             }
         }
         return true;
+    }
+
+    public boolean isPathClear(Piece piece, int targetCol, int targetRow) {
+        int colDiff = targetCol - piece.getCol();
+        int rowDiff = targetRow - piece.getRow();
+
+        switch(piece.getTypeID()) {
+            case KNIGHT:
+                return true;
+            default:
+                break;
+        }
+
+        int colStep = Integer.signum(colDiff);
+        int rowStep = Integer.signum(rowDiff);
+
+        if(colStep == 0 && rowStep == 0) {
+            return false;
+        }
+
+        if(colStep != 0 && rowStep != 0 && Math.abs(colDiff) != Math.abs(rowDiff)) {
+            return false;
+        }
+
+        int currentCol = piece.getCol() + colStep;
+        int currentRow = piece.getRow() + rowStep;
+
+        while(currentCol != targetCol || currentRow != targetRow) {
+            if(getPieceAt(currentCol, currentRow) != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canEnPassant(Piece piece, int targetCol, int targetRow, List<Piece> board) {
+        for(Piece p : board) {
+            if(p.getTypeID() == TypeID.PAWN && p.getColor() != piece.getColor()
+                && p.getCol() == targetCol && p.getRow() == piece.getRow() && p.isTwoStepsAhead()) {
+                p.setOther(p);
+                return true;
+            }
+        }
+        return false;
     }
 
     private Move addMove(Move move) {

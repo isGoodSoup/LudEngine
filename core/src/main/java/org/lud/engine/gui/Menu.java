@@ -35,6 +35,9 @@ public abstract class Menu implements Screen {
     private int selectionIndexY;
     private int selectionIndexX;
 
+    private int moveX;
+    private int moveY;
+
     public Menu(GameService gameService, AudioService audioService) {
         this.gameService = gameService;
         this.audioService = audioService;
@@ -84,6 +87,22 @@ public abstract class Menu implements Screen {
 
     public BitmapFont getFont() {
         return font;
+    }
+
+    public int getMoveY() {
+        return moveY;
+    }
+
+    public void setMoveY(int moveY) {
+        this.moveY = moveY;
+    }
+
+    public int getMoveX() {
+        return moveX;
+    }
+
+    public void setMoveX(int moveX) {
+        this.moveX = moveX;
     }
 
     @Override public void show() {
@@ -173,16 +192,40 @@ public abstract class Menu implements Screen {
                 selectionIndexY = Math.max(0, selectionIndexY - 1);
                 audioService.playFX(1);
             }
-            case DOWN -> {
-                selectionIndexY = Math.min(maxIndex, selectionIndexY + 1);
-                audioService.playFX(1);
-            }
             case LEFT -> {
                 selectionIndexX = Math.max(0, selectionIndexX - 1);
                 audioService.playFX(1);
             }
+            case DOWN -> {
+                selectionIndexY = Math.min(maxIndex, selectionIndexY + 1);
+                audioService.playFX(1);
+            }
             case RIGHT -> {
                 selectionIndexX = Math.min(maxIndex, selectionIndexX + 1);
+                audioService.playFX(1);
+            }
+        }
+    }
+
+    public void cursor(Direction dir, boolean isBoard) {
+        int maxIndex = getButtons().size() - 1;
+        Coordinator.setLastInput(LastInput.KEYBOARD);
+
+        switch(dir) {
+            case UP -> {
+                moveY = Math.max(0, moveY - 1);
+                audioService.playFX(1);
+            }
+            case LEFT -> {
+                moveX = Math.max(0, moveX - 1);
+                audioService.playFX(1);
+            }
+            case DOWN -> {
+                moveY = Math.max(7, moveY + 1);
+                audioService.playFX(1);
+            }
+            case RIGHT -> {
+                moveX = Math.max(7, moveX + 1);
                 audioService.playFX(1);
             }
         }
@@ -198,6 +241,10 @@ public abstract class Menu implements Screen {
             selected.getAction().run();
             audioService.playFX(0);
         }
+    }
+
+    public void select() {
+        // TODO
     }
 
     public SpriteBatch getBatch() {
