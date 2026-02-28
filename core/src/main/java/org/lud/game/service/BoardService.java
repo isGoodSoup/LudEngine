@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.game.entities.Board;
 import org.lud.game.entities.Piece;
 import org.lud.game.moves.Move;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
 public class BoardService {
+    private static final Logger log = LoggerFactory.getLogger(BoardService.class);
     private final Board board;
     private final ServiceFactory service;
     private final OrthographicCamera camera;
@@ -66,6 +69,10 @@ public class BoardService {
 
             moves.add(new Move(piece, piece.getCol(), piece.getRow(),
                 targetCol, targetRow, piece.getColor(), captured));
+
+            log.info("{} {}: {} to {}", piece.getColor(), piece.getTypeID(),
+                board.getSquareNameAt(piece.getCol(), piece.getRow()),
+                board.getSquareNameAt(targetCol, targetRow));
 
             piece.setCol(targetCol);
             piece.setRow(targetRow);

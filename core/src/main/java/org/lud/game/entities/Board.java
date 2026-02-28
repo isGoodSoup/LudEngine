@@ -20,4 +20,10 @@ public class Board {
     public Piece[][] getPieces() {
         return pieces;
     }
+
+    public String getSquareNameAt(int col, int row) {
+        int rankIndex = SIZE - 1 - row;
+        char fileChar = (char) ('a' + col);
+        return "" + fileChar + (rankIndex + 1);
+    }
 }
