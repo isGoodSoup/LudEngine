@@ -15,6 +15,7 @@ import org.lud.engine.gui.Menu;
 import org.lud.game.actors.Logo;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
+import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class MainMenu extends Menu {
     private Map<Button, Supplier<String>> tooltips;
     private final GameService gameService;
     private final AudioService audioService;
+    private final BoardService boardService;
     private List<ButtonData> data;
     private Texture logo;
 
@@ -41,9 +43,11 @@ public class MainMenu extends Menu {
     private final float FADE_SPEED = 0.5f;
     private boolean isPlayButton;
 
-    public MainMenu(GameService gameService, AudioService audioService) {
-        super(gameService, audioService);
+    public MainMenu(GameService gameService, AudioService audioService,
+                    BoardService boardService) {
+        super(gameService, audioService, boardService);
         this.audioService = audioService;
+        this.boardService = boardService;
         this.tooltips = new LinkedHashMap<>();
         this.gameService = gameService;
         this.data = new ArrayList<>();

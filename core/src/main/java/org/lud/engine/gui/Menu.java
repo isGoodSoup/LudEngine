@@ -17,6 +17,7 @@ import org.lud.engine.enums.LastInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
+import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 
 import java.util.*;
@@ -26,8 +27,6 @@ public abstract class Menu implements Screen {
     private Map<Integer, Runnable> actions;
     private Map<Integer, Runnable> combos;
     private final Stage stage;
-    private final GameService gameService;
-    private final AudioService audioService;
     private final SpriteBatch batch;
     private final ShapeRenderer shaper;
     private final List<Menu> menus;
@@ -35,6 +34,9 @@ public abstract class Menu implements Screen {
     private final BitmapFont font;
     private final FreeTypeFontGenerator generator;
     private boolean isInit;
+    private final GameService gameService;
+    private final AudioService audioService;
+    private final BoardService boardService;
 
     private int selectionIndexY;
     private int selectionIndexX;
@@ -45,9 +47,11 @@ public abstract class Menu implements Screen {
     private Tooltip tooltip;
     private Texture texture;
 
-    public Menu(GameService gameService, AudioService audioService) {
+    public Menu(GameService gameService, AudioService audioService,
+                BoardService boardService) {
         this.gameService = gameService;
         this.audioService = audioService;
+        this.boardService = boardService;
         this.actions = new LinkedHashMap<>();
         this.combos = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
@@ -144,7 +148,7 @@ public abstract class Menu implements Screen {
     public abstract void setup();
     public abstract void checkInput();
 
-    public void loadKeys() {
+    private void loadKeys() {
         actions.put(Input.Keys.ESCAPE, () -> {
             gameService.showMainMenu();
             audioService.playFX(0);

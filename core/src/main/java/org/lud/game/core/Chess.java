@@ -30,7 +30,7 @@ public class Chess extends GameFrame {
         Localization.lang.setLocale(Locale.forLanguageTag("en"));
         Colors.setTheme(Theme.LEGACY);
         setScreen(new IntroScreen(this, service.getGameService(),
-            service.getAudioService()));
+            service.getAudioService(), service.getBoardService()));
     }
 
     @Override

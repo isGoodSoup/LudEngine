@@ -107,9 +107,10 @@ public class BoardService {
         return false;
     }
 
-    public void undoMove(MovePiece move) {
+    public void undoMove() {
+        List<Moves> moves = moveAIPieces;
+        MovePiece move = (MovePiece) moves.getLast();
         move.undo();
-        // TODO undo moves
     }
 
     private void logMove(Piece p, int targetCol, int targetRow) {

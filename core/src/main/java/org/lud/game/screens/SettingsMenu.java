@@ -12,6 +12,7 @@ import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
+import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -21,15 +22,18 @@ public class SettingsMenu extends Menu {
     private static final float DURATION = 1f;
     private final GameService gameService;
     private final AudioService audioService;
+    private final BoardService boardService;
     private final List<ButtonData> data;
     private Group group;
     private Texture baseButton;
     private Texture frame;
 
-    public SettingsMenu(GameService gameService, AudioService audioService) {
-        super(gameService, audioService);
+    public SettingsMenu(GameService gameService, AudioService audioService,
+                        BoardService boardService) {
+        super(gameService, audioService, boardService);
         this.gameService = gameService;
         this.audioService = audioService;
+        this.boardService = boardService;
         this.data = new ArrayList<>();
         addMenu(this);
         loadSprites();

@@ -67,7 +67,7 @@ public class BoardScreen extends Menu {
 
     public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
-        super(gameService, audioService);
+        super(gameService, audioService, boardService);
         this.boardService = boardService;
         this.gameService = gameService;
         this.pieceService = pieceService;
@@ -94,6 +94,7 @@ public class BoardScreen extends Menu {
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.RESET, gameService::resetBoard, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.UNDO, boardService::undoMove, () -> audioService.playFX(0)));
     }
 
     @Override

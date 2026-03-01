@@ -38,13 +38,15 @@ public class GameService {
     public GameService(GameFrame gameFrame, ServiceFactory service) {
         this.gameFrame = gameFrame;
         this.service = service;
+
         AudioService audio = service.getAudioService();
         PieceService piece = service.getPieceService();
+        BoardService board = service.getBoardService();
 
-        this.mainMenu = new MainMenu(this, audio);
-        this.settingsMenu = new SettingsMenu(this, audio);
-        this.achievementsMenu = new AchievementsMenu(this, audio);
-        this.boardScreen = new BoardScreen(service.getBoardService(), this, piece, audio);
+        this.mainMenu = new MainMenu(this, audio, board);
+        this.settingsMenu = new SettingsMenu(this, audio, board);
+        this.achievementsMenu = new AchievementsMenu(this, audio, board);
+        this.boardScreen = new BoardScreen(board, this, piece, audio);
 
         activeMenu = mainMenu;
     }
