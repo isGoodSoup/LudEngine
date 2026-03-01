@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import org.lud.engine.core.AudioService;
+import org.lud.engine.enums.Turn;
 import org.lud.game.actors.Piece;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
@@ -54,7 +55,7 @@ public class BoardInput {
                 float margin = tileSize * 0.15f;
                 if(local.x >= p.getX() - margin && local.x <= p.getX() + tileSize + margin &&
                     local.y >= p.getY() - margin && local.y <= p.getY() + tileSize + margin &&
-                    p.getTurn() == gameService.getTurn()) {
+                    p.getTurn() == Turn.getTurn()) {
 
                     piece = p;
                     offsetX = local.x - p.getX();

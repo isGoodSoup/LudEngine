@@ -22,7 +22,6 @@ public class GameService {
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameFrame gameFrame;
     private final ServiceFactory service;
-    private Turn turn;
 
     private Menu activeMenu;
     private final Menu mainMenu;
@@ -64,13 +63,13 @@ public class GameService {
     }
     public void resetBoard() {
         service.getPieceService().clearBoard();
-        setTurn(Turn.LIGHT);
         showBoard();
+        Turn.setTurn(Turn.LIGHT);
     }
     public void newGame() {
         service.getPieceService().clearBoard();
         showBoard();
-        setTurn(Turn.LIGHT);
+        Turn.setTurn(Turn.LIGHT);
     }
     public void showSettings() {
         activeMenu = settingsMenu;
@@ -92,13 +91,6 @@ public class GameService {
             case 2 -> showAchievements();
             case 3 -> exit();
         }
-    }
-
-    public Turn getTurn() {
-        return turn;
-    }
-    public void setTurn(Turn turn) {
-        this.turn = turn;
     }
 
     public List<Moves> newLegalMoves(Turn turn) {

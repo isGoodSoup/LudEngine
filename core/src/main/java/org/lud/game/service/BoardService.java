@@ -2,8 +2,9 @@ package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import org.lud.engine.bots.Alpha;
+import org.lud.engine.enums.Difficulty;
 import org.lud.engine.enums.Turn;
+import org.lud.engine.interfaces.AI;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
 import org.lud.game.entities.Board;
@@ -89,10 +90,10 @@ public class BoardService {
 
             logMove(piece, targetCol, targetRow);
 
-            Alpha ai = service.getAlphaAI();
-            service.getGameService().setTurn(Turn.DARK);
+            AI ai = service.setDifficulty(Difficulty.BETA);
+            ai.switchTurns();
 
-            if(service.getGameService().getTurn() == Turn.DARK) {
+            if(Turn.getTurn() == Turn.DARK) {
                 List<Moves> legalMoves = service.getGameService().newLegalMoves(Turn.DARK);
                 Moves n = ai.chooseMove(legalMoves);
                 if(n instanceof MovePiece) {
@@ -104,7 +105,7 @@ public class BoardService {
                 }
                 service.getAudioService().playFX(0);
                 canUndo = !canUndo;
-                ai.switchTurns(service.getGameService());
+                ai.switchTurns();
             }
             return true;
         }
