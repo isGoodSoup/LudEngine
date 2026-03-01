@@ -11,11 +11,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
-import org.lud.game.data.ButtonData;
 import org.lud.engine.input.Coordinator;
-import org.lud.engine.core.AudioService;
+import org.lud.game.data.ButtonData;
+import org.lud.game.data.Tooltip;
 import org.lud.game.service.GameService;
 
 import java.util.*;
@@ -41,6 +42,9 @@ public abstract class Menu implements Screen {
     private int moveX;
     private int moveY;
 
+    private Tooltip tooltip;
+    private Texture texture;
+
     public Menu(GameService gameService, AudioService audioService) {
         this.gameService = gameService;
         this.audioService = audioService;
@@ -55,6 +59,9 @@ public abstract class Menu implements Screen {
         params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
         font = generator.generateFont(params);
         generator.dispose();
+
+        this.texture = new Texture(Gdx.files.internal("tooltip.png"));
+        this.tooltip = new Tooltip("", font, texture, 16, 4);
 
         this.batch = new SpriteBatch();
         this.stage = new Stage(new ScreenViewport(), batch);
@@ -98,6 +105,10 @@ public abstract class Menu implements Screen {
 
     public int getMoveX() { return moveX; }
     public void setMoveX(int moveX) { this.moveX = moveX; }
+
+    public Tooltip getTooltip() {
+        return tooltip;
+    }
 
     @Override public void show() {
         Gdx.input.setInputProcessor(stage);

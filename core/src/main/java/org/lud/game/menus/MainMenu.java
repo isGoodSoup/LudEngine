@@ -14,7 +14,6 @@ import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
 import org.lud.game.actors.Logo;
 import org.lud.game.data.ButtonData;
-import org.lud.game.data.Tooltip;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.GameService;
 
@@ -31,7 +30,6 @@ public class MainMenu extends Menu {
     private final GameService gameService;
     private final AudioService audioService;
     private List<ButtonData> data;
-    private Tooltip tooltip;
     private Texture logo;
 
     private Group menuGroup;
@@ -49,9 +47,6 @@ public class MainMenu extends Menu {
         this.tooltips = new LinkedHashMap<>();
         this.gameService = gameService;
         this.data = new ArrayList<>();
-
-        this.tooltip = new Tooltip("", getFont());
-
         addMenu(this);
         loadSprites();
     }
@@ -135,14 +130,14 @@ public class MainMenu extends Menu {
         for(Button b : getButtons()) {
             if(b.isHovered()) {
                 Supplier<String> supplier = tooltips.get(b);
-                tooltip.setText(supplier.get());
+                getTooltip().setText(supplier.get());
                 hovering = true;
                 break;
             }
         }
 
-        tooltip.update(delta, hovering, mouseX, mouseY);
-        tooltip.render(getBatch(), getShaper());
+        getTooltip().update(delta, hovering, mouseX, mouseY);
+        getTooltip().render(getBatch());
     }
 
     @Override
@@ -168,6 +163,5 @@ public class MainMenu extends Menu {
     @Override
     public void dispose() {
         super.dispose();
-        tooltip.getFont().dispose();
     }
 }

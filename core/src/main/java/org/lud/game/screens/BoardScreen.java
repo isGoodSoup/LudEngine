@@ -21,10 +21,9 @@ import org.lud.engine.input.BoardInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.BackgroundTile;
+import org.lud.game.actors.Piece;
 import org.lud.game.actors.Tile;
 import org.lud.game.data.ButtonData;
-import org.lud.game.data.Tooltip;
-import org.lud.game.actors.Piece;
 import org.lud.game.enums.UIButton;
 import org.lud.game.moves.MovePiece;
 import org.lud.game.service.BoardService;
@@ -53,7 +52,6 @@ public class BoardScreen extends Menu {
     private final AudioService audioService;
 
     private final List<ButtonData> data;
-    private final Tooltip tooltip;
 
     private Group boardGroup;
     private Group uiGroup;
@@ -75,7 +73,6 @@ public class BoardScreen extends Menu {
         this.pieceService = pieceService;
         this.audioService = audioService;
         this.data = new ArrayList<>();
-        this.tooltip = new Tooltip("", getFont());
 
         this.startX = (Gdx.graphics.getWidth() - BOARD_SIZE)/2f;
         this.startY = (Gdx.graphics.getHeight() - BOARD_SIZE)/2f;
@@ -240,11 +237,11 @@ public class BoardScreen extends Menu {
         }
 
         if(hoveredPiece != null) {
-            tooltip.setText("tooltip." + hoveredPiece.getTypeID().getLabelKey());
+            getTooltip().setText("tooltip." + hoveredPiece.getTypeID().getLabelKey());
         }
 
-        tooltip.update(delta, hoveredPiece != null, mouseX, mouseY);
-        tooltip.render(getBatch(), getShaper());
+        getTooltip().update(delta, hoveredPiece != null, mouseX, mouseY);
+        getTooltip().render(getBatch());
     }
 
     @Override
