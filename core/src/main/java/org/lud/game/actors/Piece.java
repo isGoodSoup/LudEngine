@@ -70,4 +70,14 @@ public class Piece extends Actor {
 
     public boolean isTwoStepsAhead() { return isTwoStepsAhead; }
     public void setTwoStepsAhead(boolean twoStepsAhead) { isTwoStepsAhead = twoStepsAhead; }
+
+    public int getPieceValue(Piece p) {
+        return switch(p.getTypeID()) {
+            case PAWN -> 10;
+            case KNIGHT, BISHOP -> 30;
+            case ROOK -> 50;
+            case QUEEN -> 90;
+            case KING -> 900;
+        };
+    }
 }

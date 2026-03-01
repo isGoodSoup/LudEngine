@@ -2,10 +2,10 @@ package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import org.lud.game.entities.Board;
 import org.lud.game.actors.Piece;
+import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
-import org.lud.game.moves.Move;
+import org.lud.game.moves.MovePiece;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,13 +18,13 @@ public class BoardService {
     private static Board board;
     private final ServiceFactory service;
     private final OrthographicCamera camera;
-    private final List<Move> moves;
+    private final List<MovePiece> movePieces;
 
     public BoardService(ServiceFactory service, OrthographicCamera camera) {
         this.camera = camera;
         this.service = service;
         board = new Board();
-        this.moves = new ArrayList<>();
+        this.movePieces = new ArrayList<>();
     }
 
     public OrthographicCamera getCamera() { return camera; }
@@ -71,9 +71,10 @@ public class BoardService {
                 service.getPieceService().removePiece(captured);
             }
 
-            moves.add(new Move(piece, piece.getCol(), piece.getRow(),
-                targetCol, targetRow, piece.getTurn(), captured));
-            PieceService.updatePos(piece, targetCol, targetRow);
+            MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
+                targetCol, targetRow, piece.getTurn(), captured);
+            move.apply();
+            movePieces.add(move);
 
             log.info("{} {}: {} to {}", piece.getTurn(), piece.getTypeID(),
                 board.getSquareNameAt(piece.getPreCol(), piece.getPreRow()),
@@ -83,6 +84,10 @@ public class BoardService {
         }
 
         return false;
+    }
+
+    public void undoMove(MovePiece move) {
+        move.undo();
     }
 
     public static boolean isWithinBoard(int col, int row) {
@@ -142,9 +147,9 @@ public class BoardService {
         return false;
     }
 
-    private Move addMove(Move move) {
-        moves.add(move);
-        return move;
+    private MovePiece addMove(MovePiece movePiece) {
+        movePieces.add(movePiece);
+        return movePiece;
     }
 
     private boolean isEnPassantMove(Piece pa, int targetCol, int targetRow) {

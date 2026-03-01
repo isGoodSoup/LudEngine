@@ -47,7 +47,7 @@ public class BoardInput {
 
         if(!isDragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             for(Piece p : new ArrayList<>(pieceService.getPieces())) {
-                float margin = tileSize * 0.25f;
+                float margin = tileSize * 0.15f;
                 if(local.x >= p.getX() && local.x <= p.getX() + tileSize - margin &&
                     local.y >= p.getY() && local.y <= p.getY() + tileSize - margin &&
                     p.getTurn() == gameService.getTurn()) {
