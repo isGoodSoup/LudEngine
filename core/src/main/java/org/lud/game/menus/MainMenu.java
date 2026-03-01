@@ -6,18 +6,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.utils.ScreenUtils;
+import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.Lang;
 import org.lud.engine.gui.Button;
-import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
 import org.lud.game.actors.Logo;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.enums.UIButton;
-import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -118,10 +116,7 @@ public class MainMenu extends Menu {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Colors.getBackground());
-
-        getStage().act(delta);
-        getStage().draw();
+        super.render(delta);
 
         globalInput();
         checkInput();

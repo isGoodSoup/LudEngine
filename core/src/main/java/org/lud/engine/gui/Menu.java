@@ -111,7 +111,10 @@ public abstract class Menu implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Colors.getBackground());
-        for(Button b : getButtons()) { b.update(); }
+
+        stage.act(delta);
+        stage.draw();
+
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             for(int i = 0; i < getButtons().size(); i++) {
                 Button b = getButtons().get(i);
