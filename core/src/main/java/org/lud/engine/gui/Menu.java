@@ -16,7 +16,6 @@ import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.data.ButtonData;
-import org.lud.game.data.Tooltip;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 
