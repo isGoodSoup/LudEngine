@@ -27,6 +27,7 @@ public class GameService {
     private final BoardScreen boardScreen;
 
     private boolean isLegal;
+    private boolean isFirstBoardEntry = true;
 
     public GameService(GameFrame gameFrame, ServiceFactory service) {
         this.gameFrame = gameFrame;
@@ -42,6 +43,9 @@ public class GameService {
         activeMenu = mainMenu;
     }
 
+    public boolean isFirstBoardEntry() { return isFirstBoardEntry; }
+    public void resetFirstBoardEntry() { isFirstBoardEntry = !isFirstBoardEntry; }
+
     public void showMainMenu() {
         activeMenu = mainMenu;
         gameFrame.setScreen(activeMenu);
@@ -50,7 +54,13 @@ public class GameService {
         activeMenu = boardScreen;
         gameFrame.setScreen(activeMenu);
     }
+    public void resetBoard() {
+        service.getPieceService().clearBoard();
+        setTurn(Turn.LIGHT);
+        showBoard();
+    }
     public void newGame() {
+        service.getPieceService().clearBoard();
         showBoard();
         setTurn(Turn.LIGHT);
     }

@@ -82,12 +82,16 @@ public class BoardScreen extends Menu {
         loadSprites();
     }
 
+    public BoardInput getBoardInput() {
+        return boardInput;
+    }
+
     public void loadSprites() {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.RESET, gameService::newGame, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.RESET, gameService::resetBoard, () -> audioService.playFX(0)));
     }
 
     @Override
@@ -128,22 +132,28 @@ public class BoardScreen extends Menu {
         for(Button b : getButtons()) {
             uiGroup.addActor(b);
         }
-
-        boardGroup.setPosition(startX, startY - Gdx.graphics.getHeight());
-        uiGroup.setPosition(25f, startY - Gdx.graphics.getHeight());
-
-        getStage().addActor(boardGroup);
-        getStage().addActor(uiGroup);
-
-        boardGroup.addAction(Actions.moveTo(startX, startY, DURATION, Interpolation.pow5Out));
-        uiGroup.addAction(Actions.moveTo(25f, 25f, DURATION, Interpolation.pow5Out));
     }
 
     @Override
     public void show() {
         super.show();
-        pieceService.setPieces();
+        pieceService.clearBoard();
 
+        boardGroup.setPosition(startX, startY + Gdx.graphics.getHeight());
+        uiGroup.setPosition(25f, startY + Gdx.graphics.getHeight());
+
+        getStage().addActor(boardGroup);
+        getStage().addActor(uiGroup);
+
+        if(gameService.isFirstBoardEntry()) {
+            boardGroup.addAction(Actions.moveTo(startX, startY, DURATION, Interpolation.pow5Out));
+            uiGroup.addAction(Actions.moveTo(25f, 25f, DURATION, Interpolation.pow5Out));
+        } else {
+            boardGroup.setPosition(startX, startY);
+            uiGroup.setPosition(25f, 25f);
+        }
+
+        pieceService.setPieces();
         for(Piece p : pieceService.getPieces()) {
             p.setSprite(pieceService.getSprite(p));
             p.setPosition(p.getCol() * TILE_SIZE, p.getRow() * TILE_SIZE);
@@ -170,6 +180,12 @@ public class BoardScreen extends Menu {
         if(!isCursorActive) {
             globalInput();
         }
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        gameService.resetFirstBoardEntry();
     }
 
     private void drawCursor() {
