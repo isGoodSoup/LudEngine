@@ -17,6 +17,7 @@ public record MovePiece(Piece piece, int fromCol, int fromRow, int targetCol, in
     public void undo() {
         piece.setCol(fromCol);
         piece.setRow(fromRow);
+        piece.setHasMoved(false);
     }
 
     @Override

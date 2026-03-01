@@ -7,7 +7,6 @@ import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
-import org.lud.game.entities.Board;
 import org.lud.game.menus.AchievementsMenu;
 import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
