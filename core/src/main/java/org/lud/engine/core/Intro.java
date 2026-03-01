@@ -40,7 +40,7 @@ public class Intro {
             }
         } else if (timer > 1.5f) {
             alpha -= FADE_SPEED;
-            if(alpha < 0f) alpha = 0f;
+            if(alpha < 0f) { alpha = 0f; }
         }
 
         float scale = 1f + logoSize / 1000f;

@@ -1,6 +1,7 @@
 package org.lud.engine.gui;
 
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -57,6 +58,10 @@ public class Button extends Actor implements Clickable {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        Color col = getColor();
+        float alpha = col.a * parentAlpha;
+        batch.setColor(col.r, col.g, col.b, alpha);
+
         batch.draw(baseTexture, getX(), getY(), getWidth(), getHeight());
         batch.draw(isHovered ? iconHighlighted : iconNormal, getX(), getY(), getWidth(), getHeight());
         if(isHovered && frame != null) {

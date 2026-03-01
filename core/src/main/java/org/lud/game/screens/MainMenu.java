@@ -62,7 +62,7 @@ public class MainMenu extends Menu {
         data.add(new ButtonData(UIButton.SETTINGS, () -> slideOut(1), () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.ACHIEVEMENTS, () -> slideOut(2), () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.LANG, Lang::nextLang, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.EXIT, () -> slideOut(3), () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.EXIT, () -> fadeOut(3), () -> audioService.playFX(0)));
     }
 
     @Override
@@ -99,9 +99,8 @@ public class MainMenu extends Menu {
         }
 
         menuGroup = new Group();
-        Logo logoActor = new Logo(logo, Gdx.graphics.getWidth()/2f - logo.getWidth()/2,
-            Gdx.graphics.getHeight()/2f);
-        menuGroup.addActor(logoActor);
+        menuGroup.addActor(new Logo(logo, Gdx.graphics.getWidth()/2f - logo.getWidth()/2,
+            Gdx.graphics.getHeight()/2f));
 
         for(Button b : getButtons()) {
             menuGroup.addActor(b);
@@ -156,6 +155,13 @@ public class MainMenu extends Menu {
     public void slideOut(int i) {
         menuGroup.addAction(Actions.sequence(
             Actions.moveTo(0, -Gdx.graphics.getHeight(), DURATION, Interpolation.pow5Out),
+            Actions.run(() -> gameService.getActiveMenu(i))
+        ));
+    }
+
+    public void fadeOut(int i) {
+        menuGroup.addAction(Actions.sequence(
+            Actions.fadeOut(DURATION, Interpolation.pow5Out),
             Actions.run(() -> gameService.getActiveMenu(i))
         ));
     }
