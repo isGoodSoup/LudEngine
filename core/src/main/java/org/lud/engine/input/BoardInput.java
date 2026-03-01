@@ -2,6 +2,8 @@ package org.lud.engine.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import org.lud.engine.core.AudioService;
 import org.lud.game.actors.Piece;
 import org.lud.game.service.BoardService;
@@ -36,36 +38,30 @@ public class BoardInput {
         this.piece = piece;
     }
 
-    public void update() {
-        float mouseX = Gdx.input.getX();
-        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
+    public void update(Group boardGroup) {
+        Vector2 local = boardGroup.screenToLocalCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
 
         if(piece == null && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             for(Piece p : pieceService.getPieces()) {
-                float px = startX + p.getCol() * tileSize;
-                float py = startY + p.getRow() * tileSize;
-
                 float margin = tileSize * 0.25f;
-                if(mouseX >= px && mouseX <= px + tileSize - margin &&
-                    mouseY >= py && mouseY <= py + tileSize - margin &&
+                if(local.x >= p.getX() && local.x <= p.getX() + tileSize - margin &&
+                    local.y >= p.getY() && local.y <= p.getY() + tileSize - margin &&
                     p.getTurn() == gameService.getTurn()) {
                     piece = p;
-                    offsetX = mouseX - px;
-                    offsetY = mouseY - py;
+                    offsetX = local.x - p.getX();
+                    offsetY = local.y - p.getY();
                     break;
                 }
             }
         }
 
         if(piece != null && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            piece.setX((int)(mouseX - offsetX));
-            piece.setY((int)(mouseY - offsetY));
+            piece.setPosition(local.x - offsetX, local.y - offsetY);
         }
 
         if(piece != null && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            int col = (int)((mouseX - startX)/tileSize);
-            int row = (int)((mouseY - startY)/tileSize);
-
+            int col = (int)(piece.getX() / tileSize);
+            int row = (int)(piece.getY() / tileSize);
             col = Math.max(0, Math.min(7, col));
             row = Math.max(0, Math.min(7, row));
 

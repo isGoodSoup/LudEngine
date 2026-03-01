@@ -27,14 +27,18 @@ import org.lud.game.enums.UIButton;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BoardScreen extends Menu {
+    private static final float DURATION = 1f;
     private static final int TILE_SIZE = 64;
     private static final int BOARD_SIZE = TILE_SIZE * 8;
     private static final int PADDING = 32;
+    private static final Logger log = LoggerFactory.getLogger(BoardScreen.class);
 
     private Coordinator coordinator;
     private final BoardInput boardInput;
@@ -48,7 +52,8 @@ public class BoardScreen extends Menu {
     private final List<ButtonData> data;
     private final Tooltip tooltip;
 
-    private Group group;
+    private Group boardGroup;
+    private Group uiGroup;
     private Texture baseButton;
     private Texture frame;
 
@@ -81,7 +86,7 @@ public class BoardScreen extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
-        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.RESET, gameService::newGame, () -> audioService.playFX(0)));
     }
 
@@ -91,7 +96,9 @@ public class BoardScreen extends Menu {
         float buttonX = 50f;
         float buttonY = 50f;
 
-        group = new Group();
+        boardGroup = new Group();
+        uiGroup = new Group();
+
         for(ButtonData data : data) {
             Texture icon = getButton(data, false);
             Texture highlighted = getButton(data, true);
@@ -101,45 +108,48 @@ public class BoardScreen extends Menu {
                 highlighted, data.soundPath(), data.action()
             );
 
-            group.addActor(b);
             addButton(b);
             buttonX += baseButton.getWidth() + spacing;
         }
 
-        group.setPosition(startX, -BOARD_SIZE);
-
         BackgroundTile bg = new BackgroundTile(Colors.getEdge(), -PADDING, -PADDING,
             BOARD_SIZE + PADDING * 2, BOARD_SIZE + PADDING * 2, getShaper());
-        group.addActor(bg);
+        boardGroup.addActor(bg);
 
         for(int row = 0; row < 8; row++) {
             for(int col = 0; col < 8; col++) {
                 Color color = (row + col) % 2 == 0 ? Colors.getBackground() : Colors.getForeground();
                 Tile tile = new Tile(getShaper(), color, col * TILE_SIZE, row * TILE_SIZE,
                     TILE_SIZE);
-                group.addActor(tile);
+                boardGroup.addActor(tile);
             }
         }
 
-        for(Piece p : pieceService.getPieces()) {
-            p.setSprite(pieceService.getSprite(p));
-            p.setPosition(p.getCol() * TILE_SIZE, p.getRow() * TILE_SIZE);
-            p.setSize(TILE_SIZE, TILE_SIZE);
-            group.addActor(p);
-        }
-
         for(Button b : getButtons()) {
-            group.addActor(b);
+            uiGroup.addActor(b);
         }
 
-        getStage().addActor(group);
-        group.addAction(Actions.moveTo(startX, 0, 2f, Interpolation.pow5Out));
+        boardGroup.setPosition(startX, startY - Gdx.graphics.getHeight());
+        uiGroup.setPosition(25f, startY - Gdx.graphics.getHeight());
+
+        getStage().addActor(boardGroup);
+        getStage().addActor(uiGroup);
+
+        boardGroup.addAction(Actions.moveTo(startX, startY, DURATION, Interpolation.pow5Out));
+        uiGroup.addAction(Actions.moveTo(25f, 25f, DURATION, Interpolation.pow5Out));
     }
 
     @Override
     public void show() {
         super.show();
         pieceService.setPieces();
+
+        for(Piece p : pieceService.getPieces()) {
+            p.setSprite(pieceService.getSprite(p));
+            p.setPosition(p.getCol() * TILE_SIZE, p.getRow() * TILE_SIZE);
+            p.setSize(TILE_SIZE, TILE_SIZE);
+            boardGroup.addActor(p);
+        }
 
         coordinator = new Coordinator();
         multiplexer = new InputMultiplexer(coordinator, getStage());
@@ -154,7 +164,7 @@ public class BoardScreen extends Menu {
         drawCursor();
         drawTooltip(delta);
 
-        boardInput.update();
+        boardInput.update(boardGroup);
 
         checkInput();
         if(!isCursorActive) {
@@ -167,8 +177,8 @@ public class BoardScreen extends Menu {
         if(Coordinator.getLastInput() == LastInput.KEYBOARD &&
             isCursorActive) {
             getShaper().setColor(Colors.getHighlight());
-            getShaper().rect(group.getX() + getMoveX() * TILE_SIZE,
-                group.getY() + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            getShaper().rect(boardGroup.getX() + getMoveX() * TILE_SIZE,
+                boardGroup.getY() + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
         getShaper().end();
     }
@@ -178,8 +188,8 @@ public class BoardScreen extends Menu {
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
         Piece hoveredPiece = null;
         for(Piece p : pieceService.getPieces()) {
-            float px = group.getX() + p.getX();
-            float py = group.getY() + p.getY();
+            float px = boardGroup.getX() + p.getX();
+            float py = boardGroup.getY() + p.getY();
             if(mouseX >= px && mouseX <= px + TILE_SIZE && mouseY >= py && mouseY <= py + TILE_SIZE) {
                 hoveredPiece = p;
                 break;
@@ -209,6 +219,15 @@ public class BoardScreen extends Menu {
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
+    }
+
+    public void slideOut() {
+        boardGroup.addAction(Actions.sequence(
+                Actions.moveTo(startX, -Gdx.graphics.getHeight(), DURATION, Interpolation.pow5Out),
+                Actions.run(gameService::showMainMenu)
+        ));
+        uiGroup.addAction(Actions.moveTo(25f, -Gdx.graphics.getHeight(),
+            DURATION, Interpolation.pow5Out));
     }
 
     @Override
