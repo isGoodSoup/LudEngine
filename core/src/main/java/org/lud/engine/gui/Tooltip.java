@@ -31,8 +31,8 @@ public class Tooltip {
 
     public void setText(String text){ this.text = text; }
 
-    public void update(float delta, boolean hovering, float mouseX, float mouseY){
-        if(hovering){
+    public void update(float delta, boolean isHovering, float mouseX, float mouseY){
+        if(isHovering){
             timer += delta;
             if(timer >= delay){
                 isVisible = true;
