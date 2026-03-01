@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.engine.bots.*;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
-import org.lud.engine.enums.Difficulty;
-import org.lud.engine.interfaces.AI;
 
 public class ServiceFactory {
     private final GameFrame gameFrame;
@@ -47,15 +45,5 @@ public class ServiceFactory {
     }
     public GameService getGameService() {
         return gameService;
-    }
-
-    public AI setDifficulty(Difficulty difficulty) {
-        return switch(difficulty) {
-            case ALPHA -> alpha;
-            case BETA -> beta;
-            case CORONEL -> coronel;
-            case DELTA -> delta;
-            case SIGMA -> sigma;
-        };
     }
 }

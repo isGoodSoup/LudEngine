@@ -1,20 +1,63 @@
 package org.lud.engine.gui;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import org.lud.engine.interfaces.Clickable;
 
-public class Window extends Actor {
-    private float timer = 0f;
-    private final float delay = 0.25f;
-    private final float padding = 8f;
-    private final Texture tex;
-    private final int cs;
+public class Window extends Actor implements Clickable {
+    private final Slicer background;
     private final float scale;
+    private Runnable action;
+    private Runnable sound;
 
-    public Window(float x, float y, float scale, int cs, Texture tex) {
+    private boolean isHovered = false;
+
+    public Window(float x, float y, float width, float height, Slicer background,
+                  float scale, Runnable action, Runnable sound) {
+
+        this.background = background;
         this.scale = scale;
-        this.cs = cs;
-        this.tex = tex;
-        setPosition(x, y);
+        this.action = action;
+        this.sound = sound;
+
+        setBounds(x, y, width, height);
+        addInteraction();
+    }
+
+    private void addInteraction() {
+        addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if(button == Input.Buttons.LEFT) {
+                    onClick();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                isHovered = true;
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                isHovered = false;
+            }
+        });
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        background.draw(batch, getX(), getY(), getWidth(), getHeight(), scale, isHovered);
+    }
+
+    @Override
+    public void onClick() {
+        if(action != null) { action.run(); }
+        if(sound != null) { sound.run(); }
     }
 }

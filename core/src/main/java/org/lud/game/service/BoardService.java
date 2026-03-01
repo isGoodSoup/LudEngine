@@ -90,7 +90,7 @@ public class BoardService {
 
             logMove(piece, targetCol, targetRow);
 
-            AI ai = service.setDifficulty(Difficulty.BETA);
+            AI ai = Difficulty.setDifficulty(Difficulty.CORONEL);
             ai.switchTurns();
 
             if(Turn.getTurn() == Turn.DARK) {
