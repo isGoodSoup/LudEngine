@@ -31,7 +31,6 @@ public class BoardScreen extends Menu {
     private static final int BOARD_SIZE = TILE_SIZE * 8;
     private static final int PADDING = 32;
 
-    private Stage stage;
     private Coordinator coordinator;
     private final BoardInput boardInput;
     private InputMultiplexer multiplexer;
@@ -107,9 +106,8 @@ public class BoardScreen extends Menu {
         this.shaper = getShaper();
         pieceService.setPieces();
 
-        stage = new Stage();
         coordinator = new Coordinator();
-        multiplexer = new InputMultiplexer(coordinator, stage);
+        multiplexer = new InputMultiplexer(coordinator, getStage());
         Gdx.input.setInputProcessor(multiplexer);
     }
 

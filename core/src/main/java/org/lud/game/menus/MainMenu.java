@@ -3,12 +3,17 @@ package org.lud.game.menus;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.ScreenUtils;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.Lang;
 import org.lud.engine.gui.Button;
+import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
+import org.lud.game.actors.Logo;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.enums.UIButton;
@@ -23,8 +28,6 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("ALL")
 public class MainMenu extends Menu {
-    private static boolean isFadeShown;
-
     private Map<Button, Supplier<String>> tooltips;
     private final GameService gameService;
     private final AudioService audioService;
@@ -98,15 +101,27 @@ public class MainMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
+
+        Group menuGroup = new Group();
+        Logo logoActor = new Logo(logo, Gdx.graphics.getWidth()/2f - logo.getWidth()/2,
+            Gdx.graphics.getHeight()/2f);
+        menuGroup.addActor(logoActor);
+
+        for(Button b : getButtons()) {
+            menuGroup.addActor(b);
+        }
+
+        menuGroup.setPosition(0, Gdx.graphics.getHeight());
+        menuGroup.addAction(Actions.moveTo(0, 0, 2f, Interpolation.pow5Out));
+        getStage().addActor(menuGroup);
     }
 
     @Override
     public void render(float delta) {
-        super.render(delta);
-        getBatch().begin();
-        getBatch().draw(logo, Gdx.graphics.getWidth()/2 - logo.getWidth()/2,
-            Gdx.graphics.getHeight()/2);
-        getBatch().end();
+        ScreenUtils.clear(Colors.getBackground());
+
+        getStage().act(delta);
+        getStage().draw();
 
         globalInput();
         checkInput();
@@ -126,21 +141,6 @@ public class MainMenu extends Menu {
 
         tooltip.update(delta, hovering, mouseX, mouseY);
         tooltip.render(getBatch(), getShaper());
-
-        if(!isFadeShown) {
-            if(fadeAlpha > 0f) {
-                fadeAlpha -= FADE_SPEED * Gdx.graphics.getDeltaTime();
-                if(fadeAlpha <= 0f) {
-                    fadeAlpha = 0f;
-                    isFadeShown = true;
-                }
-
-                getShaper().begin(ShapeRenderer.ShapeType.Filled);
-                getShaper().setColor(0, 0, 0, fadeAlpha);
-                getShaper().rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                getShaper().end();
-            }
-        }
     }
 
     @Override

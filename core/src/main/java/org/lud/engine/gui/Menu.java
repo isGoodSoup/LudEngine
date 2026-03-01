@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
 import org.lud.game.data.ButtonData;
@@ -22,6 +24,7 @@ import java.util.*;
 public abstract class Menu implements Screen {
     private Map<Integer, Runnable> actions;
     private Map<Integer, Runnable> combos;
+    private final Stage stage;
     private final GameService gameService;
     private final AudioService audioService;
     private final SpriteBatch batch;
@@ -54,6 +57,7 @@ public abstract class Menu implements Screen {
         generator.dispose();
 
         this.batch = new SpriteBatch();
+        this.stage = new Stage(new ScreenViewport(), batch);
         this.shaper = new ShapeRenderer();
     }
 
@@ -89,23 +93,14 @@ public abstract class Menu implements Screen {
         return font;
     }
 
-    public int getMoveY() {
-        return moveY;
-    }
+    public int getMoveY() { return moveY; }
+    public void setMoveY(int moveY) { this.moveY = moveY; }
 
-    public void setMoveY(int moveY) {
-        this.moveY = moveY;
-    }
-
-    public int getMoveX() {
-        return moveX;
-    }
-
-    public void setMoveX(int moveX) {
-        this.moveX = moveX;
-    }
+    public int getMoveX() { return moveX; }
+    public void setMoveX(int moveX) { this.moveX = moveX; }
 
     @Override public void show() {
+        Gdx.input.setInputProcessor(stage);
         if(!isInit) {
             setup();
             isInit = true;
@@ -123,15 +118,12 @@ public abstract class Menu implements Screen {
                 b.setHovered(i == selectionIndexY);
             }
         }
-
-        batch.begin();
-        for (Button b : getButtons()) {
-            b.render(batch);
-        }
-        batch.end();
     }
 
-    @Override public void resize(int width, int height) {}
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
     @Override public void pause() {}
     @Override public void resume() {}
 
@@ -255,10 +247,15 @@ public abstract class Menu implements Screen {
         return shaper;
     }
 
+    public Stage getStage() {
+        return stage;
+    }
+
     @Override
     public void dispose() {
         batch.dispose();
         shaper.dispose();
+        stage.dispose();
         for(Button b : buttons) { b.dispose(); }
         font.dispose();
     }

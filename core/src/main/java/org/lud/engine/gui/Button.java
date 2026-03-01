@@ -3,17 +3,15 @@ package org.lud.engine.gui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.lud.engine.enums.LastInput;
-import org.lud.engine.interfaces.Clickable;
 import org.lud.engine.input.Coordinator;
+import org.lud.engine.interfaces.Clickable;
 
 @SuppressWarnings("ALL")
-public class Button implements Clickable {
-    private float x;
-    private float y;
-    private float width;
-    private float height;
+public class Button extends Actor implements Clickable {
     private final Runnable action;
     private Texture texture;
     private Texture icon;
@@ -25,10 +23,6 @@ public class Button implements Clickable {
     public Button(float x, float y, float width, float height,
                   Texture texture, Texture icon, Texture frame,
                   Texture iconHighlighted, Runnable sound, Runnable action) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
         this.texture = texture;
         this.icon = icon;
         this.frame = frame;
@@ -38,19 +32,64 @@ public class Button implements Clickable {
         if(sound != null) {
             this.sound = sound;
         }
+
+        setSize(width, height);
+        setPosition(x, y);
     }
 
-    public float getX() { return x; }
-    public void setX(float x) { this.x = x; }
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+    }
 
-    public float getY() { return y; }
-    public void setY(float y) { this.y = y; }
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+        batch.draw(texture, getX(), getY(), getWidth(), getHeight());
+        batch.draw(icon, getX(), getY(), getWidth(), getHeight());
+        if(isHovered && frame != null) {
+            batch.draw(iconHighlighted, getX(), getY(), getWidth(), getHeight());
+            batch.draw(frame, getX(), getY(), getWidth(), getHeight());
+        }
+    }
 
-    public float getWidth() { return width; }
-    public void setWidth(float width) { this.width = width; }
+    @Override
+    public void onClick() {
+        action.run();
+        if(sound != null) {
+            sound.run();
+        }
+    }
 
-    public float getHeight() { return height; }
-    public void setHeight(float height) { this.height = height; }
+    public void update() {
+        boolean currentlyHovered = false;
+
+        if(Gdx.input.isTouched() || Gdx.input.getX() >= 0) {
+            float mouseX = Gdx.input.getX();
+            float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+            float localX = mouseX;
+            float localY = mouseY;
+            if(getParent() != null) {
+                Vector2 v = getParent().screenToLocalCoordinates(new Vector2(mouseX, mouseY));
+                localX = v.x;
+                localY = v.y;
+            }
+
+            currentlyHovered = localX >= getX() && localX <= getX() + getWidth()
+                && localY >= getY() && localY <= getY() + getHeight();
+
+            if(currentlyHovered) {
+                Coordinator.setLastInput(LastInput.MOUSE);
+            }
+        }
+
+        isHovered = currentlyHovered ||
+            (Coordinator.getLastInput() == LastInput.KEYBOARD && isHovered);
+        if(isHovered && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
+            onClick();
+        }
+    }
 
     public Runnable getAction() {
         return action;
@@ -63,41 +102,6 @@ public class Button implements Clickable {
         isHovered = hovered;
     }
 
-    @Override
-    public void onClick() {
-        action.run();
-        if(sound != null) {
-            sound.run();
-        }
-    }
-
-    public void render(SpriteBatch batch) {
-        if(isHovered && frame != null) {
-            batch.draw(texture, x, y, width, height);
-            batch.draw(iconHighlighted, x, y, width, height);
-            batch.draw(frame, x, y, width, height);
-        } else {
-            batch.draw(texture, x, y, width, height);
-            batch.draw(icon, x, y, width, height);
-        }
-    }
-
-    public void update() {
-        float mouseX = Gdx.input.getX();
-        float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
-
-        boolean currentlyHovered = mouseX >= x && mouseX <= x + width &&
-            mouseY >= y && mouseY <= y + height;
-
-        if(currentlyHovered) {
-            Coordinator.setLastInput(LastInput.MOUSE);
-        }
-
-        isHovered = currentlyHovered || (Coordinator.getLastInput() == LastInput.KEYBOARD && isHovered);
-        if(isHovered && Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
-            onClick();
-        }
-    }
 
     public void dispose() {
         texture.dispose();
