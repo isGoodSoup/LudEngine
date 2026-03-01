@@ -1,4 +1,4 @@
-package org.lud.game.menus;
+package org.lud.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,7 +17,7 @@ import org.lud.game.service.GameService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsMenu extends Menu {
+public class AchievementsMenu extends Menu {
     private static final float DURATION = 1f;
     private final GameService gameService;
     private final AudioService audioService;
@@ -26,7 +26,7 @@ public class SettingsMenu extends Menu {
     private Texture baseButton;
     private Texture frame;
 
-    public SettingsMenu(GameService gameService, AudioService audioService) {
+    public AchievementsMenu(GameService gameService, AudioService audioService) {
         super(gameService, audioService);
         this.gameService = gameService;
         this.audioService = audioService;
@@ -46,8 +46,8 @@ public class SettingsMenu extends Menu {
     @Override
     public void setup() {
         float spacing = 1f;
-        float startX = 50f;
-        float y = 50f;
+        float startX = 25f;
+        float y = 25f;
 
         group = new Group();
 
@@ -62,7 +62,7 @@ public class SettingsMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
-        // TODO toggles
+        // TODO Achievements menu
     }
 
     @Override

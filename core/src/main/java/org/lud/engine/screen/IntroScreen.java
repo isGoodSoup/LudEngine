@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.core.Intro;
-import org.lud.game.menus.MainMenu;
+import org.lud.game.screens.MainMenu;
 import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
