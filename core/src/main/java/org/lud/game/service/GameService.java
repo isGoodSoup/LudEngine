@@ -7,11 +7,8 @@ import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
-import org.lud.game.screens.AchievementsMenu;
-import org.lud.game.screens.MainMenu;
-import org.lud.game.screens.SettingsMenu;
+import org.lud.game.screens.*;
 import org.lud.game.moves.MovePiece;
-import org.lud.game.screens.BoardScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +24,7 @@ public class GameService {
     private final Menu mainMenu;
     private final Menu settingsMenu;
     private final Menu achievementsMenu;
-
+    private final DifficultyScreen difficultyScreen;
     private final BoardScreen boardScreen;
 
     private boolean isLegal;
@@ -45,6 +42,7 @@ public class GameService {
         this.mainMenu = new MainMenu(this, audio, board);
         this.settingsMenu = new SettingsMenu(this, audio, board);
         this.achievementsMenu = new AchievementsMenu(this, audio, board);
+        this.difficultyScreen = new DifficultyScreen(this, audio, board);
         this.boardScreen = new BoardScreen(board, this, piece, audio);
 
         activeMenu = mainMenu;
@@ -71,6 +69,10 @@ public class GameService {
         showBoard();
         Turn.setTurn(Turn.LIGHT);
     }
+    public void showModes() {
+        activeMenu = difficultyScreen;
+        gameFrame.setScreen(activeMenu);
+    }
     public void showSettings() {
         activeMenu = settingsMenu;
         gameFrame.setScreen(activeMenu);
@@ -86,7 +88,7 @@ public class GameService {
 
     public void getActiveMenu(int index) {
         switch(index) {
-            case 0 -> newGame();
+            case 0 -> showModes();
             case 1 -> showSettings();
             case 2 -> showAchievements();
             case 3 -> exit();

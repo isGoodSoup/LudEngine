@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
+import org.lud.engine.enums.Lang;
 import org.lud.engine.enums.LastInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.data.ButtonData;
@@ -168,6 +169,9 @@ public abstract class Menu implements Screen {
         combos.put(Input.Keys.T, () -> {
             Colors.nextTheme();
             audioService.playFX(1);
+        });
+        combos.put(Input.Keys.L, () -> {
+            Lang.nextLang();
         });
         combos.put(Input.Keys.Q, Gdx.app::exit);
     }
