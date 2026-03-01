@@ -1,9 +1,11 @@
 package org.lud.game.service;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import org.lud.engine.bots.Alpha;
+import org.lud.engine.bots.*;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
+import org.lud.engine.enums.Difficulty;
+import org.lud.engine.interfaces.AI;
 
 public class ServiceFactory {
     private final GameFrame gameFrame;
@@ -13,7 +15,11 @@ public class ServiceFactory {
     private final GameService gameService;
     private final OrthographicCamera camera;
 
-    private final Alpha alphaAI;
+    private final Alpha alpha;
+    private final Beta beta;
+    private final Coronel coronel;
+    private final Delta delta;
+    private final Sigma sigma;
 
     public ServiceFactory(GameFrame gameFrame, OrthographicCamera camera) {
         this.gameFrame = gameFrame;
@@ -23,7 +29,11 @@ public class ServiceFactory {
         this.pieceService = new PieceService(this);
         this.gameService = new GameService(gameFrame, this);
 
-        this.alphaAI = new Alpha();
+        this.alpha = new Alpha();
+        this.beta = new Beta();
+        this.coronel = new Coronel();
+        this.delta = new Delta();
+        this.sigma = new Sigma();
     }
 
     public AudioService getAudioService() {
@@ -39,7 +49,13 @@ public class ServiceFactory {
         return gameService;
     }
 
-    public Alpha getAlphaAI() {
-        return alphaAI;
+    public AI setDifficulty(Difficulty difficulty) {
+        return switch(difficulty) {
+            case ALPHA -> alpha;
+            case BETA -> beta;
+            case CORONEL -> coronel;
+            case DELTA -> delta;
+            case SIGMA -> sigma;
+        };
     }
 }

@@ -4,4 +4,6 @@ public interface Moves {
     void apply();
     void undo();
     int getScoreImpact();
+    int isCapture();
+    int isUnique();
 }

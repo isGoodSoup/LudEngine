@@ -24,4 +24,17 @@ public record MovePiece(Piece piece, int fromCol, int fromRow, int targetCol, in
     public int getScoreImpact() {
         return piece.getPieceValue(piece);
     }
+
+    @Override
+    public int isCapture() {
+        if(captured != null) {
+            return 5;
+        }
+        return 0;
+    }
+
+    @Override
+    public int isUnique() {
+        return 10;
+    }
 }
