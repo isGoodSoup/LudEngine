@@ -25,12 +25,15 @@ public class BoardService {
     private final List<Moves> movePieces;
     private final List<Moves> moveAIPieces;
 
+    private boolean canUndo;
+
     public BoardService(ServiceFactory service, OrthographicCamera camera) {
         this.camera = camera;
         this.service = service;
         board = new Board();
         this.movePieces = new ArrayList<>();
         this.moveAIPieces = new ArrayList<>();
+        canUndo = true;
     }
 
     public OrthographicCamera getCamera() { return camera; }
@@ -75,6 +78,7 @@ public class BoardService {
             if (captured != null) {
                 if(captured.getParent() != null) { captured.remove(); }
                 service.getPieceService().removePiece(captured);
+                captured = null;
             }
 
             MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
@@ -99,6 +103,7 @@ public class BoardService {
                         ((MovePiece)n).targetRow());
                 }
                 service.getAudioService().playFX(0);
+                canUndo = !canUndo;
                 ai.switchTurns(service.getGameService());
             }
             return true;
@@ -108,9 +113,11 @@ public class BoardService {
     }
 
     public void undoMove() {
-        List<Moves> moves = moveAIPieces;
+        if(!canUndo) { return; }
+        List<Moves> moves = movePieces;
         MovePiece move = (MovePiece) moves.getLast();
         move.undo();
+        canUndo = false;
     }
 
     private void logMove(Piece p, int targetCol, int targetRow) {
