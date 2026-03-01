@@ -26,12 +26,15 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("ALL")
 public class MainMenu extends Menu {
+    private static final float DURATION = 1f;
     private Map<Button, Supplier<String>> tooltips;
     private final GameService gameService;
     private final AudioService audioService;
     private List<ButtonData> data;
     private Tooltip tooltip;
     private Texture logo;
+
+    private Group menuGroup;
     private Texture baseButton;
     private Texture altButton;
     private Texture frame;
@@ -60,11 +63,11 @@ public class MainMenu extends Menu {
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
 
-        data.add(new ButtonData(UIButton.PLAY, gameService::newGame, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.SETTINGS, gameService::showSettings, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.ACHIEVEMENTS, gameService::showAchievements, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.PLAY, () -> slideOut(0), () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.SETTINGS, () -> slideOut(1), () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.ACHIEVEMENTS, () -> slideOut(2), () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.LANG, Lang::nextLang, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.EXIT, gameService::exit, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.EXIT, () -> slideOut(3), () -> audioService.playFX(0)));
     }
 
     @Override
@@ -100,7 +103,7 @@ public class MainMenu extends Menu {
             startX += baseButton.getWidth() + spacing;
         }
 
-        Group menuGroup = new Group();
+        menuGroup = new Group();
         Logo logoActor = new Logo(logo, Gdx.graphics.getWidth()/2f - logo.getWidth()/2,
             Gdx.graphics.getHeight()/2f);
         menuGroup.addActor(logoActor);
@@ -110,7 +113,7 @@ public class MainMenu extends Menu {
         }
 
         menuGroup.setPosition(0, Gdx.graphics.getHeight());
-        menuGroup.addAction(Actions.moveTo(0, 0, 2f, Interpolation.pow5Out));
+        menuGroup.addAction(Actions.moveTo(0, 0, DURATION, Interpolation.pow5Out));
         getStage().addActor(menuGroup);
     }
 
@@ -149,6 +152,13 @@ public class MainMenu extends Menu {
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             cursor(Direction.DOWN);
         }
+    }
+
+    public void slideOut(int i) {
+        menuGroup.addAction(Actions.sequence(
+            Actions.moveTo(0, -Gdx.graphics.getHeight(), DURATION, Interpolation.pow5Out),
+            Actions.run(() -> gameService.getActiveMenu(i))
+        ));
     }
 
     @Override

@@ -3,7 +3,9 @@ package org.lud.game.menus;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsMenu extends Menu {
+    private static final float DURATION = 1f;
     private final GameService gameService;
     private final AudioService audioService;
     private final List<ButtonData> data;
@@ -36,7 +39,7 @@ public class SettingsMenu extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
-        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, gameService::showMainMenu,
+        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut,
             () -> audioService.playFX(0)));
     }
 
@@ -83,6 +86,13 @@ public class SettingsMenu extends Menu {
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             cursor(Direction.DOWN);
         }
+    }
+
+    public void slideOut() {
+        group.addAction(Actions.sequence(
+            Actions.moveTo(0, -Gdx.graphics.getHeight(), DURATION, Interpolation.pow5Out),
+            Actions.run(gameService::showMainMenu)
+        ));
     }
 
     @Override

@@ -67,8 +67,13 @@ public class GameService {
         Gdx.app.exit();
     }
 
-    public Menu getActiveMenu() {
-        return activeMenu;
+    public void getActiveMenu(int index) {
+        switch(index) {
+            case 0 -> newGame();
+            case 1 -> showSettings();
+            case 2 -> showAchievements();
+            case 3 -> exit();
+        }
     }
 
     public Turn getTurn() {

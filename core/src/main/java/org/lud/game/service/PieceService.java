@@ -10,14 +10,18 @@ import org.lud.game.actors.Piece;
 import org.lud.game.enums.TypeID;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("ALL")
 public class PieceService {
+    private final Map<String, Texture> sprites;
     private final ServiceFactory service;
     private final List<Piece> pieces;
 
     public PieceService(ServiceFactory service) {
+        this.sprites = new LinkedHashMap<>();
         this.pieces = new ArrayList<>();
         this.service = service;
     }
@@ -56,12 +60,14 @@ public class PieceService {
     }
 
     public Texture getSprite(Piece p) {
-        String path = "pieces/";
         String name = p.getTypeID().name().toLowerCase();
         Theme theme = Colors.getTheme();
-        String suffix = theme.getColor(p.getTurn());
-        path += name + "/" + name + "_" + suffix + ".png";
-        return new Texture(Gdx.files.internal(path));
+        String key = name + "_" + theme.getColor(p.getTurn());
+        if(sprites.containsKey(key)) { return sprites.get(key); }
+        String path = "pieces/" + name + "/" + name + "_" + theme.getColor(p.getTurn()) + ".png";
+        Texture t = new Texture(Gdx.files.internal(path));
+        sprites.put(key, t);
+        return t;
     }
 
     public void addPiece(Piece p) {

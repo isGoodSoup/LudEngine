@@ -21,9 +21,12 @@ public class Tile extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
+        shaper.setProjectionMatrix(getStage().getCamera().combined);
         shaper.begin(ShapeRenderer.ShapeType.Filled);
         shaper.setColor(color);
-        shaper.rect(getX(), getY(), getWidth(), getHeight());
+        float worldX = getX() + getParent().getX();
+        float worldY = getY() + getParent().getY();
+        shaper.rect(worldX, worldY, getWidth(), getHeight());
         shaper.end();
         batch.begin();
     }
