@@ -1,13 +1,17 @@
-package org.lud.game.entities;
+package org.lud.game.actors;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import org.lud.engine.enums.Turn;
+import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
 
-public class Piece {
-    private Piece other;
+public class Piece extends Actor {
     private TypeID typeID;
+    private Piece other;
     private Turn color;
-    private int x, y;
+    private Texture sprite;
     private int preCol, preRow;
     private int col, row;
 
@@ -21,32 +25,35 @@ public class Piece {
         this.row = row;
         this.preCol = col;
         this.preRow = row;
-        this.x = col * Board.getSQUARE();
-        this.y = row * Board.getSQUARE();
+        setX(col * Board.getSQUARE());
+        setY(row * Board.getSQUARE());
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        if(sprite != null) {
+            batch.draw(sprite, getX(), getY(), getWidth(), getHeight());
+        }
     }
 
     public TypeID getTypeID() { return typeID; }
     public void setTypeID(TypeID typeID) { this.typeID = typeID; }
 
-    public Turn getColor() { return color; }
-    public void setColor(Turn color) { this.color = color; }
+    public Turn getTurn() { return color; }
 
-    public int getX() { return x; }
-    public void setX(int x) { this.x = x; }
-
-    public int getY() { return y; }
-    public void setY(int y) { this.y = y; }
+    public Texture getSprite() { return sprite; }
+    public void setSprite(Texture texture) { this.sprite = texture; }
 
     public int getCol() { return col; }
     public void setCol(int col) {
         this.col = col;
-        this.x = col * Board.getSQUARE();
+        setX(col * Board.getSQUARE());
     }
 
     public int getRow() { return row; }
     public void setRow(int row) {
         this.row = row;
-        this.y = row * Board.getSQUARE();
+        setY(row * Board.getSQUARE());
     }
 
     public int getPreCol() { return preCol; }

@@ -5,7 +5,7 @@ import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
-import org.lud.game.entities.Piece;
+import org.lud.game.actors.Piece;
 import org.lud.game.menus.AchievementsMenu;
 import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
@@ -88,7 +88,7 @@ public class GameService {
     public boolean canMove(Piece p, int targetCol, int targetRow) {
         switch(p.getTypeID()) {
             case PAWN -> {
-                int direction = (p.getColor() == Turn.LIGHT) ? 1 : -1;
+                int direction = (p.getTurn() == Turn.LIGHT) ? 1 : -1;
                 Piece pieceAtTarget = BoardService.getPieceAt(targetCol, targetRow);
 
                 if(targetCol == p.getCol() && targetRow == p.getRow() + direction) {
@@ -99,7 +99,7 @@ public class GameService {
                     return pieceAtTarget == null;
                 }
                 if(Math.abs(targetCol - p.getCol()) == 1 && targetRow == p.getRow() + direction) {
-                    if(pieceAtTarget != null && pieceAtTarget.getColor() != p.getColor()) {
+                    if(pieceAtTarget != null && pieceAtTarget.getTurn() != p.getTurn()) {
                         return true;
                     }
                     return service.getBoardService().canEnPassant(p, targetCol, targetRow,
@@ -134,7 +134,7 @@ public class GameService {
                         break;
                     }
                 }
-                return target == null || target.getColor() != p.getColor();
+                return target == null || target.getTurn() != p.getTurn();
             }
             case ROOK -> {
                 if(targetCol == p.getPreCol() || targetRow == p.getPreRow()) {
@@ -168,7 +168,7 @@ public class GameService {
                         break;
                     }
                 }
-                return target == null || target.getColor() != p.getColor();
+                return target == null || target.getTurn() != p.getTurn();
             }
             case KING -> {
                 int colDiff = Math.abs(targetCol - p.getCol());

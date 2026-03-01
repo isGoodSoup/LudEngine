@@ -3,12 +3,13 @@ package org.lud.game.menus;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
-import org.lud.engine.core.AudioService;
 import org.lud.game.service.GameService;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class AchievementsMenu extends Menu {
     private final GameService gameService;
     private final AudioService audioService;
     private final List<ButtonData> data;
+    private Group group;
     private Texture baseButton;
     private Texture frame;
 
@@ -44,6 +46,8 @@ public class AchievementsMenu extends Menu {
         float startX = 50f;
         float y = 50f;
 
+        group = new Group();
+
         for(ButtonData data : data) {
             Texture icon = getButton(data, false);
             Texture highlighted = getButton(data, true);
@@ -51,9 +55,11 @@ public class AchievementsMenu extends Menu {
             Button b = new Button(startX, y, baseButton.getWidth(), baseButton.getHeight(),
                 baseButton, icon, frame, highlighted, data.soundPath(), data.action());
 
+            group.addActor(b);
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
+        getStage().addActor(group);
         // TODO Achievements menu
     }
 

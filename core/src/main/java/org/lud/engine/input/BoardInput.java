@@ -3,7 +3,7 @@ package org.lud.engine.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import org.lud.engine.core.AudioService;
-import org.lud.game.entities.Piece;
+import org.lud.game.actors.Piece;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
@@ -48,7 +48,7 @@ public class BoardInput {
                 float margin = tileSize * 0.25f;
                 if(mouseX >= px && mouseX <= px + tileSize - margin &&
                     mouseY >= py && mouseY <= py + tileSize - margin &&
-                    p.getColor() == gameService.getTurn()) {
+                    p.getTurn() == gameService.getTurn()) {
                     piece = p;
                     offsetX = mouseX - px;
                     offsetY = mouseY - py;

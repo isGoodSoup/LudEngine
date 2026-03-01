@@ -3,9 +3,13 @@ package org.lud.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
@@ -14,9 +18,11 @@ import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.input.BoardInput;
 import org.lud.engine.input.Coordinator;
+import org.lud.game.actors.BackgroundTile;
+import org.lud.game.actors.Tile;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
-import org.lud.game.entities.Piece;
+import org.lud.game.actors.Piece;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
@@ -41,8 +47,8 @@ public class BoardScreen extends Menu {
 
     private final List<ButtonData> data;
     private final Tooltip tooltip;
-    private ShapeRenderer shaper;
 
+    private Group group;
     private Texture baseButton;
     private Texture frame;
 
@@ -85,6 +91,7 @@ public class BoardScreen extends Menu {
         float buttonX = 50f;
         float buttonY = 50f;
 
+        group = new Group();
         for(ButtonData data : data) {
             Texture icon = getButton(data, false);
             Texture highlighted = getButton(data, true);
@@ -94,15 +101,44 @@ public class BoardScreen extends Menu {
                 highlighted, data.soundPath(), data.action()
             );
 
+            group.addActor(b);
             addButton(b);
             buttonX += baseButton.getWidth() + spacing;
         }
+
+        group.setPosition(startX, -BOARD_SIZE);
+
+        BackgroundTile bg = new BackgroundTile(Colors.getEdge(), -PADDING, -PADDING,
+            BOARD_SIZE + PADDING * 2, BOARD_SIZE + PADDING * 2, getShaper());
+        group.addActor(bg);
+
+        for(int row = 0; row < 8; row++) {
+            for(int col = 0; col < 8; col++) {
+                Color color = (row + col) % 2 == 0 ? Colors.getBackground() : Colors.getForeground();
+                Tile tile = new Tile(getShaper(), color, col * TILE_SIZE, row * TILE_SIZE,
+                    TILE_SIZE);
+                group.addActor(tile);
+            }
+        }
+
+        for(Piece p : pieceService.getPieces()) {
+            p.setSprite(pieceService.getSprite(p));
+            p.setPosition(p.getCol() * TILE_SIZE, p.getRow() * TILE_SIZE);
+            p.setSize(TILE_SIZE, TILE_SIZE);
+            group.addActor(p);
+        }
+
+        for(Button b : getButtons()) {
+            group.addActor(b);
+        }
+
+        getStage().addActor(group);
+        group.addAction(Actions.moveTo(startX, 0, 2f, Interpolation.pow5Out));
     }
 
     @Override
     public void show() {
         super.show();
-        this.shaper = getShaper();
         pieceService.setPieces();
 
         coordinator = new Coordinator();
@@ -115,61 +151,26 @@ public class BoardScreen extends Menu {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
 
-        drawBoard();
-        drawPieces();
+        drawCursor();
         drawTooltip(delta);
 
         boardInput.update();
+
         checkInput();
         if(!isCursorActive) {
             globalInput();
         }
     }
 
-    private void drawBoard() {
-        shaper.begin(ShapeRenderer.ShapeType.Filled);
-
-        shaper.setColor(Colors.getEdge());
-        shaper.rect(
-            startX - PADDING,
-            startY - PADDING,
-            BOARD_SIZE + PADDING * 2,
-            BOARD_SIZE + PADDING * 2
-        );
-
-        for(int row = 0; row < 8; row++) {
-            for(int col = 0; col < 8; col++) {
-                shaper.setColor((row + col) % 2 == 0 ? Colors.getBackground() : Colors.getForeground());
-                shaper.rect(startX + col * TILE_SIZE, startY + row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-            }
-        }
-
+    private void drawCursor() {
+        getShaper().begin(ShapeRenderer.ShapeType.Filled);
         if(Coordinator.getLastInput() == LastInput.KEYBOARD &&
             isCursorActive) {
-            shaper.setColor(Colors.getHighlight());
-            shaper.rect(startX + getMoveX() * TILE_SIZE,
-                startY + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            getShaper().setColor(Colors.getHighlight());
+            getShaper().rect(group.getX() + getMoveX() * TILE_SIZE,
+                group.getY() + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         }
-        shaper.end();
-    }
-
-    private void drawPieces() {
-        getBatch().begin();
-        for(Piece p : pieceService.getPieces()) {
-            Texture tex = pieceService.getSprite(p);
-            float x, y;
-
-            if(boardInput.getPiece() == p) {
-                x = p.getX();
-                y = p.getY();
-            } else {
-                x = startX + p.getCol() * TILE_SIZE;
-                y = startY + p.getRow() * TILE_SIZE;
-            }
-
-            getBatch().draw(tex, x, y, TILE_SIZE, TILE_SIZE);
-        }
-        getBatch().end();
+        getShaper().end();
     }
 
     private void drawTooltip(float delta) {
@@ -177,8 +178,8 @@ public class BoardScreen extends Menu {
         float mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
         Piece hoveredPiece = null;
         for(Piece p : pieceService.getPieces()) {
-            float px = startX + p.getCol() * TILE_SIZE;
-            float py = startY + p.getRow() * TILE_SIZE;
+            float px = group.getX() + p.getX();
+            float py = group.getY() + p.getY();
             if(mouseX >= px && mouseX <= px + TILE_SIZE && mouseY >= py && mouseY <= py + TILE_SIZE) {
                 hoveredPiece = p;
                 break;
@@ -190,7 +191,7 @@ public class BoardScreen extends Menu {
         }
 
         tooltip.update(delta, hoveredPiece != null, mouseX, mouseY);
-        tooltip.render(getBatch(), shaper);
+        tooltip.render(getBatch(), getShaper());
     }
 
     @Override
@@ -211,7 +212,5 @@ public class BoardScreen extends Menu {
     }
 
     @Override
-    public void dispose() {
-        shaper.dispose();
-    }
+    public void dispose() {}
 }

@@ -3,7 +3,7 @@ package org.lud.game.service;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.game.entities.Board;
-import org.lud.game.entities.Piece;
+import org.lud.game.actors.Piece;
 import org.lud.game.enums.TypeID;
 import org.lud.game.moves.Move;
 import org.slf4j.Logger;
@@ -71,13 +71,13 @@ public class BoardService {
             }
 
             moves.add(new Move(piece, piece.getCol(), piece.getRow(),
-                targetCol, targetRow, piece.getColor(), captured));
+                targetCol, targetRow, piece.getTurn(), captured));
 
             piece.setCol(targetCol);
             piece.setRow(targetRow);
             piece.setHasMoved(true);
 
-            log.info("{} {}: {} to {}", piece.getColor(), piece.getTypeID(),
+            log.info("{} {}: {} to {}", piece.getTurn(), piece.getTypeID(),
                 board.getSquareNameAt(piece.getCol(), piece.getRow()),
                 board.getSquareNameAt(targetCol, targetRow));
 
@@ -94,7 +94,7 @@ public class BoardService {
     public static boolean isValidSquare(Piece piece, int targetCol, int targetRow, List<Piece> board) {
         for (Piece p : board) {
             if (p.getCol() == targetCol && p.getRow() == targetRow) {
-                return p.getColor() != piece.getColor();
+                return p.getTurn() != piece.getTurn();
             }
         }
         return true;
@@ -135,7 +135,7 @@ public class BoardService {
 
     public boolean canEnPassant(Piece piece, int targetCol, int targetRow, List<Piece> board) {
         for(Piece p : board) {
-            if(p.getTypeID() == TypeID.PAWN && p.getColor() != piece.getColor()
+            if(p.getTypeID() == TypeID.PAWN && p.getTurn() != piece.getTurn()
                 && p.getCol() == targetCol && p.getRow() == piece.getRow() && p.isTwoStepsAhead()) {
                 p.setOther(p);
                 return true;

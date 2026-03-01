@@ -1,5 +1,7 @@
 package org.lud.game.entities;
 
+import org.lud.game.actors.Piece;
+
 public class Board {
     private static final int SIZE = 8;
     private static final int SQUARE = SIZE * 8;

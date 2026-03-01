@@ -6,7 +6,7 @@ import org.lud.engine.enums.Theme;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Colors;
 import org.lud.game.entities.Board;
-import org.lud.game.entities.Piece;
+import org.lud.game.actors.Piece;
 import org.lud.game.enums.TypeID;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class PieceService {
         String path = "pieces/";
         String name = p.getTypeID().name().toLowerCase();
         Theme theme = Colors.getTheme();
-        String suffix = theme.getColor(p.getColor());
+        String suffix = theme.getColor(p.getTurn());
         path += name + "/" + name + "_" + suffix + ".png";
         return new Texture(Gdx.files.internal(path));
     }
