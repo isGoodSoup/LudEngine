@@ -16,7 +16,7 @@ public class Tooltip {
     private boolean isVisible = false;
     private float timer = 0f;
     private final float delay = 0.25f;
-    private final float padding = 32f;
+    private float padding = 32f;
     private final Texture tex;
     private final int cs;
     private final float scale;
@@ -54,6 +54,11 @@ public class Tooltip {
         float maxLineWidth = 0;
         GlyphLayout layout = new GlyphLayout();
         for(String line : lines) {
+            if(lines.length == 1) {
+                padding = 16f;
+            } else {
+                padding = 32f;
+            }
             layout.setText(font, line);
             if(layout.width > maxLineWidth) maxLineWidth = layout.width;
         }
@@ -120,6 +125,10 @@ public class Tooltip {
 
         float textX = l + hPadding;
         float textY = t - padding;
+
+        if (lines.length == 1) {
+            textY -= layout.height/2f;
+        }
 
         for(String line : lines) {
             layout.setText(font, line);

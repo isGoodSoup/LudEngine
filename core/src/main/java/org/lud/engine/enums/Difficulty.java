@@ -21,7 +21,7 @@ public enum Difficulty {
         return Localization.lang.t(this.labelKey);
     }
 
-    public static AI setDifficulty(Difficulty difficulty) {
+    public static AI setDiff(Difficulty difficulty) {
         return switch(difficulty) {
             case ALPHA -> new Alpha();
             case BETA -> new Beta();
