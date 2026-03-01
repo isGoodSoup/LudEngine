@@ -61,7 +61,7 @@ public class Tooltip {
 
         float textHeight = layout.height * lines.length + (lines.length - 1) * 2;
 
-        float hPadding = padding + 8;
+        float hPadding = padding + 16;
         float w = Math.max(maxLineWidth + 2 * hPadding, cs * scale);
         float h = Math.max(textHeight + 2 * padding, cs * scale);
 
