@@ -19,16 +19,17 @@ public class Slider extends Actor implements Clickable {
     private float value;
     private boolean isAnimating = true;
 
-    public Slider(Runnable action, Texture head, Texture body,
-                  float x, float y, float width) {
+    public Slider(Runnable action,  float x, float y, float width) {
         this.action = action;
-        this.head = head;
-        this.body = body;
         this.minX = x;
         this.maxX = x + width - head.getWidth();
         this.headX = minX - head.getWidth();
         this.targetHeadX = minX;
         this.value = (headX - minX)/(maxX - minX);
+
+        this.head = new Texture("slider/slider_head.png");
+        this.body = new Texture("slider/slider_body.png");
+
         setPosition(x, y);
         setSize(body.getWidth(), head.getHeight());
     }
