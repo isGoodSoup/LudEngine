@@ -1,21 +1,18 @@
 package org.lud.engine.bots;
 
-import org.lud.engine.enums.Turn;
 import org.lud.engine.interfaces.AI;
 import org.lud.engine.interfaces.Moves;
 
 import java.util.List;
 
-public class Alpha implements AI {
+public class Sigma implements AI {
     @Override
     public Moves chooseMove(List<Moves> legalMoves) {
-        if(legalMoves.isEmpty()) { return null; }
-        int index = (int) (Math.random() * legalMoves.size());
-        return legalMoves.get(index);
+        return null;
     }
 
     @Override
     public void switchTurns() {
-        Turn.nextTurn();
+
     }
 }
