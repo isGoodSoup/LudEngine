@@ -4,6 +4,7 @@ import org.lud.game.actors.Piece;
 
 public class Board {
     private static final int SIZE = 8;
+    private static final int PIXEL_SIZE = 512;
     private static final int SQUARE = SIZE * 8;
     private final Piece[][] pieces;
 
@@ -14,10 +15,11 @@ public class Board {
     public static int getSQUARE() {
         return SQUARE;
     }
-
     public static int getSIZE() {
         return SIZE;
     }
+    public static int getPIXEL_SIZE() { return PIXEL_SIZE; }
+    public static float getTileSize() { return PIXEL_SIZE/(float)SIZE; }
 
     public Piece[][] getPieces() {
         return pieces;

@@ -42,14 +42,18 @@ public class BoardInput {
     }
 
     public void update(Group boardGroup) {
+        if(gameService.isInputLocked()) {
+            return;
+        }
+
         Vector2 mouse = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         Vector2 local = boardGroup.screenToLocalCoordinates(mouse);
 
         if(!isDragging && Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             for(Piece p : new ArrayList<>(pieceService.getPieces())) {
                 float margin = tileSize * 0.15f;
-                if(local.x >= p.getX() && local.x <= p.getX() + tileSize - margin &&
-                    local.y >= p.getY() && local.y <= p.getY() + tileSize - margin &&
+                if(local.x >= p.getX() - margin && local.x <= p.getX() + tileSize + margin &&
+                    local.y >= p.getY() - margin && local.y <= p.getY() + tileSize + margin &&
                     p.getTurn() == gameService.getTurn()) {
 
                     piece = p;
@@ -69,8 +73,8 @@ public class BoardInput {
         }
 
         if(isDragging && piece != null && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            int col = (int)(piece.getX() / tileSize);
-            int row = (int)(piece.getY() / tileSize);
+            int col = (int)((piece.getX() + tileSize/2)/tileSize);
+            int row = (int)((piece.getY() + tileSize/2)/tileSize);
 
             col = Math.max(0, Math.min(7, col));
             row = Math.max(0, Math.min(7, row));
@@ -85,10 +89,5 @@ public class BoardInput {
             piece = null;
             isDragging = false;
         }
-    }
-
-    public void cancelDrag() {
-        piece = null;
-        isDragging = false;
     }
 }

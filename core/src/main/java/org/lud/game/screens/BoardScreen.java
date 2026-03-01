@@ -13,17 +13,20 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
+import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.input.BoardInput;
 import org.lud.engine.input.Coordinator;
+import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.BackgroundTile;
 import org.lud.game.actors.Tile;
 import org.lud.game.data.ButtonData;
 import org.lud.game.data.Tooltip;
 import org.lud.game.actors.Piece;
 import org.lud.game.enums.UIButton;
+import org.lud.game.moves.MovePiece;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
 import org.lud.game.service.PieceService;
@@ -59,6 +62,8 @@ public class BoardScreen extends Menu {
 
     private final float startX;
     private final float startY;
+
+    private int lastAnimatedIndex = -1;
 
     private boolean isCursorActive;
 
@@ -171,6 +176,15 @@ public class BoardScreen extends Menu {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
 
+        List<Moves> moves = boardService.getMoveAIPieces();
+        if (!moves.isEmpty() && moves.size() - 1 > lastAnimatedIndex) {
+            Moves last = moves.getLast();
+            if (last instanceof MovePiece move && move.color() == Turn.DARK) {
+                animateMove(move);
+                lastAnimatedIndex = moves.size() - 1;
+            }
+        }
+
         drawCursor();
         drawTooltip(delta);
 
@@ -180,6 +194,19 @@ public class BoardScreen extends Menu {
         if(!isCursorActive) {
             globalInput();
         }
+    }
+
+    public void animateMove(MovePiece move) {
+        Piece piece = move.piece();
+        float toX = move.targetCol() * TILE_SIZE;
+        float toY = move.targetRow() * TILE_SIZE;
+        piece.clearActions();
+        piece.addAction(Actions.sequence(
+            Actions.moveTo(toX, toY, 0.2f),
+            Actions.run(move::apply)
+        ));
+
+        gameService.setInputLocked(false);
     }
 
     @Override

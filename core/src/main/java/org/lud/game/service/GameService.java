@@ -5,13 +5,19 @@ import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
+import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
+import org.lud.game.entities.Board;
 import org.lud.game.menus.AchievementsMenu;
 import org.lud.game.menus.MainMenu;
 import org.lud.game.menus.SettingsMenu;
+import org.lud.game.moves.MovePiece;
 import org.lud.game.screens.BoardScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameService {
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
@@ -28,6 +34,7 @@ public class GameService {
 
     private boolean isLegal;
     private boolean isFirstBoardEntry = true;
+    private boolean isInputLocked;
 
     public GameService(GameFrame gameFrame, ServiceFactory service) {
         this.gameFrame = gameFrame;
@@ -93,11 +100,37 @@ public class GameService {
         this.turn = turn;
     }
 
+    public List<Moves> newLegalMoves(Turn turn) {
+        List<Moves> legalMoves = new ArrayList<>();
+        List<Piece> pieces = service.getPieceService().getPieces();
+        for(Piece piece : pieces) {
+            if(piece.getTurn() != turn) continue;
+
+            for(int row = 0; row < 8; row++) {
+                for(int col = 0; col < 8; col++) {
+                    if(piece.getRow() == row && piece.getCol() == col) { continue; }
+                    if(!BoardService.isWithinBoard(col, row)) { continue; }
+                    if(!BoardService.isPathClear(piece, col, row)) { continue; }
+                    Piece targetPiece = BoardService.getPieceAt(col, row);
+                    if(targetPiece != null && targetPiece.getTurn() == turn) { continue; }
+
+                    MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(), col, row,
+                        piece.getTurn(), targetPiece);
+
+                    if (canMove(piece, col, row)) {
+                        legalMoves.add(move);
+                    }
+                }
+            }
+        }
+        return legalMoves;
+    }
+
     public boolean isLegal() {
         return isLegal;
     }
     public void setLegal(boolean legal) {
-        isLegal = legal;
+        this.isLegal = legal;
     }
 
     public boolean canMove(Piece p, int targetCol, int targetRow) {
@@ -201,4 +234,7 @@ public class GameService {
     private boolean isCheckmate() {
         return false;
     }
+
+    public boolean isInputLocked() { return isInputLocked; }
+    public void setInputLocked(boolean inputLocked) { this.isInputLocked = inputLocked; }
 }

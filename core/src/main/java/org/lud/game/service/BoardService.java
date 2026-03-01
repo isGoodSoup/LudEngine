@@ -2,6 +2,9 @@ package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import org.lud.engine.bots.Alpha;
+import org.lud.engine.enums.Turn;
+import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
 import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
@@ -18,13 +21,16 @@ public class BoardService {
     private static Board board;
     private final ServiceFactory service;
     private final OrthographicCamera camera;
-    private final List<MovePiece> movePieces;
+
+    private final List<Moves> movePieces;
+    private final List<Moves> moveAIPieces;
 
     public BoardService(ServiceFactory service, OrthographicCamera camera) {
         this.camera = camera;
         this.service = service;
         board = new Board();
         this.movePieces = new ArrayList<>();
+        this.moveAIPieces = new ArrayList<>();
     }
 
     public OrthographicCamera getCamera() { return camera; }
@@ -72,14 +78,29 @@ public class BoardService {
             }
 
             MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
-                targetCol, targetRow, piece.getTurn(), captured);
+                            targetCol, targetRow, piece.getTurn(), captured);
+
             move.apply();
             movePieces.add(move);
 
-            log.info("{} {}: {} to {}", piece.getTurn(), piece.getTypeID(),
-                board.getSquareNameAt(piece.getPreCol(), piece.getPreRow()),
-                board.getSquareNameAt(targetCol, targetRow));
+            logMove(piece, targetCol, targetRow);
 
+            Alpha ai = service.getAlphaAI();
+            service.getGameService().setTurn(Turn.DARK);
+
+            if(service.getGameService().getTurn() == Turn.DARK) {
+                List<Moves> legalMoves = service.getGameService().newLegalMoves(Turn.DARK);
+                Moves n = ai.chooseMove(legalMoves);
+                if(n instanceof MovePiece) {
+                    service.getGameService().setInputLocked(true);
+                    moveAIPieces.add(n);
+                    logMove(((MovePiece) n).piece(),
+                        ((MovePiece) n).targetCol(),
+                        ((MovePiece)n).targetRow());
+                }
+                service.getAudioService().playFX(0);
+                ai.switchTurns(service.getGameService());
+            }
             return true;
         }
 
@@ -88,6 +109,20 @@ public class BoardService {
 
     public void undoMove(MovePiece move) {
         move.undo();
+        // TODO undo moves
+    }
+
+    private void logMove(Piece p, int targetCol, int targetRow) {
+        log.info("{} {}: {} to {}", p.getTurn(), p.getTypeID(),
+            board.getSquareNameAt(p.getPreCol(), p.getPreRow()),
+            board.getSquareNameAt(targetCol, targetRow));
+    }
+
+    public List<Moves> getMovePieces() {
+        return movePieces;
+    }
+    public List<Moves> getMoveAIPieces() {
+        return moveAIPieces;
     }
 
     public static boolean isWithinBoard(int col, int row) {
@@ -117,21 +152,16 @@ public class BoardService {
         int colStep = Integer.signum(colDiff);
         int rowStep = Integer.signum(rowDiff);
 
-        if(colStep == 0 && rowStep == 0) {
-            return false;
-        }
-
-        if(colStep != 0 && rowStep != 0 && Math.abs(colDiff) != Math.abs(rowDiff)) {
-            return false;
-        }
+        if(colStep == 0 && rowStep == 0) { return false; }
+        if(colStep != 0 && rowStep != 0 && Math.abs(colDiff) != Math.abs(rowDiff)) { return false; }
 
         int currentCol = piece.getCol() + colStep;
         int currentRow = piece.getRow() + rowStep;
 
         while(currentCol != targetCol || currentRow != targetRow) {
-            if(getPieceAt(currentCol, currentRow) != null) {
-                return false;
-            }
+            if(getPieceAt(currentCol, currentRow) != null) { return false; }
+            currentCol += colStep;
+            currentRow += rowStep;
         }
         return true;
     }
