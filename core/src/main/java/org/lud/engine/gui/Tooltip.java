@@ -16,7 +16,7 @@ public class Tooltip {
     private boolean isVisible = false;
     private float timer = 0f;
     private final float delay = 0.25f;
-    private final float padding = 8f;
+    private final float padding = 32f;
     private final Texture tex;
     private final int cs;
     private final float scale;
@@ -119,14 +119,13 @@ public class Tooltip {
         batch.draw(center, l + cell * scale, b + cell * scale, w - 2 * cell * scale, h - 2 * cell * scale);
 
         float textX = l + hPadding;
-        float extraHeight = h - textHeight;
-        float textY = t - padding - extraHeight/3;
+        float textY = t - padding;
 
         for(String line : lines) {
             layout.setText(font, line);
             font.setColor(Color.WHITE);
             font.draw(batch, layout, textX, textY);
-            textY -= layout.height + 2;
+            textY -= layout.height + 8;
         }
         batch.end();
     }
