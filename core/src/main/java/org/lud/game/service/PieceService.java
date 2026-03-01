@@ -91,14 +91,31 @@ public class PieceService {
         service.getBoardService().removePiece(p);
     }
 
-    public static void updatePos(Piece p, boolean isOldPos) {
-        p.setX(p.getCol() * Board.getSQUARE());
-        p.setY(p.getRow() * Board.getSQUARE());
+    public static void updatePos(Piece p, int targetCol, int targetRow) {
+        p.setPreCol(p.getCol());
+        p.setPreRow(p.getRow());
+        p.setCol(targetCol);
+        p.setRow(targetRow);
         p.setHasMoved(true);
     }
 
     public static float[] toPixels(int col, int row) {
         float square = Board.getSQUARE();
         return new float[]{col * square, row * square};
+    }
+
+    public void clearBoard() {
+        for(Piece p : new ArrayList<>(pieces)) {
+            if(p.getParent() != null) {
+                p.remove();
+            }
+        }
+        pieces.clear();
+        Piece[][] ps = service.getBoardService().getBoard().getPieces();
+        for(int i = 0; i < ps.length; i++) {
+            for(int j = 0; j < ps[0].length; j++) {
+                ps[i][j] = null;
+            }
+        }
     }
 }

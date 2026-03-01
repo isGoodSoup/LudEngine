@@ -111,10 +111,14 @@ public class MainMenu extends Menu {
         for(Button b : getButtons()) {
             menuGroup.addActor(b);
         }
+    }
 
+    @Override
+    public void show() {
+        super.show();
         menuGroup.setPosition(0, Gdx.graphics.getHeight());
-        menuGroup.addAction(Actions.moveTo(0, 0, DURATION, Interpolation.pow5Out));
         getStage().addActor(menuGroup);
+        menuGroup.addAction(Actions.moveTo(0, 0, DURATION, Interpolation.pow5Out));
     }
 
     @Override

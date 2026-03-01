@@ -62,9 +62,14 @@ public class SettingsMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
-        getStage().addActor(group);
-
         // TODO toggles
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        getStage().addActor(group);
+        group.addAction(Actions.moveTo(25f, 25f, DURATION, Interpolation.pow5Out));
     }
 
     @Override

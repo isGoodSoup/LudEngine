@@ -33,7 +33,7 @@ public class BoardService {
     public void setPieces() {
         for(Piece[] row : board.getPieces()) {
             for(Piece p : row) {
-                if(p != null) addPiece(p);
+                if(p != null) { addPiece(p); }
             }
         }
     }
@@ -66,19 +66,17 @@ public class BoardService {
             service.getGameService().canMove(piece, targetCol, targetRow)) {
 
             Piece captured = getPieceAt(targetCol, targetRow);
-            if(captured != null) {
+            if (captured != null) {
+                if(captured.getParent() != null) { captured.remove(); }
                 service.getPieceService().removePiece(captured);
             }
 
             moves.add(new Move(piece, piece.getCol(), piece.getRow(),
                 targetCol, targetRow, piece.getTurn(), captured));
-
-            piece.setCol(targetCol);
-            piece.setRow(targetRow);
-            piece.setHasMoved(true);
+            PieceService.updatePos(piece, targetCol, targetRow);
 
             log.info("{} {}: {} to {}", piece.getTurn(), piece.getTypeID(),
-                board.getSquareNameAt(piece.getCol(), piece.getRow()),
+                board.getSquareNameAt(piece.getPreCol(), piece.getPreRow()),
                 board.getSquareNameAt(targetCol, targetRow));
 
             return true;
