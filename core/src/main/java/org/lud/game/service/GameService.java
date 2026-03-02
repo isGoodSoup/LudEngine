@@ -7,8 +7,12 @@ import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
-import org.lud.game.screens.*;
+import org.lud.game.enums.TypeID;
 import org.lud.game.moves.MovePiece;
+import org.lud.game.screens.AchievementsMenu;
+import org.lud.game.screens.BoardScreen;
+import org.lud.game.screens.MainMenu;
+import org.lud.game.screens.SettingsMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +110,7 @@ public class GameService {
                     MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(), col, row,
                         piece.getTurn(), targetPiece);
 
-                    if (canMove(piece, col, row)) {
+                    if (canMove(piece, col, row) && !wouldLeaveKingInCheck(piece, col, row)) {
                         legalMoves.add(move);
                     }
                 }
@@ -115,11 +119,38 @@ public class GameService {
         return legalMoves;
     }
 
-    public boolean isLegal() {
-        return isLegal;
-    }
-    public void setLegal(boolean legal) {
-        this.isLegal = legal;
+    public boolean wouldLeaveKingInCheck(Piece piece, int targetCol, int targetRow) {
+        int originalCol = piece.getCol();
+        int originalRow = piece.getRow();
+        Piece captured = BoardService.getPieceAt(targetCol, targetRow);
+        piece.setCol(targetCol);
+        piece.setRow(targetRow);
+        if (captured != null) {
+            service.getPieceService().removePiece(captured);
+        }
+
+        Piece king = service.getPieceService().getPieces().stream()
+            .filter(p -> p.getTypeID() == TypeID.KING && p.getTurn() == piece.getTurn())
+            .findFirst()
+            .orElse(null);
+
+        boolean inCheck = false;
+        if(king != null) {
+            for (Piece enemy : service.getPieceService().getPieces()) {
+                if (enemy.getTurn() != piece.getTurn() && canMove(enemy, king.getCol(), king.getRow())) {
+                    inCheck = true;
+                    break;
+                }
+            }
+        }
+
+        piece.setCol(originalCol);
+        piece.setRow(originalRow);
+        if(captured != null) {
+            service.getPieceService().getPieces().add(captured);
+        }
+
+        return inCheck;
     }
 
     public boolean canMove(Piece p, int targetCol, int targetRow) {

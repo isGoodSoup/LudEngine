@@ -23,10 +23,6 @@ public enum Difficulty {
         return difficulties[index];
     }
 
-    public Difficulty update() {
-        return this;
-    }
-
     public String getLabelKey() {
         return Localization.lang.t(this.labelKey);
     }

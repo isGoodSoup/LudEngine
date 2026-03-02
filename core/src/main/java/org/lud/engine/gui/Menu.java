@@ -211,7 +211,8 @@ public abstract class Menu implements Screen {
         combos.put(Input.Keys.D, () -> {
             Difficulty next = boardService.getDifficulty().nextDifficulty();
             boardService.switchDifficulties(next);
-            createToast(boardService.getDifficulty().update());
+            createToast(next);
+            System.out.println(boardService.getDifficulty() + " to " + next.name());
             audioService.playFX(2);
         });
         combos.put(Input.Keys.Q, Gdx.app::exit);
