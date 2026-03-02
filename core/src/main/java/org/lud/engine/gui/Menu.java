@@ -277,7 +277,7 @@ public abstract class Menu implements Screen {
     }
 
     public void select() {
-        // TODO
+        // TODO select logic
     }
 
     public SpriteBatch getBatch() {

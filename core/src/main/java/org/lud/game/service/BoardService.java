@@ -86,7 +86,7 @@ public class BoardService {
             service.getGameService().canMove(piece, targetCol, targetRow)) {
 
             Piece captured = getPieceAt(targetCol, targetRow);
-            if (captured != null) {
+            if(captured != null) {
                 if(captured.getParent() != null) { captured.remove(); }
                 service.getPieceService().removePiece(captured);
                 captured = null;
