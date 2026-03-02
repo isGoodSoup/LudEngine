@@ -18,7 +18,10 @@ public class Tooltip {
     private final float delay = 0.25f;
     private float padding = 32f;
     private final Texture tex;
+    private final TextureRegion tl, tr, bl, br;
+    private final TextureRegion top, bottom, left, right, center;
     private final int cs;
+    private final int cell = 4;
     private final float scale;
 
     public Tooltip(String text, BitmapFont font, Texture tex, int cs, float scale){
@@ -27,6 +30,32 @@ public class Tooltip {
         this.tex = tex;
         this.cs = cs;
         this.scale = scale;
+
+        int texW = tex.getWidth();
+        int texH = tex.getHeight();
+        int centerW = texW - 2 * cell;
+        int centerH = texH - 2 * cell;
+
+        this.tl = new TextureRegion(tex, 0, texH - cell, cell, cell);
+        this.tr = new TextureRegion(tex, texW - cell, texH - cell, cell, cell);
+        this.bl = new TextureRegion(tex, 0, 0, cell, cell);
+        this.br = new TextureRegion(tex, texW - cell, 0, cell, cell);
+
+        this.top = new TextureRegion(tex, cell, texH - cell, centerW, cell);
+        this.bottom = new TextureRegion(tex, cell, 0, centerW, cell);
+        this.left = new TextureRegion(tex, 0, cell, cell, centerH);
+        this.right = new TextureRegion(tex, texW - cell, cell, cell, centerH);
+        this.center = new TextureRegion(tex, cell, cell, centerW, centerH);
+
+        tl.flip(false, true);
+        tr.flip(false, true);
+        bl.flip(false, true);
+        br.flip(false, true);
+        top.flip(false, true);
+        bottom.flip(false, true);
+        left.flip(false, true);
+        right.flip(false, true);
+        center.flip(false, true);
     }
 
     public void setText(String text){ this.text = text; }
@@ -80,33 +109,6 @@ public class Tooltip {
         float r = drawX + w;
         float t = drawY;
         float b = drawY - h;
-
-        int cell = 4;
-        int texW = tex.getWidth();
-        int texH = tex.getHeight();
-        int centerW = texW - 2 * cell;
-        int centerH = texH - 2 * cell;
-
-        TextureRegion tl = new TextureRegion(tex, 0, texH - cell, cell, cell);
-        TextureRegion tr = new TextureRegion(tex, texW - cell, texH - cell, cell, cell);
-        TextureRegion bl = new TextureRegion(tex, 0, 0, cell, cell);
-        TextureRegion br = new TextureRegion(tex, texW - cell, 0, cell, cell);
-
-        TextureRegion top = new TextureRegion(tex, cell, texH - cell, centerW, cell);
-        TextureRegion bottom = new TextureRegion(tex, cell, 0, centerW, cell);
-        TextureRegion left = new TextureRegion(tex, 0, cell, cell, centerH);
-        TextureRegion right = new TextureRegion(tex, texW - cell, cell, cell, centerH);
-        TextureRegion center = new TextureRegion(tex, cell, cell, centerW, centerH);
-
-        tl.flip(false, true);
-        tr.flip(false, true);
-        bl.flip(false, true);
-        br.flip(false, true);
-        top.flip(false, true);
-        bottom.flip(false, true);
-        left.flip(false, true);
-        right.flip(false, true);
-        center.flip(false, true);
 
         batch.begin();
         Gdx.gl.glEnable(GL20.GL_BLEND);

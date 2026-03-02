@@ -178,8 +178,12 @@ public abstract class Menu implements Screen {
     public abstract void checkInput();
 
     public Toast createToast(Difficulty difficulty) {
-        Toast toast = new Toast(difficulty.getLabelKey(),
-            difficulty.name(), getMediumFont(), Gdx.graphics.getWidth()/2f, 100f);
+        float toastWidth = Gdx.graphics.getWidth()/3f;
+        float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
+
+        Toast toast = new Toast(difficulty.getLabelKey(), difficulty.name(), getMediumFont(),
+                        centerX, 75f);
+
         toasts.add(toast);
         toastGroup.addActor(toast);
         toastGroup.toFront();
@@ -205,9 +209,9 @@ public abstract class Menu implements Screen {
             Lang.nextLang();
         });
         combos.put(Input.Keys.D, () -> {
-            boardService.switchDifficulties(
-                boardService.getDifficulty().nextDifficulty());
-            createToast(boardService.getDifficulty());
+            Difficulty next = boardService.getDifficulty().nextDifficulty();
+            boardService.switchDifficulties(next);
+            createToast(boardService.getDifficulty().update());
             audioService.playFX(2);
         });
         combos.put(Input.Keys.Q, Gdx.app::exit);

@@ -150,7 +150,7 @@ public class BoardScreen extends Menu {
 
         boardGroup.setPosition(startX, startY + Gdx.graphics.getHeight());
         uiGroup.setPosition(25f, startY + Gdx.graphics.getHeight());
-        getToastGroup().setPosition(Gdx.graphics.getWidth()/2f, 0);
+        getToastGroup().setPosition(0, 0);
 
         getStage().addActor(boardGroup);
         getStage().addActor(uiGroup);
