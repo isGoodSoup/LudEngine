@@ -28,8 +28,8 @@ public class Toast extends Actor {
         this.text = text;
         this.font = font;
         this.tex = new Texture("tooltip.png");
-        this.width = 200;
-        this.height = 50;
+        this.width = 200f;
+        this.height = 100f;
         setPosition(targetX, -height);
         setSize(width, height);
 

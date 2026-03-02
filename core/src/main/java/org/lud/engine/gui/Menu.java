@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lud.engine.core.AudioService;
+import org.lud.engine.enums.Difficulty;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.Lang;
 import org.lud.engine.enums.LastInput;
@@ -30,6 +32,7 @@ public abstract class Menu implements Screen {
     private final SpriteBatch batch;
     private final ShapeRenderer shaper;
     private final List<Menu> menus;
+    private final List<Toast> toasts;
     private final List<Button> buttons;
 
     private final BitmapFont small;
@@ -48,6 +51,8 @@ public abstract class Menu implements Screen {
     private int moveX;
     private int moveY;
 
+    private Group toastGroup;
+
     private Tooltip tooltip;
     private Texture texture;
 
@@ -60,6 +65,8 @@ public abstract class Menu implements Screen {
         this.combos = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
+        this.toasts = new ArrayList<>();
+        this.toastGroup = new Group();
 
         this.generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BoldPixels.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter params = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -170,6 +177,15 @@ public abstract class Menu implements Screen {
     public abstract void setup();
     public abstract void checkInput();
 
+    public Toast createToast(Difficulty difficulty) {
+        Toast toast = new Toast(difficulty.getLabelKey(),
+            difficulty.name(), getMediumFont(), Gdx.graphics.getWidth()/2f, 100f);
+        toasts.add(toast);
+        toastGroup.addActor(toast);
+        toastGroup.toFront();
+        return toast;
+    }
+
     private void loadKeys() {
         actions.put(Input.Keys.ESCAPE, () -> {
             gameService.showMainMenu();
@@ -191,6 +207,7 @@ public abstract class Menu implements Screen {
         combos.put(Input.Keys.D, () -> {
             boardService.switchDifficulties(
                 boardService.getDifficulty().nextDifficulty());
+            createToast(boardService.getDifficulty());
             audioService.playFX(2);
         });
         combos.put(Input.Keys.Q, Gdx.app::exit);
@@ -290,6 +307,14 @@ public abstract class Menu implements Screen {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public Group getToastGroup() {
+        return toastGroup;
+    }
+
+    public List<Toast> getToasts() {
+        return toasts;
     }
 
     @Override

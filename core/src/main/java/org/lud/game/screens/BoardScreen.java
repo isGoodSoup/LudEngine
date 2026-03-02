@@ -16,6 +16,7 @@ import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
+import org.lud.engine.gui.Toast;
 import org.lud.engine.input.BoardInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.engine.interfaces.Moves;
@@ -136,6 +137,10 @@ public class BoardScreen extends Menu {
         for(Button b : getButtons()) {
             uiGroup.addActor(b);
         }
+
+        for(Toast t : getToasts()) {
+            getToastGroup().addActor(t);
+        }
     }
 
     @Override
@@ -145,9 +150,11 @@ public class BoardScreen extends Menu {
 
         boardGroup.setPosition(startX, startY + Gdx.graphics.getHeight());
         uiGroup.setPosition(25f, startY + Gdx.graphics.getHeight());
+        getToastGroup().setPosition(Gdx.graphics.getWidth()/2f, 0);
 
         getStage().addActor(boardGroup);
         getStage().addActor(uiGroup);
+        getStage().addActor(getToastGroup());
 
         if(gameService.isFirstBoardEntry()) {
             boardGroup.addAction(Actions.moveTo(startX, startY, DURATION, Interpolation.pow5Out));
