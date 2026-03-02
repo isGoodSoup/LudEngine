@@ -3,6 +3,7 @@ package org.lud.game.service;
 import com.badlogic.gdx.Gdx;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.core.GameFrame;
+import org.lud.engine.enums.GameState;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.interfaces.Moves;
@@ -31,6 +32,7 @@ public class GameService {
     private final Menu settingsMenu;
     private final Menu achievementsMenu;
     private final BoardScreen boardScreen;
+    private GameState gameState;
 
     private Piece checkingPiece;
 
@@ -41,6 +43,7 @@ public class GameService {
     public GameService(GameFrame gameFrame, ServiceFactory service) {
         this.gameFrame = gameFrame;
         this.service = service;
+        this.gameState = GameState.MENU;
 
         AudioService audio = service.getAudioService();
         PieceService piece = service.getPieceService();
@@ -57,12 +60,17 @@ public class GameService {
     public boolean isFirstBoardEntry() { return isFirstBoardEntry; }
     public void resetFirstBoardEntry() { isFirstBoardEntry = !isFirstBoardEntry; }
 
+    public GameState getGameState() { return gameState; }
+    public void setGameState(GameState gameState) { this.gameState = gameState; }
+
     public void showMainMenu() {
         activeMenu = mainMenu;
+        gameState = GameState.MENU;
         gameFrame.setScreen(activeMenu);
     }
     public void showBoard() {
         activeMenu = boardScreen;
+        gameState = GameState.BOARD;
         gameFrame.setScreen(activeMenu);
     }
     public void resetBoard() {

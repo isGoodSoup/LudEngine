@@ -13,10 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lud.engine.core.AudioService;
-import org.lud.engine.enums.Difficulty;
-import org.lud.engine.enums.Direction;
-import org.lud.engine.enums.Lang;
-import org.lud.engine.enums.LastInput;
+import org.lud.engine.enums.*;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.data.ButtonData;
 import org.lud.game.service.BoardService;
@@ -202,6 +199,7 @@ public abstract class Menu implements Screen {
         actions.put(Input.Keys.NUMPAD_SUBTRACT, () -> audioService.setMusicVolume(-0.1f));
 
         combos.put(Input.Keys.T, () -> {
+            if(gameService.getGameState() == GameState.BOARD) { return; }
             Colors.nextTheme();
             audioService.playFX(1);
         });

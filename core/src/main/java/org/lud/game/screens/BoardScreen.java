@@ -121,19 +121,6 @@ public class BoardScreen extends Menu {
             buttonX += baseButton.getWidth() + spacing;
         }
 
-        BackgroundTile bg = new BackgroundTile(Colors.getEdge(), -PADDING, -PADDING,
-            BOARD_SIZE + PADDING * 2, BOARD_SIZE + PADDING * 2, getShaper());
-        boardGroup.addActor(bg);
-
-        for(int row = 0; row < 8; row++) {
-            for(int col = 0; col < 8; col++) {
-                Color color = (row + col) % 2 == 0 ? Colors.getBackground() : Colors.getForeground();
-                Tile tile = new Tile(getShaper(), color, col * TILE_SIZE, row * TILE_SIZE,
-                    TILE_SIZE);
-                boardGroup.addActor(tile);
-            }
-        }
-
         for(Button b : getButtons()) {
             uiGroup.addActor(b);
         }
@@ -162,6 +149,19 @@ public class BoardScreen extends Menu {
         } else {
             boardGroup.setPosition(startX, startY);
             uiGroup.setPosition(25f, 25f);
+        }
+
+        BackgroundTile bg = new BackgroundTile(Colors.getEdge(), -PADDING, -PADDING,
+            BOARD_SIZE + PADDING * 2, BOARD_SIZE + PADDING * 2, getShaper());
+        boardGroup.addActor(bg);
+
+        for(int row = 0; row < 8; row++) {
+            for(int col = 0; col < 8; col++) {
+                Color color = (row + col) % 2 == 0 ? Colors.getBackground() : Colors.getForeground();
+                Tile tile = new Tile(getShaper(), color, col * TILE_SIZE, row * TILE_SIZE,
+                    TILE_SIZE);
+                boardGroup.addActor(tile);
+            }
         }
 
         pieceService.setPieces();
