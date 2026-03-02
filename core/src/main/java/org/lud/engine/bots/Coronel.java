@@ -11,38 +11,54 @@ public class Coronel implements AI {
 
     @Override
     public Moves chooseMove(List<Moves> legalMoves) {
-        if(legalMoves.isEmpty()) { return null; }
+        if(legalMoves.isEmpty()) return null;
 
-        Moves bestMove = null;
         int bestScore = Integer.MIN_VALUE;
-
         List<Moves> bestMoves = new ArrayList<>();
+
         for(Moves move : legalMoves) {
             int score = move.getScoreImpact();
             score += move.isCapture();
-            score += isUniqueBonus(move);
+            score += history.contains(moveKey(move)) ? 0 : 5;
+
+            int opponentMax = simulateOpponentResponse(move, legalMoves);
+            score -= opponentMax;
 
             if(score > bestScore) {
                 bestScore = score;
-                bestMove = move;
-                bestMoves.add(bestMove);
+                bestMoves.clear();
+                bestMoves.add(move);
+            } else if(score == bestScore) {
+                bestMoves.add(move);
             }
         }
 
-        if(bestMove != null) {
-            history.add(moveKey(bestMove));
+        if(!bestMoves.isEmpty()) {
+            Moves chosen = bestMoves.get((int) (Math.random() * bestMoves.size()));
+            history.add(moveKey(chosen));
+            return chosen;
         }
-        int index = Math.max((int) (Math.random() * bestMoves.size()), bestMoves.size());
-        return bestMoves.get(index);
+
+        return legalMoves.get((int) (Math.random() * legalMoves.size()));
+    }
+
+    private int simulateOpponentResponse(Moves move, List<Moves> allMoves) {
+        int maxImpact = 0;
+        Turn opponentTurn = (move.isTurn()) ? Turn.DARK : Turn.LIGHT;
+        for(Moves oppMove : allMoves) {
+            if(oppMove.getTurn() != opponentTurn) continue;
+
+            int impact = oppMove.getScoreImpact();
+            impact += oppMove.isCapture();
+            maxImpact = Math.max(maxImpact, impact);
+        }
+
+        return maxImpact;
     }
 
     @Override
     public void switchTurns() {
         Turn.nextTurn();
-    }
-
-    private int isUniqueBonus(Moves move) {
-        return history.contains(moveKey(move)) ? 0 : 10;
     }
 
     private String moveKey(Moves move) {

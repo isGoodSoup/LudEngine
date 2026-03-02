@@ -12,18 +12,15 @@ public class Beta implements AI {
     public Moves chooseMove(List<Moves> legalMoves) {
         if(legalMoves.isEmpty()) { return null; }
 
-        List<Moves> safeMoves = legalMoves.stream()
-            .filter(m -> m.getScoreImpact() >= 0)
-            .toList();
-
         int bestScore = Integer.MIN_VALUE;
         List<Moves> bestMoves = new ArrayList<>();
-        for(Moves move : safeMoves) {
+
+        for(Moves move : legalMoves) {
             int score = move.getScoreImpact();
             if(score > bestScore) {
+                bestScore = score;
                 bestMoves.clear();
                 bestMoves.add(move);
-                bestScore = score;
             } else if(score == bestScore) {
                 bestMoves.add(move);
             }

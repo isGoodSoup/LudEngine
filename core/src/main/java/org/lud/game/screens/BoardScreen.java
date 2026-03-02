@@ -158,6 +158,8 @@ public class BoardScreen extends Menu {
         }
 
         pieceService.setPieces();
+        boardService.setPieces();
+
         for(Piece p : pieceService.getPieces()) {
             p.setSprite(pieceService.getSprite(p));
             p.setPosition(p.getCol() * TILE_SIZE, p.getRow() * TILE_SIZE);

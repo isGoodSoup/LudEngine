@@ -174,14 +174,14 @@ public class GameService {
                 return target == null || target.getTurn() != p.getTurn();
             }
             case ROOK -> {
-                if(targetCol == p.getPreCol() || targetRow == p.getPreRow()) {
+                if(targetCol == p.getCol() || targetRow == p.getRow()) {
                     return BoardService.isValidSquare(p, targetCol, targetRow,
                         service.getPieceService().getPieces())
                         && BoardService.isPathClear(p, targetCol, targetRow);
                 }
             }
             case QUEEN -> {
-                if(targetCol == p.getPreCol() || targetRow == p.getPreRow()) {
+                if(targetCol == p.getCol() || targetRow == p.getRow()) {
                     return BoardService.isValidSquare(p, targetCol, targetRow,
                         service.getPieceService().getPieces())
                         && BoardService.isPathClear(p, targetCol, targetRow);

@@ -83,6 +83,9 @@ public class PieceService {
         }
         service.getBoardService().removePiece(pold);
         service.getBoardService().addPiece(pnew);
+
+        removePiece(pold);
+        addPiece(pnew);
         getSprite(pnew);
     }
 
@@ -103,7 +106,7 @@ public class PieceService {
             }
         }
         pieces.clear();
-        Piece[][] ps = service.getBoardService().getBoard().getPieces();
+        Piece[][] ps = BoardService.getBoard().getPieces();
         for(int i = 0; i < ps.length; i++) {
             for(int j = 0; j < ps[0].length; j++) {
                 ps[i][j] = null;

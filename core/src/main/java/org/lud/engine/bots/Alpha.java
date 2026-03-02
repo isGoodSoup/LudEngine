@@ -10,6 +10,12 @@ public class Alpha implements AI {
     @Override
     public Moves chooseMove(List<Moves> legalMoves) {
         if(legalMoves.isEmpty()) { return null; }
+
+        List<Moves> safe = legalMoves.stream()
+            .filter(m -> m.getScoreImpact() >= 0)
+            .toList();
+        if(!safe.isEmpty()) { legalMoves = safe; }
+
         int index = (int) (Math.random() * legalMoves.size());
         return legalMoves.get(index);
     }

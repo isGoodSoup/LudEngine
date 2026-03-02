@@ -7,9 +7,7 @@ import org.lud.engine.interfaces.AI;
 public enum Difficulty {
     ALPHA("difficulty.alpha", new Alpha()),
     BETA("difficulty.beta", new Beta()),
-    CORONEL("difficulty.coronel", new Coronel()),
-    DELTA("difficulty.delta", new Delta()),
-    SIGMA("difficulty.sigma", new Sigma());
+    CORONEL("difficulty.coronel", new Coronel());
 
     private final AI ai;
     private final String labelKey;

@@ -35,16 +35,16 @@ public class BoardService {
         board = new Board();
         this.movePieces = new ArrayList<>();
         this.moveAIPieces = new ArrayList<>();
-        this.difficulty = Difficulty.ALPHA;
+        this.difficulty = Difficulty.CORONEL;
         canUndo = true;
     }
 
     public OrthographicCamera getCamera() { return camera; }
-    public Board getBoard() { return board; }
+    public static Board getBoard() { return board; }
 
     public void setPieces() {
-        for(Piece[] row : board.getPieces()) {
-            for(Piece p : row) {
+        for(Piece[] col : board.getPieces()) {
+            for(Piece p : col) {
                 if(p != null) { addPiece(p); }
             }
         }
@@ -63,8 +63,12 @@ public class BoardService {
     }
 
     public static Piece getPieceAt(int col, int row) {
-        if(isWithinBoard(col, row)) {
-            return board.getPieces()[row][col];
+        try {
+            if(isWithinBoard(col, row)) {
+                return board.getPieces()[row][col];
+            }
+        } catch(NullPointerException e) {
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -89,7 +93,8 @@ public class BoardService {
             if(captured != null) {
                 if(captured.getParent() != null) { captured.remove(); }
                 service.getPieceService().removePiece(captured);
-                captured = null;
+                log.debug("{} {} > {} {}", captured.getTurn(), captured.getTypeID(),
+                    piece.getTurn(), piece.getTypeID());
             }
 
             MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
