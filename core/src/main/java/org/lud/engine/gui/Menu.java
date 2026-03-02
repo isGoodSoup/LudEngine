@@ -8,11 +8,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lud.engine.core.AudioService;
+import org.lud.engine.core.Cursor;
 import org.lud.engine.enums.*;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.data.ButtonData;
@@ -25,6 +27,7 @@ import java.util.*;
 public abstract class Menu implements Screen {
     private Map<Integer, Runnable> actions;
     private Map<Integer, Runnable> combos;
+    private final Cursor cursor;
     private final Stage stage;
     private final SpriteBatch batch;
     private final ShapeRenderer shaper;
@@ -58,6 +61,7 @@ public abstract class Menu implements Screen {
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
+        this.cursor = new Cursor();
         this.actions = new LinkedHashMap<>();
         this.combos = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
@@ -100,6 +104,10 @@ public abstract class Menu implements Screen {
             }
         }
         return new Texture(iconPath);
+    }
+
+    public Cursor getCursor() {
+        return cursor;
     }
 
     public void addMenu(Menu... menus) {
@@ -151,6 +159,10 @@ public abstract class Menu implements Screen {
 
         stage.act(delta);
         stage.draw();
+        cursor.render(batch);
+
+        updateCursor(delta);
+        updateSelection();
 
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             for(int i = 0; i < getButtons().size(); i++) {
@@ -160,6 +172,34 @@ public abstract class Menu implements Screen {
         } else {
             for(Button b : getButtons()) {
                 b.setSelected(false);
+            }
+        }
+    }
+
+    public void updateCursor(float delta) {
+        if (Coordinator.getLastInput() == LastInput.KEYBOARD) {
+            int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
+            Button selected = buttons.get(index);
+            cursor.setPosition(selected.getX() + selected.getWidth()/2f,
+                selected.getY() + selected.getHeight()/2f);
+        }
+
+        Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight()
+            - Gdx.input.getY());
+        if (mousePos.x != cursor.x || mousePos.y != cursor.y) {
+            cursor.setPosition(mousePos.x, mousePos.y);
+            Coordinator.setLastInput(LastInput.MOUSE);
+        }
+    }
+
+    public void updateSelection() {
+        for(int i = 0; i < buttons.size(); i++) {
+            Button b = buttons.get(i);
+            boolean isOver = cursor.x >= b.getX() && cursor.x <= b.getX() + b.getWidth()
+                && cursor.y >= b.getY() && cursor.y <= b.getY() + b.getHeight();
+            b.setSelected(isOver);
+            if (isOver && Coordinator.getLastInput() == LastInput.KEYBOARD) {
+                stage.setKeyboardFocus(b);
             }
         }
     }
@@ -294,10 +334,6 @@ public abstract class Menu implements Screen {
         if(selected != null) {
             selected.onClick();
         }
-    }
-
-    public void select() {
-        // TODO select logic
     }
 
     public SpriteBatch getBatch() {

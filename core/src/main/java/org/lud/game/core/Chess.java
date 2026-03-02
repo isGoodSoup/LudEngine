@@ -1,6 +1,7 @@
 package org.lud.game.core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.engine.core.GameFrame;
 import org.lud.engine.enums.Theme;
@@ -30,6 +31,7 @@ public class Chess extends GameFrame {
         service.getAudioService().setMusicVolume(0.4f);
         Localization.lang.setLocale(Locale.forLanguageTag("en"));
         Colors.setTheme(Theme.LEGACY);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
         setScreen(new IntroScreen(this, service.getGameService(),
             service.getAudioService(), service.getBoardService()));
     }

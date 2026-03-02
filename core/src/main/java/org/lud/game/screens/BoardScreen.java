@@ -57,14 +57,11 @@ public class BoardScreen extends Menu {
     private Group uiGroup;
     private Texture baseButton;
     private Texture frame;
-    private Texture cursor;
 
     private final float startX;
     private final float startY;
 
     private int lastAnimatedIndex = -1;
-
-    private boolean isCursorActive;
 
     public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
@@ -93,7 +90,6 @@ public class BoardScreen extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
-        this.cursor = new Texture("cursor.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.RESET, gameService::resetBoard, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.UNDO, boardService::undoMove, () -> audioService.playFX(0)));
@@ -199,7 +195,7 @@ public class BoardScreen extends Menu {
         boardInput.update(boardGroup);
 
         checkInput();
-        if(!isCursorActive) {
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             globalInput();
         }
     }
@@ -224,14 +220,10 @@ public class BoardScreen extends Menu {
     }
 
     private void drawCursor() {
-        int offset = 32;
-        getBatch().begin();
-        if(Coordinator.getLastInput() == LastInput.KEYBOARD &&
-            isCursorActive) {
-            getBatch().draw(cursor, boardGroup.getX() + getMoveX() * TILE_SIZE + offset,
-                boardGroup.getY() + getMoveY() * TILE_SIZE - offset);
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+            getCursor().setPosition(boardGroup.getX() + getMoveX() * TILE_SIZE,
+                boardGroup.getY() + getMoveY() * TILE_SIZE);
         }
-        getBatch().end();
     }
 
     private void drawTooltip(float delta) {
@@ -257,15 +249,7 @@ public class BoardScreen extends Menu {
 
     @Override
     public void checkInput() {
-        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) { isCursorActive ^= true; }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            if (isCursorActive) {
-                select();
-            } else {
-                activate();
-            }
-        }
-        if(!isCursorActive) { return; }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) { activate(); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
