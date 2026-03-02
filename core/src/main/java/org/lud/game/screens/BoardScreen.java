@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -57,6 +56,7 @@ public class BoardScreen extends Menu {
     private Group uiGroup;
     private Texture baseButton;
     private Texture frame;
+    private Texture cursor;
 
     private final float startX;
     private final float startY;
@@ -92,6 +92,7 @@ public class BoardScreen extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
+        this.cursor = new Texture("cursor.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.RESET, gameService::resetBoard, () -> audioService.playFX(0)));
         data.add(new ButtonData(UIButton.UNDO, boardService::undoMove, () -> audioService.playFX(0)));
@@ -214,14 +215,14 @@ public class BoardScreen extends Menu {
     }
 
     private void drawCursor() {
-        getShaper().begin(ShapeRenderer.ShapeType.Filled);
+        int offset = 32;
+        getBatch().begin();
         if(Coordinator.getLastInput() == LastInput.KEYBOARD &&
             isCursorActive) {
-            getShaper().setColor(Colors.getHighlight());
-            getShaper().rect(boardGroup.getX() + getMoveX() * TILE_SIZE,
-                boardGroup.getY() + getMoveY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            getBatch().draw(cursor, boardGroup.getX() + getMoveX() * TILE_SIZE + offset,
+                boardGroup.getY() + getMoveY() * TILE_SIZE - offset);
         }
-        getShaper().end();
+        getBatch().end();
     }
 
     private void drawTooltip(float delta) {
