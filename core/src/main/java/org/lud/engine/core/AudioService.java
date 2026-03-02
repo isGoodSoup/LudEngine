@@ -21,10 +21,11 @@ public class AudioService {
 
     public void loadFx() {
         this.fx = new Sound[10];
-        fx[0] = loadSound("piece-fx", ".wav");
+        fx[0] = loadSound("click", ".wav");
         fx[1] = loadSound("menu-select", ".wav");
         fx[2] = loadSound("reveal", ".wav");
         fx[3] = loadSound("checkmate", ".wav");
+        fx[4] = loadSound("piece_fx", ".ogg");
     }
 
     public Sound loadSound(String file, String format) {
