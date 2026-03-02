@@ -5,15 +5,17 @@ import org.lud.engine.gui.Localization;
 import org.lud.engine.interfaces.AI;
 
 public enum Difficulty {
-    ALPHA("difficulty.alpha"),
-    BETA("difficulty.beta"),
-    CORONEL("difficulty.coronel"),
-    DELTA("difficulty.delta"),
-    SIGMA("difficulty.sigma");
+    ALPHA("difficulty.alpha", new Alpha()),
+    BETA("difficulty.beta", new Beta()),
+    CORONEL("difficulty.coronel", new Coronel()),
+    DELTA("difficulty.delta", new Delta()),
+    SIGMA("difficulty.sigma", new Sigma());
 
+    private final AI ai;
     private final String labelKey;
 
-    Difficulty(String labelKey) {
+    Difficulty(String labelKey, AI ai) {
+        this.ai = ai;
         this.labelKey = labelKey;
     }
 
@@ -22,12 +24,6 @@ public enum Difficulty {
     }
 
     public static AI setDiff(Difficulty difficulty) {
-        return switch(difficulty) {
-            case ALPHA -> new Alpha();
-            case BETA -> new Beta();
-            case CORONEL -> new Coronel();
-            case DELTA -> new Delta();
-            case SIGMA -> new Sigma();
-        };
+        return difficulty.ai;
     }
 }

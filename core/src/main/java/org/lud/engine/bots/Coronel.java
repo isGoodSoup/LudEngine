@@ -16,6 +16,7 @@ public class Coronel implements AI {
         Moves bestMove = null;
         int bestScore = Integer.MIN_VALUE;
 
+        List<Moves> bestMoves = new ArrayList<>();
         for(Moves move : legalMoves) {
             int score = move.getScoreImpact();
             score += move.isCapture();
@@ -24,14 +25,15 @@ public class Coronel implements AI {
             if(score > bestScore) {
                 bestScore = score;
                 bestMove = move;
+                bestMoves.add(bestMove);
             }
         }
 
         if(bestMove != null) {
             history.add(moveKey(bestMove));
         }
-
-        return bestMove;
+        int index = Math.max((int) (Math.random() * bestMoves.size()), bestMoves.size());
+        return bestMoves.get(index);
     }
 
     @Override

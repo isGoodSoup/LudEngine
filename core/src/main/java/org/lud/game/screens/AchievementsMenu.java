@@ -3,12 +3,15 @@ package org.lud.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
+import org.lud.engine.gui.Colors;
+import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
@@ -79,6 +82,18 @@ public class AchievementsMenu extends Menu {
     @Override
     public void render(float delta) {
         super.render(delta);
+
+        String header = Localization.lang.t("header.achievements").toUpperCase();
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(getLargeFont(), header);
+
+        float startY = Gdx.graphics.getHeight() - 100f;
+        float headerX = (Gdx.graphics.getWidth() - layout.width)/2f;
+
+        getBatch().begin();
+        getLargeFont().setColor(Colors.getForeground());
+        getLargeFont().draw(getBatch(), header, headerX, startY);
+        getBatch().end();
 
         globalInput();
         checkInput();

@@ -31,7 +31,11 @@ public abstract class Menu implements Screen {
     private final ShapeRenderer shaper;
     private final List<Menu> menus;
     private final List<Button> buttons;
-    private final BitmapFont font;
+
+    private final BitmapFont small;
+    private final BitmapFont medium;
+    private final BitmapFont large;
+
     private final FreeTypeFontGenerator generator;
     private boolean isInit;
     private final GameService gameService;
@@ -61,11 +65,19 @@ public abstract class Menu implements Screen {
         FreeTypeFontGenerator.FreeTypeFontParameter params = new FreeTypeFontGenerator.FreeTypeFontParameter();
         params.size = 32;
         params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
-        font = generator.generateFont(params);
+        small = generator.generateFont(params);
+
+        params.size = 40;
+        params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
+        medium = generator.generateFont(params);
+
+        params.size = 48;
+        params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
+        large = generator.generateFont(params);
         generator.dispose();
 
         this.texture = new Texture(Gdx.files.internal("tooltip.png"));
-        this.tooltip = new Tooltip("", font, texture, 16, 4);
+        this.tooltip = new Tooltip("", small, texture, 16, 4);
 
         this.batch = new SpriteBatch();
         this.stage = new Stage(new ScreenViewport(), batch);
@@ -100,8 +112,14 @@ public abstract class Menu implements Screen {
         return buttons;
     }
 
-    public BitmapFont getFont() {
-        return font;
+    public BitmapFont getSmallFont() {
+        return small;
+    }
+    public BitmapFont getMediumFont() {
+        return medium;
+    }
+    public BitmapFont getLargeFont() {
+        return large;
     }
 
     public int getMoveY() { return moveY; }
@@ -278,6 +296,8 @@ public abstract class Menu implements Screen {
         shaper.dispose();
         stage.dispose();
         for(Button b : buttons) { b.dispose(); }
-        font.dispose();
+        small.dispose();
+        medium.dispose();
+        large.dispose();
     }
 }

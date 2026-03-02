@@ -26,6 +26,7 @@ public class BoardService {
     private final List<Moves> movePieces;
     private final List<Moves> moveAIPieces;
 
+    private Difficulty difficulty;
     private boolean canUndo;
 
     public BoardService(ServiceFactory service, OrthographicCamera camera) {
@@ -34,6 +35,7 @@ public class BoardService {
         board = new Board();
         this.movePieces = new ArrayList<>();
         this.moveAIPieces = new ArrayList<>();
+        this.difficulty = Difficulty.ALPHA;
         canUndo = true;
     }
 
@@ -67,6 +69,10 @@ public class BoardService {
         return null;
     }
 
+    private void switchDifficulties(Difficulty difficulty) {
+        this.difficulty = difficulty;
+    }
+
     public boolean attemptMove(Piece piece, int targetCol, int targetRow) {
         if(!isWithinBoard(targetCol, targetRow)) { return false; }
 
@@ -90,7 +96,13 @@ public class BoardService {
 
             logMove(piece, targetCol, targetRow);
 
-            AI ai = Difficulty.setDiff(Difficulty.CORONEL);
+            AI ai = switch(difficulty) {
+                case ALPHA -> Difficulty.setDiff(difficulty);
+                case BETA -> Difficulty.setDiff(difficulty);
+                case CORONEL -> Difficulty.setDiff(difficulty);
+                case DELTA -> Difficulty.setDiff(difficulty);
+                case SIGMA -> Difficulty.setDiff(difficulty);
+            };
             ai.switchTurns();
 
             if(Turn.getTurn() == Turn.DARK) {
