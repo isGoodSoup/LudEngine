@@ -17,7 +17,7 @@ public class Cursor {
 
     public void render(SpriteBatch batch) {
         batch.begin();
-        batch.draw(sprite, x - sprite.getWidth()/2f,
+        batch.draw(sprite, x - sprite.getWidth()/2f + 16f,
             y - sprite.getHeight()/2f);
         batch.end();
     }

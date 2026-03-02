@@ -24,6 +24,9 @@ public class Tooltip {
     private final int cell = 4;
     private final float scale;
 
+    private final float cursorOffsetY = 32f;
+    private final float cursorOffsetX = 48f;
+
     public Tooltip(String text, BitmapFont font, Texture tex, int cs, float scale){
         this.text = text;
         this.font = font;
@@ -65,8 +68,8 @@ public class Tooltip {
             timer += delta;
             if(timer >= delay){
                 isVisible = true;
-                x = mouseX;
-                y = mouseY;
+                x = mouseX + cursorOffsetX;
+                y = mouseY + cursorOffsetY;
             }
         } else{
             timer = 0f;
