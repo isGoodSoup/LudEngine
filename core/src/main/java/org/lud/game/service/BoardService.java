@@ -129,6 +129,7 @@ public class BoardService {
     }
 
     public void undoMove() {
+        if(movePieces.isEmpty()) { return; }
         if(!canUndo) { return; }
         List<Moves> moves = movePieces;
         MovePiece move = (MovePiece) moves.getLast();
