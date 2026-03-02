@@ -15,7 +15,7 @@ public class Lwjgl3Launcher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
         config.setWindowedMode(displayMode.width, displayMode.height);
-        config.setTitle("LudEngine v1.0");
+        config.setTitle("LudEngine v1.3");
         config.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
         config.setWindowedMode(displayMode.width, displayMode.height);
         config.setDecorated(false);

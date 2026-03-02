@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 
 public enum Theme {
     DEFAULT(
-        "white", "black",
+        "white", "brown",
         new Color(1f, 1f, 1f, 1f),
         new Color(0.078f, 0.078f, 0.157f, 1f),
         new Color(0.078f, 0.078f, 0.157f, 1f),
@@ -39,7 +39,7 @@ public enum Theme {
         new Color(0.588f, 0.941f, 0.706f, 1f)
     ),
     LOGO(
-        "logo", "black",
+        "logo", "brown",
         new Color(0.435f, 0.686f, 0.302f, 1f),
         new Color(0.278f, 0.529f, 0.145f, 1f),
         new Color(0.200f, 0.451f, 0.067f, 1f),

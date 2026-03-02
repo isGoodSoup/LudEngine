@@ -7,6 +7,7 @@ import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
+import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
 import org.lud.game.moves.MovePiece;
 import org.lud.game.screens.AchievementsMenu;
@@ -16,6 +17,7 @@ import org.lud.game.screens.SettingsMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class GameService {
     private final Menu settingsMenu;
     private final Menu achievementsMenu;
     private final BoardScreen boardScreen;
+
+    private Piece checkingPiece;
 
     private boolean isLegal;
     private boolean isFirstBoardEntry = true;
@@ -125,7 +129,7 @@ public class GameService {
         Piece captured = BoardService.getPieceAt(targetCol, targetRow);
         piece.setCol(targetCol);
         piece.setRow(targetRow);
-        if (captured != null) {
+        if(captured != null) {
             service.getPieceService().removePiece(captured);
         }
 
@@ -151,6 +155,46 @@ public class GameService {
         }
 
         return inCheck;
+    }
+
+    public boolean isKingInCheck(Turn kingColor) {
+        Piece king = service.getPieceService().getKing(kingColor);
+        if(king == null) { return false; }
+
+        for(Piece p : service.getPieceService().getPieces()) {
+            if(p.getTurn() != kingColor) {
+                if(canMove(p, king.getCol(), king.getRow())) {
+                    checkingPiece = p;
+                    return true;
+                }
+            }
+        }
+        checkingPiece = null;
+        return false;
+    }
+
+    public boolean isCheckmate() {
+        Turn currentTurn = Turn.getTurn();
+        Turn opponent = Turn.DARK;
+        Piece king = service.getPieceService().getKing(opponent);
+        if(king == null) { return false; }
+        if(!isKingInCheck(opponent)) { return false; }
+
+        for(Piece piece : service.getPieceService().getPieces()) {
+            if(piece.getTurn() != opponent) { continue; }
+            for(int col = 0; col < Board.getSIZE(); col++) {
+                for(int row = 0; row < Board.getSIZE(); row++) {
+                    if(canMove(piece, col, row) &&
+                        !wouldLeaveKingInCheck(piece, col, row)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        log.debug("Checkmate for {}", opponent);
+        service.getAudioService().playFX(3);
+        return true;
     }
 
     public boolean canMove(Piece p, int targetCol, int targetRow) {
@@ -248,10 +292,6 @@ public class GameService {
                 }
             }
         }
-        return false;
-    }
-
-    private boolean isCheckmate() {
         return false;
     }
 

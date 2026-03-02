@@ -27,7 +27,7 @@ public class Chess extends GameFrame {
         camera.update();
         service = new ServiceFactory(this, camera);
         service.getAudioService().playMusic();
-        service.getAudioService().setMusicVolume(0.6f);
+        service.getAudioService().setMusicVolume(0.4f);
         Localization.lang.setLocale(Locale.forLanguageTag("en"));
         Colors.setTheme(Theme.LEGACY);
         setScreen(new IntroScreen(this, service.getGameService(),

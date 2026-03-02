@@ -94,6 +94,17 @@ public class PieceService {
         service.getBoardService().removePiece(p);
     }
 
+    public Piece getKing(Turn turn) {
+        Piece king = null;
+        for(Piece piece : pieces) {
+            if(piece.getTypeID() == TypeID.KING && piece.getTurn() == turn.getTurn()) {
+                king = piece;
+                return king;
+            }
+        }
+        return king;
+    }
+
     public static float[] toPixels(int col, int row) {
         float square = Board.getSQUARE();
         return new float[]{col * square, row * square};

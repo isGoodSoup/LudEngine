@@ -87,6 +87,9 @@ public class BoardService {
 
     public boolean attemptMove(Piece piece, int targetCol, int targetRow) {
         if(!isWithinBoard(targetCol, targetRow)) { return false; }
+        if(service.getGameService().isCheckmate()) {
+            return false;
+        }
 
         // TODO: implement special logic for pawns, kings, castling, en-passant
 
