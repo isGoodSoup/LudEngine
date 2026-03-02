@@ -20,15 +20,16 @@ public class AudioService {
     }
 
     public void loadFx() {
-        this.fx = new Sound[2];
+        this.fx = new Sound[10];
         fx[0] = loadSound("piece-fx", ".wav");
         fx[1] = loadSound("menu-select", ".wav");
+        fx[2] = loadSound("reveal", ".wav");
+        fx[3] = loadSound("checkmate", ".wav");
     }
 
     public Sound loadSound(String file, String format) {
         return Gdx.audio.newSound(Gdx.files.internal("sounds/" + file + format));
     }
-
     public Music loadMusic(String file, String format) {
         return Gdx.audio.newMusic(Gdx.files.internal("sounds/" + file + format));
     }
@@ -62,28 +63,35 @@ public class AudioService {
         }
     }
 
-    private float sliderToDb(float slider) {
-        float minDb = -40f;
-        float maxDb = 0f;
-        return minDb + (maxDb - minDb) * slider;
+    private float linearToDb(float linear) {
+        return 20f * (float)Math.log10(Math.max(linear, 0.0001f));
     }
 
     private float dbToLinear(float db) {
-        return (float) Math.pow(10f, db/20f);
+        return (float)Math.pow(10f, db/20f);
     }
 
-    public void setMasterVolume(float slider) {
-        masterGain = dbToLinear(sliderToDb(slider));
+    public void setMasterGain(float delta) {
+        float linear = masterGain;
+        linear += delta;
+        linear = Math.max(0f, Math.min(1f, linear));
+        masterGain = linear;
         apply();
     }
 
-    public void setMusicVolume(float slider) {
-        musicGain = dbToLinear(sliderToDb(slider));
+    public void setMusicVolume(float delta) {
+        float linear = musicGain;
+        linear += delta;
+        linear = Math.max(0f, Math.min(1f, linear));
+        musicGain = linear;
         apply();
     }
 
-    public void setSfxVolume(float slider) {
-        sfxGain = dbToLinear(sliderToDb(slider));
+    public void setFXVolume(float delta) {
+        float linear = sfxGain;
+        linear += delta;
+        linear = Math.max(0f, Math.min(1f, linear));
+        sfxGain = linear;
         apply();
     }
 

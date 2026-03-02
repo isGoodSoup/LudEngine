@@ -8,8 +8,10 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
-import org.lud.engine.enums.Direction;
-import org.lud.engine.gui.*;
+import org.lud.engine.gui.Button;
+import org.lud.engine.gui.Colors;
+import org.lud.engine.gui.Localization;
+import org.lud.engine.gui.Menu;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.BoardService;
@@ -28,8 +30,6 @@ public class SettingsMenu extends Menu {
     private Group group;
     private Texture baseButton;
     private Texture frame;
-
-    private Slider volume;
 
     public SettingsMenu(GameService gameService, AudioService audioService,
                         BoardService boardService) {
@@ -103,12 +103,6 @@ public class SettingsMenu extends Menu {
     public void checkInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             activate();
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            cursor(Direction.UP);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            cursor(Direction.DOWN);
         }
     }
 

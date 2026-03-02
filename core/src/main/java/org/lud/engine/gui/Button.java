@@ -19,6 +19,7 @@ public class Button extends Actor implements Clickable {
     private final Texture frame;
     private final Runnable sound;
     private boolean isHovered = false;
+    private boolean isSelected = false;
 
     public Button(float x, float y, float width, float height,
                   Texture baseTexture, Texture iconNormal, Texture frame,
@@ -45,13 +46,17 @@ public class Button extends Actor implements Clickable {
 
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                isHovered = true;
-                Coordinator.setLastInput(LastInput.MOUSE);
+                if(Coordinator.getLastInput() != LastInput.KEYBOARD) {
+                    isHovered = true;
+                    Coordinator.setLastInput(LastInput.MOUSE);
+                }
             }
 
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                isHovered = false;
+                if(Coordinator.getLastInput() != LastInput.KEYBOARD) {
+                    isHovered = false;
+                }
             }
         });
     }
@@ -62,9 +67,10 @@ public class Button extends Actor implements Clickable {
         float alpha = col.a * parentAlpha;
         batch.setColor(col.r, col.g, col.b, alpha);
 
+        Texture iconToDraw = (isSelected || isHovered) && iconHighlighted != null ? iconHighlighted : iconNormal;
         batch.draw(baseTexture, getX(), getY(), getWidth(), getHeight());
-        batch.draw(isHovered ? iconHighlighted : iconNormal, getX(), getY(), getWidth(), getHeight());
-        if(isHovered && frame != null) {
+        batch.draw(iconToDraw, getX(), getY(), getWidth(), getHeight());
+        if((isSelected || isHovered) && frame != null) {
             batch.draw(frame, getX(), getY(), getWidth(), getHeight());
         }
     }
@@ -83,6 +89,13 @@ public class Button extends Actor implements Clickable {
     }
     public void setHovered(boolean hovered) {
         this.isHovered = hovered;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public void dispose() {

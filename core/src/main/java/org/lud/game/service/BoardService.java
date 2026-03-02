@@ -69,8 +69,12 @@ public class BoardService {
         return null;
     }
 
-    private void switchDifficulties(Difficulty difficulty) {
-        this.difficulty = difficulty;
+    public AI switchDifficulties(Difficulty d) {
+        return Difficulty.setDiff(d);
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     public boolean attemptMove(Piece piece, int targetCol, int targetRow) {
@@ -96,13 +100,7 @@ public class BoardService {
 
             logMove(piece, targetCol, targetRow);
 
-            AI ai = switch(difficulty) {
-                case ALPHA -> Difficulty.setDiff(difficulty);
-                case BETA -> Difficulty.setDiff(difficulty);
-                case CORONEL -> Difficulty.setDiff(difficulty);
-                case DELTA -> Difficulty.setDiff(difficulty);
-                case SIGMA -> Difficulty.setDiff(difficulty);
-            };
+            AI ai = switchDifficulties(difficulty);
             ai.switchTurns();
 
             if(Turn.getTurn() == Turn.DARK) {

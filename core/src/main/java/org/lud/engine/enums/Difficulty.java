@@ -19,6 +19,12 @@ public enum Difficulty {
         this.labelKey = labelKey;
     }
 
+    public Difficulty nextDifficulty() {
+        Difficulty[] difficulties = Difficulty.values();
+        int index = (this.ordinal() + 1) % difficulties.length;
+        return difficulties[index];
+    }
+
     public String getLabelKey() {
         return Localization.lang.t(this.labelKey);
     }

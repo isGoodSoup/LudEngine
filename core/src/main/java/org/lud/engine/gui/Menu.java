@@ -151,7 +151,11 @@ public abstract class Menu implements Screen {
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             for(int i = 0; i < getButtons().size(); i++) {
                 Button b = getButtons().get(i);
-                b.setHovered(i == selectionIndexY);
+                b.setSelected(i == selectionIndexY);
+            }
+        } else {
+            for(Button b : getButtons()) {
+                b.setSelected(false);
             }
         }
     }
@@ -174,22 +178,20 @@ public abstract class Menu implements Screen {
         actions.put(Input.Keys.UP, () -> cursor(Direction.UP));
         actions.put(Input.Keys.DOWN, () -> cursor(Direction.DOWN));
         actions.put(Input.Keys.M, () -> audioService.toggleMusic());
+        actions.put(Input.Keys.NUMPAD_ADD, () -> audioService.setMusicVolume(0.1f));
+        actions.put(Input.Keys.NUMPAD_SUBTRACT, () -> audioService.setMusicVolume(-0.1f));
 
-        combos.put(Input.Keys.W, () -> {
-            audioService.setMusicVolume(Math.max(1,
-                audioService.getMusicGain() + 0.1f));
-        });
-
-        combos.put(Input.Keys.S, () -> {
-            audioService.setMusicVolume(Math.max(0,
-                audioService.getMusicGain() - 0.1f));
-        });
         combos.put(Input.Keys.T, () -> {
             Colors.nextTheme();
             audioService.playFX(1);
         });
         combos.put(Input.Keys.L, () -> {
             Lang.nextLang();
+        });
+        combos.put(Input.Keys.D, () -> {
+            boardService.switchDifficulties(
+                boardService.getDifficulty().nextDifficulty());
+            audioService.playFX(2);
         });
         combos.put(Input.Keys.Q, Gdx.app::exit);
     }
@@ -215,7 +217,8 @@ public abstract class Menu implements Screen {
     }
 
     public void cursor(Direction dir) {
-        int maxIndex = getButtons().size() - 1;
+        List<Button> buttons = getButtons();
+        if(buttons.isEmpty()) return;
         Coordinator.setLastInput(LastInput.KEYBOARD);
 
         switch(dir) {
@@ -223,17 +226,17 @@ public abstract class Menu implements Screen {
                 selectionIndexY = Math.max(0, selectionIndexY - 1);
                 audioService.playFX(1);
             }
-            case LEFT -> {
-                selectionIndexX = Math.max(0, selectionIndexX - 1);
-                audioService.playFX(1);
-            }
             case DOWN -> {
-                selectionIndexY = Math.min(maxIndex, selectionIndexY + 1);
+                selectionIndexY = Math.min(buttons.size() - 1, selectionIndexY + 1);
                 audioService.playFX(1);
             }
-            case RIGHT -> {
-                selectionIndexX = Math.min(maxIndex, selectionIndexX + 1);
-                audioService.playFX(1);
+        }
+
+        for(int i = 0; i < buttons.size(); i++){
+            Button b = buttons.get(i);
+            b.setSelected(i == selectionIndexY);
+            if(i == selectionIndexY) {
+                stage.setKeyboardFocus(b);
             }
         }
     }
@@ -269,8 +272,7 @@ public abstract class Menu implements Screen {
         Button selected = buttons.get(index);
 
         if(selected != null) {
-            selected.getAction().run();
-            audioService.playFX(0);
+            selected.onClick();
         }
     }
 

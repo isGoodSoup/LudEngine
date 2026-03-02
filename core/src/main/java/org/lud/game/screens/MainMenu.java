@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
-import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.Lang;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Localization;
@@ -86,16 +85,15 @@ public class MainMenu extends Menu {
             Texture icon = getButton(data, false);
             Texture highlighted = getButton(data, true);
 
-            if(!isPlayButton && data.type().getSuffix().equals("play")) {
-                isPlayButton = true;
-            } else {
-                isPlayButton = false;
-            }
+            boolean isPlayButton = data.type().getSuffix().equals("play");
 
-            Button b = new Button(startX, y - baseButton.getHeight()/2f,
+            Button b = new Button(
+                startX, y - baseButton.getHeight()/2f,
                 baseButton.getWidth(), baseButton.getHeight(),
-                isPlayButton ? altButton : baseButton, icon, frame, highlighted,
-                data.soundPath(), data.action());
+                isPlayButton ? altButton : baseButton,
+                icon, frame, highlighted,
+                data.soundPath(), data.action()
+            );
 
             tooltips.put(b, () -> Localization.lang.t("tooltip." + data.type().getSuffix()));
             addButton(b);
@@ -147,12 +145,6 @@ public class MainMenu extends Menu {
     public void checkInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             activate();
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            cursor(Direction.UP);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            cursor(Direction.DOWN);
         }
     }
 

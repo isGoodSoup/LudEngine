@@ -27,6 +27,7 @@ public class Chess extends GameFrame {
         camera.update();
         service = new ServiceFactory(this, camera);
         service.getAudioService().playMusic();
+        service.getAudioService().setMusicVolume(0.6f);
         Localization.lang.setLocale(Locale.forLanguageTag("en"));
         Colors.setTheme(Theme.LEGACY);
         setScreen(new IntroScreen(this, service.getGameService(),
@@ -35,7 +36,6 @@ public class Chess extends GameFrame {
 
     @Override
     public void render() {
-        service.getAudioService().setMusicVolume(0.6f);
         camera.update();
         super.render();
     }

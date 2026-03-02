@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
-import org.lud.engine.enums.Direction;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
@@ -103,12 +102,6 @@ public class AchievementsMenu extends Menu {
     public void checkInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             activate();
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            cursor(Direction.UP);
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            cursor(Direction.DOWN);
         }
     }
 
