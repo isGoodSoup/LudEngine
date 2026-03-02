@@ -63,6 +63,8 @@ public class BoardScreen extends Menu {
 
     private int lastAnimatedIndex = -1;
 
+    private boolean isCursorActive;
+
     public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
         super(gameService, audioService, boardService);
@@ -249,7 +251,9 @@ public class BoardScreen extends Menu {
 
     @Override
     public void checkInput() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) { isCursorActive = !isCursorActive; }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) { activate(); }
+        if(isCursorActive) { return; }
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }

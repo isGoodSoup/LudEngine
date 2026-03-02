@@ -125,7 +125,7 @@ public class BoardService {
                         ((MovePiece) n).targetCol(),
                         ((MovePiece)n).targetRow());
                 }
-                service.getAudioService().playFX(0);
+                service.getAudioService().playFX(4);
                 canUndo = !canUndo;
                 ai.switchTurns();
             }

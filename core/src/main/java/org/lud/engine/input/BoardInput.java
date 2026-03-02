@@ -82,7 +82,7 @@ public class BoardInput {
 
             if(boardService.attemptMove(piece, col, row)) {
                 piece.setPosition(piece.getCol() * tileSize, piece.getRow() * tileSize);
-                audioService.playFX(0);
+                audioService.playFX(4);
             } else {
                 piece.setPosition(piece.getCol() * tileSize, piece.getRow() * tileSize);
             }

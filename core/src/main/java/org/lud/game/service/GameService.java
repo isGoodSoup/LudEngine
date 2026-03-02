@@ -111,6 +111,8 @@ public class GameService {
         for(Piece piece : pieces) {
             if(piece.getTurn() != turn) continue;
 
+            // TODO ConcurrentModificationException on Pieces
+
             for(int row = 0; row < 8; row++) {
                 for(int col = 0; col < 8; col++) {
                     if(piece.getRow() == row && piece.getCol() == col) { continue; }
