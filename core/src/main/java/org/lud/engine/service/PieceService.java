@@ -88,6 +88,7 @@ public class PieceService {
 
     public void removePiece(Piece p) {
         pieces.remove(p);
+        if(p.getParent() != null) { p.remove(); }
     }
 
     public Piece getKing(Turn turn) {

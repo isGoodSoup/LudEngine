@@ -79,12 +79,16 @@ public class BoardService {
         }
 
         if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces())
-            && service.getGameService().canMove(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
+            && service.getGameService().canMove(piece, targetCol, targetRow,
+            service.getPieceService().getPieces())) {
 
-            Piece captured = getPieceAt(targetCol, targetRow, service.getPieceService().getPieces());
-            if(captured != null) {
-                if(captured.getParent() != null) { captured.remove(); }
+            Piece captured = getPieceAt(targetCol, targetRow,
+                service.getPieceService().getPieces());
+
+            if(captured != null && captured != piece) {
+                log.debug("Capturing piece at {} {}", captured.getCol(), captured.getRow());
                 service.getPieceService().removePiece(captured);
+                log.debug("Pieces remaining: {}", service.getPieceService().getPieces().size());
                 log.debug("{} {} > {} {}", captured.getTurn(), captured.getTypeID(),
                     piece.getTurn(), piece.getTypeID());
             }
@@ -186,21 +190,22 @@ public class BoardService {
     }
 
     public boolean saveKing(Piece piece, int targetCol, int targetRow, Piece king) {
-        Piece captured = getPieceAt(targetCol, targetRow,
-            service.getPieceService().getPieces());
-        int oldCol = piece.getCol();
-        int oldRow = piece.getRow();
+        List<Piece> copy = service.getPieceService().getPieces().stream()
+            .map(p -> p.copy(p))
+            .toList();
 
-        piece.setCol(targetCol);
-        piece.setRow(targetRow);
+        Piece simPiece = copy.stream()
+            .filter(p -> p.equals(piece))
+            .findFirst().orElseThrow();
 
-        if(captured != null) { service.getPieceService().removePiece(captured); }
-        boolean kingSafe = !service.getGameService().isKingInCheck(king.getTurn());
+        simPiece.setCol(targetCol);
+        simPiece.setRow(targetRow);
 
-        piece.setCol(oldCol);
-        piece.setRow(oldRow);
-        if(captured != null) { service.getPieceService().addPiece(captured); }
-        return kingSafe;
+        Piece simKing = copy.stream()
+            .filter(p -> p.getTypeID() == TypeID.KING && p.getTurn() == king.getTurn())
+            .findFirst().orElseThrow();
+
+        return !service.getGameService().isKingInCheck(simKing.getTurn(), copy);
     }
 
     public boolean canEnPassant(Piece piece, int targetCol, int targetRow, List<Piece> board) {

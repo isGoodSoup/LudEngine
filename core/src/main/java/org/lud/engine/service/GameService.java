@@ -191,14 +191,13 @@ public class GameService {
         return sim.getFirst();
     }
 
-    public boolean isKingInCheck(Turn kingColor) {
+    public boolean isKingInCheck(Turn kingColor, List<Piece> list) {
         Piece king = service.getPieceService().getKing(kingColor);
         if(king == null) { return false; }
 
-        for(Piece p : service.getPieceService().getPieces()) {
+        for(Piece p : list) {
             if(p.getTurn() != kingColor) {
-                if(canMove(p, king.getCol(), king.getRow(),
-                    service.getPieceService().getPieces())) {
+                if(canMove(p, king.getCol(), king.getRow(), list)) {
                     checkingPiece = p;
                     return true;
                 }
@@ -213,7 +212,7 @@ public class GameService {
         Turn opponent = currentTurn.getOpossite();
         Piece king = service.getPieceService().getKing(opponent);
         if(king == null) { return false; }
-        if(!isKingInCheck(opponent)) { return false; }
+        if(!isKingInCheck(opponent, service.getPieceService().getPieces())) { return false; }
 
         List<Piece> pieces = service.getPieceService().getPieces();
 
