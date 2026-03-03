@@ -147,8 +147,9 @@ public class BoardService {
 
     public static boolean isValidSquare(Piece piece, int targetCol, int targetRow,
                                         List<Piece> board) {
-        for (Piece p : board) {
+        for(Piece p : board) {
             if(p.getCol() == targetCol && p.getRow() == targetRow) {
+                if(p.getTypeID() == TypeID.KING) { return false; }
                 return p.getTurn() != piece.getTurn();
             }
         }

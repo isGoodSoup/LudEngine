@@ -165,6 +165,7 @@ public abstract class Menu implements Screen {
 
     @Override public void show() {
         Gdx.input.setInputProcessor(stage);
+        Coordinator.setLastInput(LastInput.MOUSE);
         if(!isInit) {
             setup();
             isInit = true;
