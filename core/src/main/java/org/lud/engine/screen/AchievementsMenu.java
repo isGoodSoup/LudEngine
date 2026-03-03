@@ -8,12 +8,14 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import org.lud.engine.core.AudioService;
+import org.lud.engine.data.Achievement;
+import org.lud.engine.data.ButtonData;
+import org.lud.engine.enums.UIButton;
 import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
-import org.lud.engine.data.ButtonData;
-import org.lud.engine.enums.UIButton;
+import org.lud.engine.service.AchievementService;
 import org.lud.engine.service.BoardService;
 import org.lud.engine.service.GameService;
 import org.lud.engine.service.PieceService;
@@ -27,19 +29,24 @@ public class AchievementsMenu extends Menu {
     private final AudioService audioService;
     private final BoardService boardService;
     private final PieceService pieceService;
+    private final AchievementService achievementService;
     private final List<ButtonData> data;
+    private final List<Achievement> achievements;
     private Group group;
     private Texture baseButton;
     private Texture frame;
 
     public AchievementsMenu(GameService gameService, AudioService audioService,
-                            BoardService boardService, PieceService pieceService) {
+                            BoardService boardService, PieceService pieceService,
+                            AchievementService achievementService) {
         super(gameService, audioService, boardService, pieceService);
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
         this.pieceService = pieceService;
+        this.achievementService = achievementService;
         this.data = new ArrayList<>();
+        this.achievements = achievementService.listOfAchievements();
         addMenu(this);
         loadSprites();
     }
@@ -71,7 +78,6 @@ public class AchievementsMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
-        // TODO Achievements menu
     }
 
     @Override

@@ -48,10 +48,11 @@ public class GameService {
         AudioService audio = service.getAudioService();
         PieceService piece = service.getPieceService();
         BoardService board = service.getBoardService();
+        AchievementService achievement = service.getAchievementService();
 
         this.mainMenu = new MainMenu(this, audio, board, piece);
         this.settingsMenu = new SettingsMenu(this, audio, board, piece);
-        this.achievementsMenu = new AchievementsMenu(this, audio, board, piece);
+        this.achievementsMenu = new AchievementsMenu(this, audio, board, piece, achievement);
         this.boardScreen = new BoardScreen(board, this, piece, audio);
 
         activeMenu = mainMenu;
