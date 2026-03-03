@@ -61,7 +61,8 @@ public class BoardScreen extends Menu {
     private final float startX;
     private final float startY;
 
-    private int lastAnimatedIndex = -1;
+    private int lastAnimatedDark = -1;
+    private int lastAnimatedLight = -1;
 
     public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
@@ -179,12 +180,21 @@ public class BoardScreen extends Menu {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         super.render(delta);
 
-        List<Moves> moves = boardService.getMoveAIPieces();
-        if (!moves.isEmpty() && moves.size() - 1 > lastAnimatedIndex) {
-            Moves last = moves.getLast();
+        List<Moves> dark = boardService.getMoveAIPieces();
+        if (!dark.isEmpty() && dark.size() - 1 > lastAnimatedDark) {
+            Moves last = dark.getLast();
             if (last instanceof MovePiece move && move.color() == Turn.DARK) {
                 animateMove(move);
-                lastAnimatedIndex = moves.size() - 1;
+                lastAnimatedDark = dark.size() - 1;
+            }
+        }
+
+        List<Moves> light = boardService.getMovePieces();
+        if (!light.isEmpty() && light.size() - 1 > lastAnimatedLight) {
+            Moves last = light.getLast();
+            if (last instanceof MovePiece move && move.color() == Turn.LIGHT) {
+                animateMove(move);
+                lastAnimatedLight = light.size() - 1;
             }
         }
 

@@ -45,11 +45,17 @@ public abstract class Menu implements Screen {
     private final BitmapFont large;
 
     private final FreeTypeFontGenerator generator;
-    private boolean isInit;
     private final GameService gameService;
     private final AudioService audioService;
     private final BoardService boardService;
     private final PieceService pieceService;
+
+    private Piece selectedPiece;
+
+    private Group toastGroup;
+
+    private Tooltip tooltip;
+    private Texture texture;
 
     private int selectionIndexY;
     private int selectionIndexX;
@@ -57,12 +63,8 @@ public abstract class Menu implements Screen {
     private int moveX;
     private int moveY;
 
-    private Group toastGroup;
-
-    private Tooltip tooltip;
-    private Texture texture;
-
     private boolean isCursorActive;
+    private boolean isInit;
 
     public Menu(GameService gameService, AudioService audioService,
                 BoardService boardService, PieceService pieceService) {
@@ -342,21 +344,30 @@ public abstract class Menu implements Screen {
         }
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     public void activate() {
         if(isCursorActive) {
             int cursorCol = getMoveX();
             int cursorRow = getMoveY();
 
-            Piece selected = null;
+            Piece underCursor = null;
             for(Piece p : pieceService.getPieces()) {
                 if(p.getCol() == cursorCol && p.getRow() == cursorRow) {
-                    selected = p;
+                    underCursor = p;
                     break;
                 }
             }
-            if(selected != null) {
-                selected.setCol(cursorCol);
-                selected.setRow(cursorRow);
+
+            if(selectedPiece == null) {
+                if(underCursor != null) {
+                    selectedPiece = underCursor;
+                }
+            } else {
+                boolean hasMoved = boardService.attemptMove(selectedPiece, cursorCol, cursorRow);
+                if(hasMoved) {
+                    audioService.playFX(4);
+                } else {}
+                selectedPiece = null;
             }
             return;
         }
