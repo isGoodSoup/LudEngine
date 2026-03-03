@@ -16,6 +16,7 @@ import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
+import org.lud.game.service.PieceService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +26,19 @@ public class AchievementsMenu extends Menu {
     private final GameService gameService;
     private final AudioService audioService;
     private final BoardService boardService;
+    private final PieceService pieceService;
     private final List<ButtonData> data;
     private Group group;
     private Texture baseButton;
     private Texture frame;
 
     public AchievementsMenu(GameService gameService, AudioService audioService,
-                            BoardService boardService) {
-        super(gameService, audioService, boardService);
+                            BoardService boardService, PieceService pieceService) {
+        super(gameService, audioService, boardService, pieceService);
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
+        this.pieceService = pieceService;
         this.data = new ArrayList<>();
         addMenu(this);
         loadSprites();

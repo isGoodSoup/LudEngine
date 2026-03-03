@@ -16,6 +16,7 @@ import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
+import org.lud.game.service.PieceService;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,6 +31,7 @@ public class MainMenu extends Menu {
     private final GameService gameService;
     private final AudioService audioService;
     private final BoardService boardService;
+    private final PieceService pieceService;
     private List<ButtonData> data;
     private Texture logo;
 
@@ -43,10 +45,11 @@ public class MainMenu extends Menu {
     private boolean isPlayButton;
 
     public MainMenu(GameService gameService, AudioService audioService,
-                    BoardService boardService) {
-        super(gameService, audioService, boardService);
+                    BoardService boardService, PieceService pieceService) {
+        super(gameService, audioService, boardService, pieceService);
         this.audioService = audioService;
         this.boardService = boardService;
+        this.pieceService = pieceService;
         this.tooltips = new LinkedHashMap<>();
         this.gameService = gameService;
         this.data = new ArrayList<>();

@@ -17,14 +17,19 @@ import org.lud.engine.core.AudioService;
 import org.lud.engine.core.Cursor;
 import org.lud.engine.enums.*;
 import org.lud.engine.input.Coordinator;
+import org.lud.game.actors.Piece;
 import org.lud.game.data.ButtonData;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
+import org.lud.game.service.PieceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 @SuppressWarnings("ALL")
 public abstract class Menu implements Screen {
+    private static final Logger log = LoggerFactory.getLogger(Menu.class);
     private Map<Integer, Runnable> actions;
     private Map<Integer, Runnable> combos;
     private final Cursor cursor;
@@ -44,6 +49,7 @@ public abstract class Menu implements Screen {
     private final GameService gameService;
     private final AudioService audioService;
     private final BoardService boardService;
+    private final PieceService pieceService;
 
     private int selectionIndexY;
     private int selectionIndexX;
@@ -56,11 +62,14 @@ public abstract class Menu implements Screen {
     private Tooltip tooltip;
     private Texture texture;
 
+    private boolean isCursorActive;
+
     public Menu(GameService gameService, AudioService audioService,
-                BoardService boardService) {
+                BoardService boardService, PieceService pieceService) {
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
+        this.pieceService = pieceService;
         this.cursor = new Cursor();
         this.actions = new LinkedHashMap<>();
         this.combos = new LinkedHashMap<>();
@@ -139,6 +148,14 @@ public abstract class Menu implements Screen {
 
     public int getMoveX() { return moveX; }
     public void setMoveX(int moveX) { this.moveX = moveX; }
+
+    public boolean isCursorActive() {
+        return isCursorActive;
+    }
+
+    public void setCursorActive(boolean cursorActive) {
+        isCursorActive = cursorActive;
+    }
 
     public Tooltip getTooltip() {
         return tooltip;
@@ -280,7 +297,8 @@ public abstract class Menu implements Screen {
 
     public void cursor(Direction dir) {
         List<Button> buttons = getButtons();
-        if(buttons.isEmpty()) return;
+        if(buttons.isEmpty()) { return; }
+        if(isCursorActive) { return; }
         Coordinator.setLastInput(LastInput.KEYBOARD);
 
         switch(dir) {
@@ -325,6 +343,24 @@ public abstract class Menu implements Screen {
     }
 
     public void activate() {
+        if(isCursorActive) {
+            int cursorCol = getMoveX();
+            int cursorRow = getMoveY();
+
+            Piece selected = null;
+            for(Piece p : pieceService.getPieces()) {
+                if(p.getCol() == cursorCol && p.getRow() == cursorRow) {
+                    selected = p;
+                    break;
+                }
+            }
+            if(selected != null) {
+                selected.setCol(cursorCol);
+                selected.setRow(cursorRow);
+            }
+            return;
+        }
+
         List<Button> buttons = getButtons();
         if(buttons.isEmpty()) { return; }
         int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));

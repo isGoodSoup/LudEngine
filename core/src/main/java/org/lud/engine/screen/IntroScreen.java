@@ -10,20 +10,24 @@ import org.lud.game.screens.MainMenu;
 import org.lud.engine.core.AudioService;
 import org.lud.game.service.BoardService;
 import org.lud.game.service.GameService;
+import org.lud.game.service.PieceService;
 
 public class IntroScreen implements Screen {
     private final GameFrame gameFrame;
     private final GameService gameService;
     private final AudioService audioService;
     private final BoardService boardService;
+    private final PieceService pieceService;
     private final Intro intro;
     private SpriteBatch batch;
 
-    public IntroScreen(GameFrame gameFrame, GameService gameService, AudioService audioService, BoardService boardService) {
+    public IntroScreen(GameFrame gameFrame, GameService gameService, AudioService audioService,
+                       BoardService boardService, PieceService pieceService) {
         this.gameFrame = gameFrame;
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
+        this.pieceService = pieceService;
         this.intro = new Intro();
     }
 
@@ -42,7 +46,8 @@ public class IntroScreen implements Screen {
         batch.end();
 
         if(intro.isFinished()) {
-            gameFrame.setScreen(new MainMenu(gameService, audioService, boardService));
+            gameFrame.setScreen(new MainMenu(gameService,
+                audioService, boardService, pieceService));
             dispose();
         }
     }
