@@ -172,7 +172,7 @@ public class BoardScreen extends Menu {
         }
 
         coordinator = new Coordinator();
-        multiplexer = new InputMultiplexer(coordinator, getStage());
+        multiplexer = new InputMultiplexer(getStage(), coordinator);
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -196,6 +196,7 @@ public class BoardScreen extends Menu {
         boardInput.update(boardGroup);
 
         checkInput();
+
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             globalInput();
         }
@@ -222,8 +223,8 @@ public class BoardScreen extends Menu {
 
     private void drawCursor() {
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
-            getCursor().setPosition(boardGroup.getX() + getMoveX() * TILE_SIZE,
-                boardGroup.getY() + getMoveY() * TILE_SIZE);
+            getCursor().setPosition(boardGroup.getX() + getMoveX() * TILE_SIZE + TILE_SIZE/2f,
+                boardGroup.getY() + getMoveY() * TILE_SIZE + 16f);
         }
     }
 
@@ -251,12 +252,13 @@ public class BoardScreen extends Menu {
     @Override
     public void checkInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.TAB)) { isCursorActive = !isCursorActive; }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) { activate(); }
-        if(isCursorActive) { return; }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
+        if(isCursorActive) {
+            if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) { activate(); }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) { cursor(Direction.UP, true); }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
+            if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
+        }
     }
 
     public void slideOut() {
