@@ -1,6 +1,4 @@
-package org.lud.game.enums;
-
-import org.lud.engine.enums.Lang;
+package org.lud.engine.enums;
 
 public enum UIButton {
     PLAY("play"),

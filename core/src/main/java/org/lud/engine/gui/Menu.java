@@ -18,7 +18,7 @@ import org.lud.engine.core.Cursor;
 import org.lud.engine.enums.*;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.actors.Piece;
-import org.lud.game.data.ButtonData;
+import org.lud.engine.data.ButtonData;
 import org.lud.engine.service.BoardService;
 import org.lud.engine.service.GameService;
 import org.lud.engine.service.PieceService;
