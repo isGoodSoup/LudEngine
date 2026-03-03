@@ -13,12 +13,14 @@ public class Cursor {
         this.x = Gdx.input.getX();
         this.y = Gdx.input.getY();
         this.sprite = new Texture("cursor.png");
+        setPosition(Gdx.graphics.getHeight()/2f,
+            Gdx.graphics.getWidth()/2f);
     }
 
     public void render(SpriteBatch batch) {
         batch.begin();
-        batch.draw(sprite, x - sprite.getWidth()/2f + 16f,
-            y - sprite.getHeight()/2f);
+        batch.draw(sprite, x - sprite.getWidth()/2f + 32f,
+            y - sprite.getHeight()/2f - 16f);
         batch.end();
     }
 

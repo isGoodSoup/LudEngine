@@ -182,6 +182,7 @@ public abstract class Menu implements Screen {
             Button selected = buttons.get(index);
             cursor.setPosition(selected.getX() + selected.getWidth()/2f,
                 selected.getY() + selected.getHeight()/2f);
+            return;
         }
 
         Vector2 stageCoords = stage.screenToStageCoordinates(
@@ -303,9 +304,6 @@ public abstract class Menu implements Screen {
     }
 
     public void cursor(Direction dir, boolean isBoard) {
-        int maxIndex = getButtons().size() - 1;
-        Coordinator.setLastInput(LastInput.KEYBOARD);
-
         switch(dir) {
             case UP -> {
                 moveY = Math.min(7, moveY + 1);
