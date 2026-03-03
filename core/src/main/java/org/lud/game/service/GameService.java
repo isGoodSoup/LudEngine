@@ -18,9 +18,9 @@ import org.lud.game.screens.SettingsMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameService {
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
@@ -107,24 +107,24 @@ public class GameService {
 
     public List<Moves> newLegalMoves(Turn turn) {
         List<Moves> legalMoves = new ArrayList<>();
+
         List<Piece> pieces = service.getPieceService().getPieces();
+
         for(Piece piece : pieces) {
             if(piece.getTurn() != turn) continue;
-
-            // TODO ConcurrentModificationException on Pieces
-
             for(int row = 0; row < 8; row++) {
                 for(int col = 0; col < 8; col++) {
                     if(piece.getRow() == row && piece.getCol() == col) { continue; }
                     if(!BoardService.isWithinBoard(col, row)) { continue; }
-                    if(!BoardService.isPathClear(piece, col, row)) { continue; }
-                    Piece targetPiece = BoardService.getPieceAt(col, row);
+                    if(!BoardService.isPathClear(piece, col, row, pieces)) { continue; }
+                    Piece targetPiece = BoardService.getPieceAt(col, row, pieces);
                     if(targetPiece != null && targetPiece.getTurn() == turn) { continue; }
 
                     MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(), col, row,
                         piece.getTurn(), targetPiece);
 
-                    if (canMove(piece, col, row) && !wouldLeaveKingInCheck(piece, col, row)) {
+                    if (canMove(piece, col, row, pieces) &&
+                        !wouldLeaveKingInCheck(piece, col, row, pieces)) {
                         legalMoves.add(move);
                     }
                 }
@@ -133,38 +133,55 @@ public class GameService {
         return legalMoves;
     }
 
-    public boolean wouldLeaveKingInCheck(Piece piece, int targetCol, int targetRow) {
-        int originalCol = piece.getCol();
-        int originalRow = piece.getRow();
-        Piece captured = BoardService.getPieceAt(targetCol, targetRow);
-        piece.setCol(targetCol);
-        piece.setRow(targetRow);
-        if(captured != null) {
-            service.getPieceService().removePiece(captured);
-        }
+    public boolean wouldLeaveKingInCheck(Piece piece, int targetCol, int targetRow, List<Piece> list) {
 
-        Piece king = service.getPieceService().getPieces().stream()
-            .filter(p -> p.getTypeID() == TypeID.KING && p.getTurn() == piece.getTurn())
+        List<Piece> simulated = list.stream()
+            .map(p -> p.copy(p))
+            .collect(Collectors.toList());
+
+        Piece simPiece = simulated.stream()
+            .filter(p -> p.getCol() == piece.getCol()
+                && p.getRow() == piece.getRow()
+                && p.getTurn() == piece.getTurn())
             .findFirst()
             .orElse(null);
 
-        boolean inCheck = false;
-        if(king != null) {
-            for (Piece enemy : service.getPieceService().getPieces()) {
-                if (enemy.getTurn() != piece.getTurn() && canMove(enemy, king.getCol(), king.getRow())) {
-                    inCheck = true;
-                    break;
+        if(simPiece == null) {
+            return true;
+        }
+
+        simulated.stream()
+            .filter(p -> p.getCol() == targetCol && p.getRow() == targetRow)
+            .findFirst().ifPresent(simulated::remove);
+
+        simPiece.setCol(targetCol);
+        simPiece.setRow(targetRow);
+
+        Piece king = simulated.stream()
+            .filter(p -> p.getTypeID() == TypeID.KING
+                && p.getTurn() == piece.getTurn())
+            .findFirst()
+            .orElse(null);
+
+        if (king == null) return true;
+
+        for(Piece enemy : simulated) {
+            if(enemy.getTurn() != piece.getTurn()) {
+                if(canMove(enemy, king.getCol(), king.getRow(), simulated)) {
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
-        piece.setCol(originalCol);
-        piece.setRow(originalRow);
-        if(captured != null) {
-            service.getPieceService().getPieces().add(captured);
+    public Piece findPiece(Piece piece, List<Piece> sim) {
+        for(Piece simp : sim) {
+            if(simp == piece) {
+                return simp;
+            }
         }
-
-        return inCheck;
+        return sim.getFirst();
     }
 
     public boolean isKingInCheck(Turn kingColor) {
@@ -173,7 +190,8 @@ public class GameService {
 
         for(Piece p : service.getPieceService().getPieces()) {
             if(p.getTurn() != kingColor) {
-                if(canMove(p, king.getCol(), king.getRow())) {
+                if(canMove(p, king.getCol(), king.getRow(),
+                    service.getPieceService().getPieces())) {
                     checkingPiece = p;
                     return true;
                 }
@@ -185,17 +203,19 @@ public class GameService {
 
     public boolean isCheckmate() {
         Turn currentTurn = Turn.getTurn();
-        Turn opponent = Turn.DARK;
+        Turn opponent = currentTurn.getOpossite();
         Piece king = service.getPieceService().getKing(opponent);
         if(king == null) { return false; }
         if(!isKingInCheck(opponent)) { return false; }
 
-        for(Piece piece : service.getPieceService().getPieces()) {
+        List<Piece> pieces = service.getPieceService().getPieces();
+
+        for(Piece piece : pieces) {
             if(piece.getTurn() != opponent) { continue; }
             for(int col = 0; col < Board.getSIZE(); col++) {
                 for(int row = 0; row < Board.getSIZE(); row++) {
-                    if(canMove(piece, col, row) &&
-                        !wouldLeaveKingInCheck(piece, col, row)) {
+                    if(canMove(piece, col, row, pieces) &&
+                        !wouldLeaveKingInCheck(piece, col, row, pieces)) {
                         return false;
                     }
                 }
@@ -207,25 +227,24 @@ public class GameService {
         return true;
     }
 
-    public boolean canMove(Piece p, int targetCol, int targetRow) {
+    public boolean canMove(Piece p, int targetCol, int targetRow, List<Piece> list) {
         switch(p.getTypeID()) {
             case PAWN -> {
                 int direction = (p.getTurn() == Turn.LIGHT) ? 1 : -1;
-                Piece pieceAtTarget = BoardService.getPieceAt(targetCol, targetRow);
+                Piece pieceAtTarget = BoardService.getPieceAt(targetCol, targetRow, list);
 
                 if(targetCol == p.getCol() && targetRow == p.getRow() + direction) {
                     return pieceAtTarget == null;
                 }
                 if(targetCol == p.getCol() && targetRow == p.getRow() + 2 * direction
-                    && !p.hasMoved() && BoardService.isPathClear(p, targetCol, targetRow)) {
+                    && !p.hasMoved() && BoardService.isPathClear(p, targetCol, targetRow, list)) {
                     return pieceAtTarget == null;
                 }
                 if(Math.abs(targetCol - p.getCol()) == 1 && targetRow == p.getRow() + direction) {
                     if(pieceAtTarget != null && pieceAtTarget.getTurn() != p.getTurn()) {
                         return true;
                     }
-                    return service.getBoardService().canEnPassant(p, targetCol, targetRow,
-                        service.getPieceService().getPieces());
+                    return service.getBoardService().canEnPassant(p, targetCol, targetRow, list);
                 }
             }
             case KNIGHT -> {
@@ -233,8 +252,7 @@ public class GameService {
                 int rowDiff = Math.abs(targetRow - p.getRow());
 
                 if((colDiff == 2 && rowDiff == 1) || (colDiff == 1 && rowDiff == 2)) {
-                    return BoardService.isValidSquare(p, targetCol, targetRow,
-                        service.getPieceService().getPieces());
+                    return BoardService.isValidSquare(p, targetCol, targetRow, list);
                 }
             }
             case BISHOP -> {
@@ -245,12 +263,12 @@ public class GameService {
                     return false;
                 }
 
-                if(!BoardService.isPathClear(p, targetCol, targetRow)) {
+                if(!BoardService.isPathClear(p, targetCol, targetRow, list)) {
                     return false;
                 }
 
                 Piece target = null;
-                for(Piece piece : service.getPieceService().getPieces()) {
+                for(Piece piece : list) {
                     if(piece.getCol() == targetCol && piece.getRow() == targetRow) {
                         target = piece;
                         break;
@@ -260,16 +278,15 @@ public class GameService {
             }
             case ROOK -> {
                 if(targetCol == p.getCol() || targetRow == p.getRow()) {
-                    return BoardService.isValidSquare(p, targetCol, targetRow,
-                        service.getPieceService().getPieces())
-                        && BoardService.isPathClear(p, targetCol, targetRow);
+                    return BoardService.isValidSquare(p, targetCol, targetRow, list)
+                        && BoardService.isPathClear(p, targetCol, targetRow, list);
                 }
             }
             case QUEEN -> {
                 if(targetCol == p.getCol() || targetRow == p.getRow()) {
                     return BoardService.isValidSquare(p, targetCol, targetRow,
-                        service.getPieceService().getPieces())
-                        && BoardService.isPathClear(p, targetCol, targetRow);
+                        list)
+                        && BoardService.isPathClear(p, targetCol, targetRow, list);
                 }
 
                 int colDiff = targetCol - p.getCol();
@@ -279,12 +296,12 @@ public class GameService {
                     return false;
                 }
 
-                if(!BoardService.isPathClear(p, targetCol, targetRow)) {
+                if(!BoardService.isPathClear(p, targetCol, targetRow, list)) {
                     return false;
                 }
 
                 Piece target = null;
-                for(Piece piece : service.getPieceService().getPieces()) {
+                for(Piece piece : list) {
                     if(piece.getCol() == targetCol && piece.getRow() == targetRow) {
                         target = piece;
                         break;
@@ -297,8 +314,7 @@ public class GameService {
                 int rowDiff = Math.abs(targetRow - p.getRow());
 
                 if((colDiff + rowDiff == 1) || (colDiff * rowDiff == 1)) {
-                    return BoardService.isValidSquare(p, targetCol, targetRow,
-                        service.getPieceService().getPieces());
+                    return BoardService.isValidSquare(p, targetCol, targetRow, list);
                 }
             }
         }

@@ -1,16 +1,11 @@
 package org.lud.game.entities;
 
-import org.lud.game.actors.Piece;
-
 public class Board {
     private static final int SIZE = 8;
     private static final int PIXEL_SIZE = 512;
     private static final int SQUARE = SIZE * 8;
-    private final Piece[][] pieces;
 
-    public Board() {
-        this.pieces = new Piece[SIZE][SIZE];
-    }
+    public Board() {}
 
     public static int getSQUARE() {
         return SQUARE;
@@ -20,10 +15,6 @@ public class Board {
     }
     public static int getPIXEL_SIZE() { return PIXEL_SIZE; }
     public static float getTileSize() { return PIXEL_SIZE/(float)SIZE; }
-
-    public Piece[][] getPieces() {
-        return pieces;
-    }
 
     public String getSquareNameAt(int col, int row) {
         int rankIndex = SIZE - 1 - row;

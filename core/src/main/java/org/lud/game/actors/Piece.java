@@ -80,4 +80,10 @@ public class Piece extends Actor {
             case KING -> 900;
         };
     }
+
+    public Piece copy(Piece p) {
+        Piece piece = new Piece(p.typeID, p.color, p.col, p.row);
+        piece.setHasMoved(p.hasMoved());
+        return piece;
+    }
 }

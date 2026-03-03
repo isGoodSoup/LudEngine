@@ -72,7 +72,6 @@ public class PieceService {
 
     public void addPiece(Piece p) {
         pieces.add(p);
-        service.getBoardService().addPiece(p);
         getSprite(p);
     }
 
@@ -81,8 +80,6 @@ public class PieceService {
         if (index != -1) {
             pieces.set(index, pnew);
         }
-        service.getBoardService().removePiece(pold);
-        service.getBoardService().addPiece(pnew);
 
         removePiece(pold);
         addPiece(pnew);
@@ -91,7 +88,6 @@ public class PieceService {
 
     public void removePiece(Piece p) {
         pieces.remove(p);
-        service.getBoardService().removePiece(p);
     }
 
     public Piece getKing(Turn turn) {
@@ -117,11 +113,5 @@ public class PieceService {
             }
         }
         pieces.clear();
-        Piece[][] ps = BoardService.getBoard().getPieces();
-        for(int i = 0; i < ps.length; i++) {
-            for(int j = 0; j < ps[0].length; j++) {
-                ps[i][j] = null;
-            }
-        }
     }
 }

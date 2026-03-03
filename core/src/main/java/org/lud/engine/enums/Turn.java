@@ -14,6 +14,10 @@ public enum Turn {
         return currentTurn;
     }
 
+    public Turn getOpossite() {
+        return currentTurn == Turn.LIGHT ? Turn.DARK : Turn.LIGHT;
+    }
+
     public static void setTurn(Turn turn) {
         currentTurn = turn;
     }

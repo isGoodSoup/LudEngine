@@ -44,30 +44,14 @@ public class BoardService {
     public OrthographicCamera getCamera() { return camera; }
     public static Board getBoard() { return board; }
 
-    public void setPieces() {
-        for(Piece[] col : board.getPieces()) {
-            for(Piece p : col) {
-                if(p != null) { addPiece(p); }
-            }
-        }
-    }
-
-    public void addPiece(Piece p) {
-        if(isWithinBoard(p.getCol(), p.getRow())) {
-            board.getPieces()[p.getRow()][p.getCol()] = p;
-        }
-    }
-
-    public void removePiece(Piece p) {
-        if(isWithinBoard(p.getCol(), p.getRow())) {
-            board.getPieces()[p.getRow()][p.getCol()] = null;
-        }
-    }
-
-    public static Piece getPieceAt(int col, int row) {
+    public static Piece getPieceAt(int col, int row, List<Piece> pieces) {
         try {
             if(isWithinBoard(col, row)) {
-                return board.getPieces()[row][col];
+                for(Piece p : pieces) {
+                    if(p.getCol() == col && p.getRow() == row) {
+                        return p;
+                    }
+                }
             }
         } catch(NullPointerException e) {
             log.error(e.getMessage());
@@ -94,9 +78,10 @@ public class BoardService {
         // TODO: implement special logic for pawns, kings, castling, en-passant
 
         if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces()) &&
-            service.getGameService().canMove(piece, targetCol, targetRow)) {
+            service.getGameService().canMove(piece, targetCol, targetRow,
+                service.getPieceService().getPieces())) {
 
-            Piece captured = getPieceAt(targetCol, targetRow);
+            Piece captured = getPieceAt(targetCol, targetRow, service.getPieceService().getPieces());
             if(captured != null) {
                 if(captured.getParent() != null) { captured.remove(); }
                 service.getPieceService().removePiece(captured);
@@ -161,7 +146,8 @@ public class BoardService {
         return col >= 0 && col < 8 && row >= 0 && row < 8;
     }
 
-    public static boolean isValidSquare(Piece piece, int targetCol, int targetRow, List<Piece> board) {
+    public static boolean isValidSquare(Piece piece, int targetCol, int targetRow,
+                                        List<Piece> board) {
         for (Piece p : board) {
             if (p.getCol() == targetCol && p.getRow() == targetRow) {
                 return p.getTurn() != piece.getTurn();
@@ -170,7 +156,8 @@ public class BoardService {
         return true;
     }
 
-    public static boolean isPathClear(Piece piece, int targetCol, int targetRow) {
+    public static boolean isPathClear(Piece piece, int targetCol, int targetRow,
+                                      List<Piece> list) {
         int colDiff = targetCol - piece.getCol();
         int rowDiff = targetRow - piece.getRow();
 
@@ -191,7 +178,7 @@ public class BoardService {
         int currentRow = piece.getRow() + rowStep;
 
         while(currentCol != targetCol || currentRow != targetRow) {
-            if(getPieceAt(currentCol, currentRow) != null) { return false; }
+            if(getPieceAt(currentCol, currentRow, list) != null) { return false; }
             currentCol += colStep;
             currentRow += rowStep;
         }
