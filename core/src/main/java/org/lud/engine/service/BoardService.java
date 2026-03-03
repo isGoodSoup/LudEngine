@@ -77,9 +77,9 @@ public class BoardService {
 
         // TODO: implement special logic for pawns, kings, castling, en-passant
 
-        if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces()) &&
-            service.getGameService().canMove(piece, targetCol, targetRow,
-                service.getPieceService().getPieces())) {
+        if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces())
+            && service.getGameService().canMove(piece, targetCol, targetRow, service.getPieceService().getPieces())
+            && !service.getGameService().wouldLeaveKingInCheck(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
 
             Piece captured = getPieceAt(targetCol, targetRow, service.getPieceService().getPieces());
             if(captured != null) {
@@ -90,7 +90,7 @@ public class BoardService {
             }
 
             MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
-                            targetCol, targetRow, piece.getTurn(), captured);
+                targetCol, targetRow, piece.getTurn(), captured);
 
             movePieces.add(move);
             logMove(piece, targetCol, targetRow);
@@ -106,12 +106,13 @@ public class BoardService {
                     moveAIPieces.add(n);
                     logMove(((MovePiece) n).piece(),
                         ((MovePiece) n).targetCol(),
-                        ((MovePiece)n).targetRow());
+                        ((MovePiece) n).targetRow());
                 }
                 service.getAudioService().playFX(4);
                 canUndo = !canUndo;
                 ai.switchTurns();
             }
+
             return true;
         }
 
@@ -147,7 +148,7 @@ public class BoardService {
     public static boolean isValidSquare(Piece piece, int targetCol, int targetRow,
                                         List<Piece> board) {
         for (Piece p : board) {
-            if (p.getCol() == targetCol && p.getRow() == targetRow) {
+            if(p.getCol() == targetCol && p.getRow() == targetRow) {
                 return p.getTurn() != piece.getTurn();
             }
         }

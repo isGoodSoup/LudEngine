@@ -230,7 +230,7 @@ public class BoardScreen extends Menu {
     }
 
     private void drawCursor() {
-        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD && isCursorActive()) {
             getCursor().setPosition(boardGroup.getX() + getMoveX() * TILE_SIZE + TILE_SIZE/2f,
                 boardGroup.getY() + getMoveY() * TILE_SIZE + 16f);
         }
