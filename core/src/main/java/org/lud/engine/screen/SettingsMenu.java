@@ -1,4 +1,4 @@
-package org.lud.game.screens;
+package org.lud.engine.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -21,25 +21,27 @@ import org.lud.engine.service.PieceService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AchievementsMenu extends Menu {
+public class SettingsMenu extends Menu {
     private static final float DURATION = 1f;
     private final GameService gameService;
     private final AudioService audioService;
     private final BoardService boardService;
     private final PieceService pieceService;
     private final List<ButtonData> data;
+    private final List<Runnable> runnables;
     private Group group;
     private Texture baseButton;
     private Texture frame;
 
-    public AchievementsMenu(GameService gameService, AudioService audioService,
-                            BoardService boardService, PieceService pieceService) {
+    public SettingsMenu(GameService gameService, AudioService audioService,
+                        BoardService boardService, PieceService pieceService) {
         super(gameService, audioService, boardService, pieceService);
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
         this.pieceService = pieceService;
         this.data = new ArrayList<>();
+        this.runnables = new ArrayList<>();
         addMenu(this);
         loadSprites();
     }
@@ -71,7 +73,6 @@ public class AchievementsMenu extends Menu {
             addButton(b);
             startX += baseButton.getWidth() + spacing;
         }
-        // TODO Achievements menu
     }
 
     @Override
@@ -85,7 +86,7 @@ public class AchievementsMenu extends Menu {
     public void render(float delta) {
         super.render(delta);
 
-        String header = Localization.lang.t("header.achievements").toUpperCase();
+        String header = Localization.lang.t("header.settings").toUpperCase();
         GlyphLayout layout = new GlyphLayout();
         layout.setText(getLargeFont(), header);
 

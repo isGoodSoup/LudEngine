@@ -1,4 +1,4 @@
-package org.lud.game.screens;
+package org.lud.engine.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

@@ -11,10 +11,10 @@ import org.lud.game.actors.Piece;
 import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
 import org.lud.game.moves.MovePiece;
-import org.lud.game.screens.AchievementsMenu;
+import org.lud.engine.screen.AchievementsMenu;
 import org.lud.game.screens.BoardScreen;
-import org.lud.game.screens.MainMenu;
-import org.lud.game.screens.SettingsMenu;
+import org.lud.engine.screen.MainMenu;
+import org.lud.engine.screen.SettingsMenu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
