@@ -107,10 +107,9 @@ public class GameService {
 
     public List<Moves> newLegalMoves(Turn turn) {
         List<Moves> legalMoves = new ArrayList<>();
-
         List<Piece> pieces = service.getPieceService().getPieces();
 
-        for(Piece piece : pieces) {
+        for(Piece piece : new ArrayList<>(pieces)) {
             if(piece.getTurn() != turn) continue;
             for(int row = 0; row < 8; row++) {
                 for(int col = 0; col < 8; col++) {
@@ -123,8 +122,16 @@ public class GameService {
                     MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(), col, row,
                         piece.getTurn(), targetPiece);
 
+                    Piece king = null;
+                    for(Piece p : pieces) {
+                        if(p.getTypeID() == TypeID.KING) {
+                            king = p;
+                        }
+                    }
+
                     if (canMove(piece, col, row, pieces) &&
-                        !wouldLeaveKingInCheck(piece, col, row, pieces)) {
+                        !wouldLeaveKingInCheck(piece, col, row, pieces)
+                        && service.getBoardService().saveKing(piece, col, row, king)) {
                         legalMoves.add(move);
                     }
                 }

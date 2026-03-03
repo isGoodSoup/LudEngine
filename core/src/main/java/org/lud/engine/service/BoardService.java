@@ -71,15 +71,15 @@ public class BoardService {
 
     public boolean attemptMove(Piece piece, int targetCol, int targetRow) {
         if(!isWithinBoard(targetCol, targetRow)) { return false; }
-        if(service.getGameService().isCheckmate()) {
+        if(service.getGameService().isCheckmate()) { return false; }
+
+        Piece king = service.getPieceService().getKing(piece.getTurn());
+        if(king != null && !saveKing(piece, targetCol, targetRow, king)) {
             return false;
         }
 
-        // TODO: implement special logic for pawns, kings, castling, en-passant
-
         if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces())
-            && service.getGameService().canMove(piece, targetCol, targetRow, service.getPieceService().getPieces())
-            && !service.getGameService().wouldLeaveKingInCheck(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
+            && service.getGameService().canMove(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
 
             Piece captured = getPieceAt(targetCol, targetRow, service.getPieceService().getPieces());
             if(captured != null) {
@@ -183,6 +183,24 @@ public class BoardService {
             currentRow += rowStep;
         }
         return true;
+    }
+
+    public boolean saveKing(Piece piece, int targetCol, int targetRow, Piece king) {
+        Piece captured = getPieceAt(targetCol, targetRow,
+            service.getPieceService().getPieces());
+        int oldCol = piece.getCol();
+        int oldRow = piece.getRow();
+
+        piece.setCol(targetCol);
+        piece.setRow(targetRow);
+
+        if(captured != null) { service.getPieceService().removePiece(captured); }
+        boolean kingSafe = !service.getGameService().isKingInCheck(king.getTurn());
+
+        piece.setCol(oldCol);
+        piece.setRow(oldRow);
+        if(captured != null) { service.getPieceService().addPiece(captured); }
+        return kingSafe;
     }
 
     public boolean canEnPassant(Piece piece, int targetCol, int targetRow, List<Piece> board) {
