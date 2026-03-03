@@ -272,7 +272,6 @@ public abstract class Menu implements Screen {
             Difficulty next = boardService.getDifficulty().nextDifficulty();
             boardService.switchDifficulties(next);
             createToast(next);
-            System.out.println(boardService.getDifficulty() + " to " + next.name());
             audioService.playFX(2);
         });
         combos.put(Input.Keys.Q, Gdx.app::exit);
@@ -367,6 +366,9 @@ public abstract class Menu implements Screen {
                 boolean hasMoved = boardService.attemptMove(selectedPiece, cursorCol, cursorRow);
                 if(hasMoved) {
                     audioService.playFX(4);
+                    if(Turn.getTurn() == Turn.DARK) {
+                        boardService.executeAIMove();
+                    }
                 } else {}
                 selectedPiece = null;
             }

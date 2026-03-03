@@ -86,6 +86,9 @@ public class BoardInput {
                 for(Moves m : boardService.getMovePieces()) {
                     if(m instanceof MovePiece move) {
                         move.apply();
+                        if(Turn.getTurn() == Turn.DARK) {
+                            boardService.executeAIMove();
+                        }
                     }
                 }
                 piece.setPosition(piece.getCol() * tileSize, piece.getRow() * tileSize);

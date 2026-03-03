@@ -219,8 +219,6 @@ public class BoardScreen extends Menu {
             Actions.moveTo(toX, toY, 0.2f),
             Actions.run(move::apply)
         ));
-
-        gameService.setInputLocked(false);
     }
 
     @Override

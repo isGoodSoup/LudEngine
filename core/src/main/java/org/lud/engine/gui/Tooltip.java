@@ -25,7 +25,7 @@ public class Tooltip {
     private final float scale;
 
     private final float cursorOffsetY = 32f;
-    private final float cursorOffsetX = 48f;
+    private final float cursorOffsetX = 80f;
 
     public Tooltip(String text, BitmapFont font, Texture tex, int cs, float scale){
         this.text = text;

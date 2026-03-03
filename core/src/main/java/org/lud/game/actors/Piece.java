@@ -86,4 +86,11 @@ public class Piece extends Actor {
         piece.setHasMoved(p.hasMoved());
         return piece;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) { return true; }
+        if(!(o instanceof Piece p)) { return false; }
+        return col == p.col && row == p.row && typeID == p.typeID && color == p.color;
+    }
 }

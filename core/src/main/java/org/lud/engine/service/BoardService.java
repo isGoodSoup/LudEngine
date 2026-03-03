@@ -70,57 +70,67 @@ public class BoardService {
     }
 
     public boolean attemptMove(Piece piece, int targetCol, int targetRow) {
-        if(!isWithinBoard(targetCol, targetRow)) { return false; }
-        if(service.getGameService().isCheckmate()) { return false; }
+        if(!isWithinBoard(targetCol, targetRow)) return false;
 
-        Piece king = service.getPieceService().getKing(piece.getTurn());
-        if(king != null && !saveKing(piece, targetCol, targetRow, king)) {
+        MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(), targetCol,
+            targetRow, piece.getTurn(), getPieceAt(targetCol, targetRow, service.getPieceService().getPieces()));
+
+        if(!isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces()) ||
+            (!service.getGameService().canMove(piece, targetCol, targetRow, service.getPieceService().getPieces()) &&
+            !service.getGameService().wouldLeaveKingInCheck(piece, targetCol, targetRow,
+                service.getPieceService().getPieces()))) {
             return false;
         }
 
-        if(isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces())
-            && service.getGameService().canMove(piece, targetCol, targetRow,
-            service.getPieceService().getPieces())) {
-
-            Piece captured = getPieceAt(targetCol, targetRow,
-                service.getPieceService().getPieces());
-
-            if(captured != null && captured != piece) {
-                log.debug("Capturing piece at {} {}", captured.getCol(), captured.getRow());
-                service.getPieceService().removePiece(captured);
-                log.debug("Pieces remaining: {}", service.getPieceService().getPieces().size());
-                log.debug("{} {} > {} {}", captured.getTurn(), captured.getTypeID(),
-                    piece.getTurn(), piece.getTypeID());
-            }
-
-            MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
-                targetCol, targetRow, piece.getTurn(), captured);
-
-            movePieces.add(move);
-            logMove(piece, targetCol, targetRow);
-
-            AI ai = currentAI;
-            ai.switchTurns();
-
-            if(Turn.getTurn() == Turn.DARK) {
-                List<Moves> legalMoves = service.getGameService().newLegalMoves(Turn.DARK);
-                Moves n = ai.chooseMove(legalMoves);
-                if(n instanceof MovePiece) {
-                    service.getGameService().setInputLocked(true);
-                    moveAIPieces.add(n);
-                    logMove(((MovePiece) n).piece(),
-                        ((MovePiece) n).targetCol(),
-                        ((MovePiece) n).targetRow());
-                }
-                service.getAudioService().playFX(4);
-                canUndo = !canUndo;
-                ai.switchTurns();
-            }
-
-            return true;
+        if(!isPathClear(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
+            return false;
         }
 
-        return false;
+        executeMove(move);
+        return true;
+    }
+
+    public void executeMove(MovePiece move) {
+        Piece piece = move.piece();
+        int targetCol = move.targetCol();
+        int targetRow = move.targetRow();
+
+        Piece captured = getPieceAt(targetCol, targetRow,
+            service.getPieceService().getPieces());
+
+        if(captured != null && captured != piece) {
+            service.getPieceService().removePiece(captured);
+            log.debug("{} {} > {} {}", captured.getTurn(), captured.getTypeID(),
+                piece.getTurn(), piece.getTypeID());
+        }
+
+        if(piece.getTurn() == Turn.LIGHT) { movePieces.add(move);
+        } else { moveAIPieces.add(move); }
+
+        logMove(piece, targetCol, targetRow);
+        Turn.nextTurn();
+
+        canUndo = !canUndo;
+
+        if(service.getGameService().isCheckmate()) {
+            service.getGameService().setInputLocked(true);
+            log.info("Checkmate! Game over for {}", Turn.getTurn());
+            return;
+        }
+    }
+
+    public void executeAIMove() {
+        service.getGameService().setInputLocked(true);
+        List<Moves> legalMoves = service.getGameService().newLegalMoves(Turn.DARK);
+
+        Moves aiMove = currentAI.chooseMove(legalMoves);
+        if(aiMove instanceof MovePiece movePiece) {
+            executeMove(movePiece);
+        }
+
+        if(!service.getGameService().isCheckmate()) {
+            service.getGameService().setInputLocked(false);
+        }
     }
 
     public void undoMove() {
@@ -130,12 +140,6 @@ public class BoardService {
         MovePiece move = (MovePiece) moves.getLast();
         move.undo();
         canUndo = false;
-    }
-
-    private void logMove(Piece p, int targetCol, int targetRow) {
-        log.info("{} {}: {} to {}", p.getTurn(), p.getTypeID(),
-            board.getSquareNameAt(p.getPreCol(), p.getPreRow()),
-            board.getSquareNameAt(targetCol, targetRow));
     }
 
     public List<Moves> getMovePieces() {
@@ -238,5 +242,11 @@ public class BoardService {
 
     public float getBoardStartY() {
         return (Gdx.graphics.getHeight() - Board.getSIZE()) / 2f;
+    }
+
+    private void logMove(Piece p, int targetCol, int targetRow) {
+        log.info("{} {}: {} to {}", p.getTurn(), p.getTypeID(),
+            board.getSquareNameAt(p.getPreCol(), p.getPreRow()),
+            board.getSquareNameAt(targetCol, targetRow));
     }
 }

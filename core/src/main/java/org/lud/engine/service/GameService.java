@@ -192,9 +192,15 @@ public class GameService {
     }
 
     public boolean isKingInCheck(Turn kingColor, List<Piece> list) {
-        Piece king = service.getPieceService().getKing(kingColor);
-        if(king == null) { return false; }
+        Piece king = null;
+        for(Piece p : list) {
+            if(p.getTypeID() == TypeID.KING && p.getTurn() == kingColor) {
+                king = p;
+                break;
+            }
+        }
 
+        if(king == null) { return false; }
         for(Piece p : list) {
             if(p.getTurn() != kingColor) {
                 if(canMove(p, king.getCol(), king.getRow(), list)) {
@@ -203,21 +209,21 @@ public class GameService {
                 }
             }
         }
+
         checkingPiece = null;
         return false;
     }
 
     public boolean isCheckmate() {
         Turn currentTurn = Turn.getTurn();
-        Turn opponent = currentTurn.getOpossite();
-        Piece king = service.getPieceService().getKing(opponent);
+        Piece king = service.getPieceService().getKing(currentTurn);
         if(king == null) { return false; }
-        if(!isKingInCheck(opponent, service.getPieceService().getPieces())) { return false; }
+        if(!isKingInCheck(currentTurn, service.getPieceService().getPieces())) { return false; }
 
         List<Piece> pieces = service.getPieceService().getPieces();
 
         for(Piece piece : pieces) {
-            if(piece.getTurn() != opponent) { continue; }
+            if(piece.getTurn() != currentTurn) { continue; }
             for(int col = 0; col < Board.getSIZE(); col++) {
                 for(int row = 0; row < Board.getSIZE(); row++) {
                     if(canMove(piece, col, row, pieces) &&
@@ -228,7 +234,8 @@ public class GameService {
             }
         }
 
-        log.debug("Checkmate for {}", opponent);
+        log.debug("Checkmate for {}", currentTurn);
+        service.getAudioService().stopMusic();
         service.getAudioService().playFX(3);
         return true;
     }
