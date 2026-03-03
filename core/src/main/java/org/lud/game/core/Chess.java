@@ -8,7 +8,7 @@ import org.lud.engine.enums.Theme;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.screen.IntroScreen;
-import org.lud.game.service.ServiceFactory;
+import org.lud.engine.service.ServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

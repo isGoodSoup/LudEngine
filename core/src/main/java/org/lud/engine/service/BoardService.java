@@ -1,4 +1,4 @@
-package org.lud.game.service;
+package org.lud.engine.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -92,9 +92,7 @@ public class BoardService {
             MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(),
                             targetCol, targetRow, piece.getTurn(), captured);
 
-            move.apply();
             movePieces.add(move);
-
             logMove(piece, targetCol, targetRow);
 
             AI ai = currentAI;

@@ -19,9 +19,9 @@ import org.lud.engine.enums.*;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.actors.Piece;
 import org.lud.game.data.ButtonData;
-import org.lud.game.service.BoardService;
-import org.lud.game.service.GameService;
-import org.lud.game.service.PieceService;
+import org.lud.engine.service.BoardService;
+import org.lud.engine.service.GameService;
+import org.lud.engine.service.PieceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -369,16 +369,15 @@ public abstract class Menu implements Screen {
                 } else {}
                 selectedPiece = null;
             }
-            return;
-        }
+        } else {
+            List<Button> buttons = getButtons();
+            if(buttons.isEmpty()) { return; }
+            int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
+            Button selected = buttons.get(index);
 
-        List<Button> buttons = getButtons();
-        if(buttons.isEmpty()) { return; }
-        int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
-        Button selected = buttons.get(index);
-
-        if(selected != null) {
-            selected.onClick();
+            if(selected != null) {
+                selected.onClick();
+            }
         }
     }
 

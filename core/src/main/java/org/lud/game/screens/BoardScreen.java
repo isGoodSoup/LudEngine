@@ -26,9 +26,9 @@ import org.lud.game.actors.Tile;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
 import org.lud.game.moves.MovePiece;
-import org.lud.game.service.BoardService;
-import org.lud.game.service.GameService;
-import org.lud.game.service.PieceService;
+import org.lud.engine.service.BoardService;
+import org.lud.engine.service.GameService;
+import org.lud.engine.service.PieceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,9 +14,9 @@ import org.lud.engine.gui.Menu;
 import org.lud.game.actors.Logo;
 import org.lud.game.data.ButtonData;
 import org.lud.game.enums.UIButton;
-import org.lud.game.service.BoardService;
-import org.lud.game.service.GameService;
-import org.lud.game.service.PieceService;
+import org.lud.engine.service.BoardService;
+import org.lud.engine.service.GameService;
+import org.lud.engine.service.PieceService;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

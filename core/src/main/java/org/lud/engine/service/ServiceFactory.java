@@ -1,4 +1,4 @@
-package org.lud.game.service;
+package org.lud.engine.service;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import org.lud.engine.core.AudioService;

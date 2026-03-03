@@ -6,10 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import org.lud.engine.core.AudioService;
 import org.lud.engine.enums.Turn;
+import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.Piece;
-import org.lud.game.service.BoardService;
-import org.lud.game.service.GameService;
-import org.lud.game.service.PieceService;
+import org.lud.game.moves.MovePiece;
+import org.lud.engine.service.BoardService;
+import org.lud.engine.service.GameService;
+import org.lud.engine.service.PieceService;
 
 import java.util.ArrayList;
 
@@ -81,6 +83,11 @@ public class BoardInput {
             row = Math.max(0, Math.min(7, row));
 
             if(boardService.attemptMove(piece, col, row)) {
+                for(Moves m : boardService.getMovePieces()) {
+                    if(m instanceof MovePiece move) {
+                        move.apply();
+                    }
+                }
                 piece.setPosition(piece.getCol() * tileSize, piece.getRow() * tileSize);
                 audioService.playFX(4);
             } else {
