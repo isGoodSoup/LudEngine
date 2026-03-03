@@ -23,9 +23,9 @@ public class ServiceFactory {
         this.audioService = new AudioService();
         this.boardService = new BoardService(this, camera);
         this.pieceService = new PieceService(this);
-        this.gameService = new GameService(gameFrame, this);
         this.ap = new AchievementPersistence();
         this.achievementService = new AchievementService(eventBus, this, ap);
+        this.gameService = new GameService(gameFrame, this);
     }
 
     public EventBus getEventBus() { return eventBus; }

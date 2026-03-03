@@ -22,6 +22,7 @@ import org.lud.engine.data.ButtonData;
 import org.lud.engine.service.BoardService;
 import org.lud.engine.service.GameService;
 import org.lud.engine.service.PieceService;
+import org.lud.game.enums.Achievements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,6 +243,19 @@ public abstract class Menu implements Screen {
 
         Toast toast = new Toast(difficulty.getLabelKey(), difficulty.name(), getMediumFont(),
                         centerX, 75f);
+
+        toasts.add(toast);
+        toastGroup.addActor(toast);
+        toastGroup.toFront();
+        return toast;
+    }
+
+    public Toast createToast(Achievements id) {
+        float toastWidth = Gdx.graphics.getWidth()/3f;
+        float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
+
+        Toast toast = new Toast(id.getTitle(), id.getDescription(), getMediumFont(),
+            centerX, 75f);
 
         toasts.add(toast);
         toastGroup.addActor(toast);
