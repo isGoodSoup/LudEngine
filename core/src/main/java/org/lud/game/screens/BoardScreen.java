@@ -17,7 +17,7 @@ import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.gui.Toast;
-import org.lud.engine.input.BoardInput;
+import org.lud.game.input.BoardInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.engine.interfaces.Moves;
 import org.lud.game.actors.BackgroundTile;

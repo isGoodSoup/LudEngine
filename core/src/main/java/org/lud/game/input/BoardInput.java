@@ -1,4 +1,4 @@
-package org.lud.engine.input;
+package org.lud.game.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
