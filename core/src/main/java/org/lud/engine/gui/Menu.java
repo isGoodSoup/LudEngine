@@ -28,8 +28,8 @@ import java.util.*;
 @SuppressWarnings("ALL")
 public abstract class Menu implements Screen {
     private static final Logger log = LoggerFactory.getLogger(Menu.class);
-    private Map<Integer, Runnable> actions;
-    private Map<Integer, Runnable> combos;
+    private final Map<Integer, Runnable> ACTIONS;
+    private final Map<Integer, Runnable> COMBOS;
     private Menu globalInput;
     private final Cursor cursor;
     private final Stage stage;
@@ -60,8 +60,8 @@ public abstract class Menu implements Screen {
 
     public Menu() {
         this.cursor = new Cursor();
-        this.actions = new LinkedHashMap<>();
-        this.combos = new LinkedHashMap<>();
+        this.ACTIONS = new LinkedHashMap<>();
+        this.COMBOS = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
         this.toasts = new ArrayList<>();
@@ -96,8 +96,8 @@ public abstract class Menu implements Screen {
 
     public Cursor getCursor() { return cursor; }
 
-    public Map<Integer, Runnable> getActions() { return actions; }
-    public Map<Integer, Runnable> getCombos() { return combos; }
+    public Map<Integer, Runnable> getActions() { return ACTIONS; }
+    public Map<Integer, Runnable> getCombos() { return COMBOS; }
 
     public void addMenu(Menu... menus) { this.menus.addAll(Arrays.asList(menus)); }
     public List<Menu> getMenus() { return menus; }
@@ -121,15 +121,13 @@ public abstract class Menu implements Screen {
     public Tooltip getTooltip() { return tooltip; }
 
     public void setGlobalInput(Menu global) {
-        this.globalInput = global;
-
-        actions.clear();
-        combos.clear();
+        ACTIONS.clear();
+        COMBOS.clear();
 
         if(global != null) {
             global.loadKeys();
-            this.actions.putAll(global.getActions());
-            this.combos.putAll(global.getCombos());
+            ACTIONS.putAll(global.getActions());
+            COMBOS.putAll(global.getCombos());
         }
     }
     public abstract void setup();
@@ -251,14 +249,14 @@ public abstract class Menu implements Screen {
 
     public void globalInput() {
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-            for(var entry : combos.entrySet()) {
+            for(var entry : COMBOS.entrySet()) {
                 if(Gdx.input.isKeyJustPressed(entry.getKey())) {
                     entry.getValue().run();
                     return;
                 }
             }
         } else {
-            for(var entry : actions.entrySet()) {
+            for(var entry : ACTIONS.entrySet()) {
                 if(Gdx.input.isKeyJustPressed(entry.getKey())) {
                     entry.getValue().run();
                 }
