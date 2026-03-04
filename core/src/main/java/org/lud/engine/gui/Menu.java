@@ -28,8 +28,8 @@ import java.util.*;
 @SuppressWarnings("ALL")
 public abstract class Menu implements Screen {
     private static final Logger log = LoggerFactory.getLogger(Menu.class);
-    private final Map<Integer, Runnable> ACTIONS;
-    private final Map<Integer, Runnable> COMBOS;
+    private static final Map<Integer, Runnable> ACTIONS = new LinkedHashMap<>();
+    private static final Map<Integer, Runnable> COMBOS = new LinkedHashMap<>();
     private Menu globalInput;
     private final Cursor cursor;
     private final Stage stage;
@@ -60,8 +60,6 @@ public abstract class Menu implements Screen {
 
     public Menu() {
         this.cursor = new Cursor();
-        this.ACTIONS = new LinkedHashMap<>();
-        this.COMBOS = new LinkedHashMap<>();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
         this.toasts = new ArrayList<>();
@@ -125,6 +123,8 @@ public abstract class Menu implements Screen {
 
         if(global != null) {
             global.loadKeys();
+            global.getActions().clear();
+            global.getCombos().clear();
             ACTIONS.putAll(global.getActions());
             COMBOS.putAll(global.getCombos());
         }
