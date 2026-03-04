@@ -23,20 +23,22 @@ public class AchievementPersistence{
         this.file=new File(dir,"achievements.json");
     }
 
-    public void save(Collection<Achievement<Achieveable>> achievements){
-        try{
-            mapper.writeValue(file,achievements);
-        } catch(IOException e){
+    public <T extends Achieveable> void save(Collection<Achievement<T>> achievements) {
+        try {
+            mapper.writeValue(file, achievements);
+        } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    public List<Achievement> load(){
-        if(!file.exists()) return new ArrayList<>();
+    public <T extends Achieveable> List<Achievement<T>> load(Class<T> c) {
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
         try {
-            Achievement[] array = mapper.readValue(file,Achievement[].class);
+            Achievement<T>[] array = mapper.readValue(file, Achievement[].class);
             return Arrays.asList(array);
-        } catch(IOException e){
+        } catch (IOException e) {
             log.error(e.getMessage());
             return new ArrayList<>();
         }
