@@ -199,8 +199,11 @@ public abstract class Menu implements Screen {
     }
 
     public void updateCursor(float delta) {
-        Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-        boolean mouseMoved = stageCoords.x != cursor.x || stageCoords.y != cursor.y;
+        Vector2 stageCoords = stage.screenToStageCoordinates
+            (new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        float dx = Math.abs(stageCoords.x - cursor.x);
+        float dy = Math.abs(stageCoords.y - cursor.y);
+        boolean mouseMoved = dx > 1f || dy > 1f;
         boolean mouseClicked = Gdx.input.justTouched();
 
         if(mouseMoved || mouseClicked) {
@@ -209,12 +212,14 @@ public abstract class Menu implements Screen {
             return;
         }
 
-        if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+        if(Coordinator.getLastInput() == LastInput.KEYBOARD && !buttons.isEmpty()) {
             int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
             Button selected = buttons.get(index);
             if(selected != null) {
-                cursor.setPosition(selected.getX() + selected.getWidth()/2f,
-                    selected.getY() + selected.getHeight()/2f);
+                cursor.setPosition(
+                    selected.getX() + selected.getWidth() / 2f,
+                    selected.getY() + selected.getHeight() / 2f
+                );
             }
         }
     }
