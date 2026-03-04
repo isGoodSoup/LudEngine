@@ -15,10 +15,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.lud.engine.core.Cursor;
 import org.lud.engine.data.ButtonData;
-import org.lud.engine.enums.*;
+import org.lud.engine.enums.Difficulty;
+import org.lud.engine.enums.Direction;
+import org.lud.engine.enums.LastInput;
 import org.lud.engine.input.Coordinator;
-import org.lud.game.actors.Piece;
-import org.lud.game.enums.Achievements;
+import org.lud.engine.interfaces.Achieveable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,7 +191,7 @@ public abstract class Menu implements Screen {
         return toast;
     }
 
-    public Toast createToast(Achievements id) {
+    public Toast createToast(Achieveable id) {
         float toastWidth = Gdx.graphics.getWidth()/3f;
         float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
 

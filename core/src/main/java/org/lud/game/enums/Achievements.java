@@ -1,8 +1,9 @@
 package org.lud.game.enums;
 
 import org.lud.engine.gui.Localization;
+import org.lud.engine.interfaces.Achieveable;
 
-public enum Achievements {
+public enum Achievements implements Achieveable {
     FIRST_CAPTURE           (1001L, "a01_first_steps",            "achievement.first_steps.title",        "achievement.first_steps.desc"),
     SECRET_TOGGLE           (1002L, "a02_toggles",                "achievement.toggles.title",           "achievement.toggles.desc"),
     CHECKMATE               (1003L, "a03_checkmate",              "achievement.checkmate.title",         "achievement.checkmate.desc"),
@@ -30,12 +31,6 @@ public enum Achievements {
 
     public long getId() { return id; }
     public String getFile() { return file; }
-
-    public String getTitle() {
-        return Localization.lang.t(titleKey).toUpperCase();
-    }
-
-    public String getDescription() {
-        return Localization.lang.t(descKey);
-    }
+    public String getTitle() { return Localization.lang.t(titleKey).toUpperCase(); }
+    public String getDescription() { return Localization.lang.t(descKey); }
 }
