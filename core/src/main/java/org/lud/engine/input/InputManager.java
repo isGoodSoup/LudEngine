@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class InputManager {
     private static InputManager instance;
     private final List<InputContext> contexts = new ArrayList<>();
