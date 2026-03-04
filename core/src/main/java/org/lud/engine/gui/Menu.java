@@ -207,10 +207,12 @@ public abstract class Menu implements Screen {
             return;
         }
 
-        Vector2 stageCoords = stage.screenToStageCoordinates(
-            new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        Vector2 stageCoords = stage.screenToStageCoordinates
+            (new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        boolean mouseMoved = stageCoords.x != cursor.x || stageCoords.y != cursor.y;
+        boolean mouseClicked = Gdx.input.justTouched();
 
-        if (stageCoords.x != cursor.x || stageCoords.y != cursor.y) {
+        if(mouseMoved || mouseClicked) {
             cursor.setPosition(stageCoords.x, stageCoords.y);
             Coordinator.setLastInput(LastInput.MOUSE);
         }
