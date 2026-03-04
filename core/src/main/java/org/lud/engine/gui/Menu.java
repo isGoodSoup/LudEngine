@@ -199,15 +199,17 @@ public abstract class Menu implements Screen {
     }
 
     public void updateCursor(float delta) {
-        Vector2 stageCoords = stage.screenToStageCoordinates
-            (new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        Vector2 stageCoords = stage.screenToStageCoordinates(
+            new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         float dx = Math.abs(stageCoords.x - cursor.x);
         float dy = Math.abs(stageCoords.y - cursor.y);
         boolean mouseMoved = dx > 1f || dy > 1f;
         boolean mouseClicked = Gdx.input.justTouched();
 
         if(mouseMoved || mouseClicked) {
-            Coordinator.setLastInput(LastInput.MOUSE);
+            if(Coordinator.getLastInput() != LastInput.MOUSE) {
+                Coordinator.setLastInput(LastInput.MOUSE);
+            }
             cursor.setPosition(stageCoords.x, stageCoords.y);
             return;
         }
@@ -217,8 +219,8 @@ public abstract class Menu implements Screen {
             Button selected = buttons.get(index);
             if(selected != null) {
                 cursor.setPosition(
-                    selected.getX() + selected.getWidth() / 2f,
-                    selected.getY() + selected.getHeight() / 2f
+                    selected.getX() + selected.getWidth()/2f,
+                    selected.getY() + selected.getHeight()/2f
                 );
             }
         }
@@ -229,8 +231,14 @@ public abstract class Menu implements Screen {
             Button b = buttons.get(i);
             boolean isOver = cursor.x >= b.getX() && cursor.x <= b.getX() + b.getWidth()
                 && cursor.y >= b.getY() && cursor.y <= b.getY() + b.getHeight();
-            b.setSelected(isOver);
-            if (isOver && Coordinator.getLastInput() == LastInput.KEYBOARD) {
+
+            if(Coordinator.getLastInput() == LastInput.MOUSE) {
+                b.setSelected(isOver);
+            } else if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
+                b.setSelected(i == selectionIndexY);
+            }
+
+            if(Coordinator.getLastInput() == LastInput.KEYBOARD && i == selectionIndexY) {
                 stage.setKeyboardFocus(b);
             }
         }
