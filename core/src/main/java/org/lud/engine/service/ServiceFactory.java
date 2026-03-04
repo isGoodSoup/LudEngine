@@ -1,39 +1,18 @@
 package org.lud.engine.service;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import org.lud.engine.core.AudioService;
-import org.lud.engine.core.GameFrame;
-import org.lud.engine.data.EventBus;
+import org.lud.engine.interfaces.Service;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ServiceFactory {
-    private final GameFrame gameFrame;
-    private final AudioService audioService;
-    private final BoardService boardService;
-    private final PieceService pieceService;
-    private final GameService gameService;
-    private final AchievementService achievementService;
-    private final AchievementPersistence ap;
-    private final OrthographicCamera camera;
-    private final EventBus eventBus;
+    private final Map<Class<? extends Service>, Service> services = new LinkedHashMap<>();
 
-    public ServiceFactory(GameFrame gameFrame, OrthographicCamera camera) {
-        this.gameFrame = gameFrame;
-        this.camera = camera;
-        this.eventBus = new EventBus();
-        this.audioService = new AudioService();
-        this.boardService = new BoardService(this, camera);
-        this.pieceService = new PieceService(this);
-        this.ap = new AchievementPersistence();
-        this.achievementService = new AchievementService(eventBus, this, ap);
-        this.gameService = new GameService(gameFrame, this);
+    public <T extends Service> void register(Class<T> type, T instance) {
+        services.put(type, instance);
     }
 
-    public EventBus getEventBus() { return eventBus; }
-    public AudioService getAudioService() { return audioService; }
-    public BoardService getBoardService() { return boardService; }
-    public PieceService getPieceService() { return pieceService; }
-    public GameService getGameService() {
-        return gameService;
+    public <T extends Service> T get(Class<T> type) {
+        return type.cast(services.get(type));
     }
-    public AchievementService getAchievementService() { return achievementService; }
 }

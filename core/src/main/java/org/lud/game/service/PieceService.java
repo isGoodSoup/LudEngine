@@ -1,10 +1,12 @@
-package org.lud.engine.service;
+package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import org.lud.engine.enums.Theme;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Colors;
+import org.lud.engine.interfaces.Service;
+import org.lud.engine.service.ServiceFactory;
 import org.lud.game.entities.Board;
 import org.lud.game.actors.Piece;
 import org.lud.game.enums.TypeID;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("ALL")
-public class PieceService {
+public class PieceService implements Service {
     private final Map<String, Texture> sprites;
     private final ServiceFactory service;
     private final List<Piece> pieces;

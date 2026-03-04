@@ -15,10 +15,10 @@ import org.lud.engine.gui.Button;
 import org.lud.engine.gui.Colors;
 import org.lud.engine.gui.Localization;
 import org.lud.engine.gui.Menu;
-import org.lud.engine.service.AchievementService;
-import org.lud.engine.service.BoardService;
-import org.lud.engine.service.GameService;
-import org.lud.engine.service.PieceService;
+import org.lud.game.service.AchievementService;
+import org.lud.game.service.BoardService;
+import org.lud.game.service.GameService;
+import org.lud.game.service.PieceService;
 
 import java.util.ArrayList;
 import java.util.List;

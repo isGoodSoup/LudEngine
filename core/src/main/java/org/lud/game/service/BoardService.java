@@ -1,4 +1,4 @@
-package org.lud.engine.service;
+package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -6,6 +6,8 @@ import org.lud.engine.enums.Difficulty;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.interfaces.AI;
 import org.lud.engine.interfaces.Moves;
+import org.lud.engine.interfaces.Service;
+import org.lud.engine.service.ServiceFactory;
 import org.lud.game.actors.Piece;
 import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("ALL")
-public class BoardService {
+public class BoardService implements Service {
     private static final Logger log = LoggerFactory.getLogger(BoardService.class);
     private static Board board;
     private final ServiceFactory service;
@@ -73,16 +75,16 @@ public class BoardService {
         if(!isWithinBoard(targetCol, targetRow)) return false;
 
         MovePiece move = new MovePiece(piece, piece.getCol(), piece.getRow(), targetCol,
-            targetRow, piece.getTurn(), getPieceAt(targetCol, targetRow, service.getPieceService().getPieces()));
+            targetRow, piece.getTurn(), getPieceAt(targetCol, targetRow, service.get(PieceService.class).getPieces()));
 
-        if(!isValidSquare(piece, targetCol, targetRow, service.getPieceService().getPieces()) ||
-            (!service.getGameService().canMove(piece, targetCol, targetRow, service.getPieceService().getPieces()) &&
-            !service.getGameService().wouldLeaveKingInCheck(piece, targetCol, targetRow,
-                service.getPieceService().getPieces()))) {
+        if(!isValidSquare(piece, targetCol, targetRow, service.get(PieceService.class).getPieces()) ||
+            (!service.get(GameService.class).canMove(piece, targetCol, targetRow, service.get(PieceService.class).getPieces()) &&
+            !service.get(GameService.class).wouldLeaveKingInCheck(piece, targetCol, targetRow,
+                service.get(PieceService.class).getPieces()))) {
             return false;
         }
 
-        if(!isPathClear(piece, targetCol, targetRow, service.getPieceService().getPieces())) {
+        if(!isPathClear(piece, targetCol, targetRow, service.get(PieceService.class).getPieces())) {
             return false;
         }
 
@@ -96,10 +98,10 @@ public class BoardService {
         int targetRow = move.targetRow();
 
         Piece captured = getPieceAt(targetCol, targetRow,
-            service.getPieceService().getPieces());
+            service.get(PieceService.class).getPieces());
 
         if(captured != null && captured != piece) {
-            service.getPieceService().removePiece(captured);
+            service.get(PieceService.class).removePiece(captured);
             log.debug("{} {} > {} {}", captured.getTurn(), captured.getTypeID(),
                 piece.getTurn(), piece.getTypeID());
         }
@@ -112,24 +114,24 @@ public class BoardService {
 
         canUndo = !canUndo;
 
-        if(service.getGameService().isCheckmate()) {
-            service.getGameService().setInputLocked(true);
+        if(service.get(GameService.class).isCheckmate()) {
+            service.get(GameService.class).setInputLocked(true);
             log.info("Checkmate! Game over for {}", Turn.getTurn());
             return;
         }
     }
 
     public void executeAIMove() {
-        service.getGameService().setInputLocked(true);
-        List<Moves> legalMoves = service.getGameService().newLegalMoves(Turn.DARK);
+        service.get(GameService.class).setInputLocked(true);
+        List<Moves> legalMoves = service.get(GameService.class).newLegalMoves(Turn.DARK);
 
         Moves aiMove = currentAI.chooseMove(legalMoves);
         if(aiMove instanceof MovePiece movePiece) {
             executeMove(movePiece);
         }
 
-        if(!service.getGameService().isCheckmate()) {
-            service.getGameService().setInputLocked(false);
+        if(!service.get(GameService.class).isCheckmate()) {
+            service.get(GameService.class).setInputLocked(false);
         }
     }
 
@@ -194,7 +196,7 @@ public class BoardService {
     }
 
     public boolean saveKing(Piece piece, int targetCol, int targetRow, Piece king) {
-        List<Piece> copy = service.getPieceService().getPieces().stream()
+        List<Piece> copy = service.get(PieceService.class).getPieces().stream()
             .map(p -> p.copy(p))
             .toList();
 
@@ -209,7 +211,7 @@ public class BoardService {
             .filter(p -> p.getTypeID() == TypeID.KING && p.getTurn() == king.getTurn())
             .findFirst().orElseThrow();
 
-        return !service.getGameService().isKingInCheck(simKing.getTurn(), copy);
+        return !service.get(GameService.class).isKingInCheck(simKing.getTurn(), copy);
     }
 
     public boolean canEnPassant(Piece piece, int targetCol, int targetRow, List<Piece> board) {

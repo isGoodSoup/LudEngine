@@ -1,4 +1,6 @@
-package org.lud.engine.data;
+package org.lud.engine.service;
+
+import org.lud.engine.interfaces.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EventBus {
+public class EventBus implements Service {
     private final Map<Class<?>, List<Consumer<?>>> listeners = new HashMap<>();
 
     public <T> void register(Class<T> eventType, Consumer<T> listener) {

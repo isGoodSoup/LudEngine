@@ -1,4 +1,4 @@
-package org.lud.engine.service;
+package org.lud.game.service;
 
 import com.badlogic.gdx.Gdx;
 import org.lud.engine.core.AudioService;
@@ -7,6 +7,8 @@ import org.lud.engine.enums.GameState;
 import org.lud.engine.enums.Turn;
 import org.lud.engine.gui.Menu;
 import org.lud.engine.interfaces.Moves;
+import org.lud.engine.interfaces.Service;
+import org.lud.engine.service.ServiceFactory;
 import org.lud.game.actors.Piece;
 import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GameService {
+public class GameService implements Service {
     private static final Logger log = LoggerFactory.getLogger(GameService.class);
     private final GameFrame gameFrame;
     private final ServiceFactory service;
@@ -45,10 +47,10 @@ public class GameService {
         this.service = service;
         this.gameState = GameState.MENU;
 
-        AudioService audio = service.getAudioService();
-        PieceService piece = service.getPieceService();
-        BoardService board = service.getBoardService();
-        AchievementService achievement = service.getAchievementService();
+        AudioService audio = service.get(AudioService.class);
+        PieceService piece = service.get(PieceService.class);
+        BoardService board = service.get(BoardService.class);
+        AchievementService achievement = service.get(AchievementService.class);
 
         this.mainMenu = new MainMenu(this, audio, board, piece);
         this.settingsMenu = new SettingsMenu(this, audio, board, piece);
@@ -75,12 +77,12 @@ public class GameService {
         gameFrame.setScreen(activeMenu);
     }
     public void resetBoard() {
-        service.getPieceService().clearBoard();
+        service.get(PieceService.class).clearBoard();
         showBoard();
         Turn.setTurn(Turn.LIGHT);
     }
     public void newGame() {
-        service.getPieceService().clearBoard();
+        service.get(PieceService.class).clearBoard();
         showBoard();
         Turn.setTurn(Turn.LIGHT);
     }
@@ -108,7 +110,7 @@ public class GameService {
 
     public List<Moves> newLegalMoves(Turn turn) {
         List<Moves> legalMoves = new ArrayList<>();
-        List<Piece> pieces = service.getPieceService().getPieces();
+        List<Piece> pieces = service.get(PieceService.class).getPieces();
 
         for(Piece piece : new ArrayList<>(pieces)) {
             if(piece.getTurn() != turn) continue;
@@ -132,7 +134,7 @@ public class GameService {
 
                     if (canMove(piece, col, row, pieces) &&
                         !wouldLeaveKingInCheck(piece, col, row, pieces)
-                        && service.getBoardService().saveKing(piece, col, row, king)) {
+                        && service.get(BoardService.class).saveKing(piece, col, row, king)) {
                         legalMoves.add(move);
                     }
                 }
@@ -217,11 +219,11 @@ public class GameService {
 
     public boolean isCheckmate() {
         Turn currentTurn = Turn.getTurn();
-        Piece king = service.getPieceService().getKing(currentTurn);
+        Piece king = service.get(PieceService.class).getKing(currentTurn);
         if(king == null) { return false; }
-        if(!isKingInCheck(currentTurn, service.getPieceService().getPieces())) { return false; }
+        if(!isKingInCheck(currentTurn, service.get(PieceService.class).getPieces())) { return false; }
 
-        List<Piece> pieces = service.getPieceService().getPieces();
+        List<Piece> pieces = service.get(PieceService.class).getPieces();
 
         for(Piece piece : pieces) {
             if(piece.getTurn() != currentTurn) { continue; }
@@ -236,8 +238,8 @@ public class GameService {
         }
 
         log.debug("Checkmate for {}", currentTurn);
-        service.getAudioService().stopMusic();
-        service.getAudioService().playFX(3);
+        service.get(AudioService.class).stopMusic();
+        service.get(AudioService.class).playFX(3);
         return true;
     }
 
@@ -258,7 +260,7 @@ public class GameService {
                     if(pieceAtTarget != null && pieceAtTarget.getTurn() != p.getTurn()) {
                         return true;
                     }
-                    return service.getBoardService().canEnPassant(p, targetCol, targetRow, list);
+                    return service.get(BoardService.class).canEnPassant(p, targetCol, targetRow, list);
                 }
             }
             case KNIGHT -> {

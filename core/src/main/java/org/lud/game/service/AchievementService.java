@@ -1,12 +1,15 @@
-package org.lud.engine.service;
+package org.lud.game.service;
 
 import org.lud.engine.data.Achievement;
-import org.lud.engine.data.EventBus;
+import org.lud.engine.interfaces.Service;
+import org.lud.engine.service.AchievementPersistence;
+import org.lud.engine.service.EventBus;
+import org.lud.engine.service.ServiceFactory;
 import org.lud.game.enums.Achievements;
 
 import java.util.*;
 
-public class AchievementService {
+public class AchievementService implements Service {
     private final EventBus eventBus;
     private final ServiceFactory service;
     private final AchievementPersistence persistence;

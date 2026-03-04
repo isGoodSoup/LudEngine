@@ -3,8 +3,9 @@ package org.lud.engine.core;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import org.lud.engine.interfaces.Service;
 
-public class AudioService {
+public class AudioService implements Service {
     private Sound[] fx;
     private Music music;
     private float masterGain = 1f;
