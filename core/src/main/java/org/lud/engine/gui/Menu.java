@@ -156,6 +156,8 @@ public abstract class Menu implements Screen {
                 b.setSelected(false);
             }
         }
+
+        globalInput();
     }
 
     @Override
