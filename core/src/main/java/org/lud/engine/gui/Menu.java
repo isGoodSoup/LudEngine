@@ -1,7 +1,6 @@
 package org.lud.engine.gui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -19,18 +18,18 @@ import org.lud.engine.enums.Difficulty;
 import org.lud.engine.enums.Direction;
 import org.lud.engine.enums.LastInput;
 import org.lud.engine.input.Coordinator;
+import org.lud.engine.input.InputManager;
 import org.lud.engine.interfaces.Achieveable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("ALL")
 public abstract class Menu implements Screen {
     private static final Logger log = LoggerFactory.getLogger(Menu.class);
-    private static final Map<Integer, Runnable> ACTIONS = new LinkedHashMap<>();
-    private static final Map<Integer, Runnable> COMBOS = new LinkedHashMap<>();
-    private Menu globalInput;
     private final Cursor cursor;
     private final Stage stage;
     private final SpriteBatch batch;
@@ -93,9 +92,6 @@ public abstract class Menu implements Screen {
 
     public Cursor getCursor() { return cursor; }
 
-    public Map<Integer, Runnable> getActions() { return ACTIONS; }
-    public Map<Integer, Runnable> getCombos() { return COMBOS; }
-
     public void addMenu(Menu... menus) { this.menus.addAll(Arrays.asList(menus)); }
     public List<Menu> getMenus() { return menus; }
 
@@ -117,21 +113,7 @@ public abstract class Menu implements Screen {
 
     public Tooltip getTooltip() { return tooltip; }
 
-    public void setGlobalInput(Menu global) {
-        ACTIONS.clear();
-        COMBOS.clear();
-
-        if(global != null) {
-            global.loadKeys();
-            global.getActions().clear();
-            global.getCombos().clear();
-            ACTIONS.putAll(global.getActions());
-            COMBOS.putAll(global.getCombos());
-        }
-    }
     public abstract void setup();
-    public abstract void checkInput();
-    public abstract void loadKeys();
     public abstract void playFX(int i);
 
     @Override public void show() {
@@ -155,6 +137,8 @@ public abstract class Menu implements Screen {
         updateCursor(delta);
         updateSelection();
 
+        InputManager.get().update();
+
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             for(int i = 0; i < getButtons().size(); i++) {
                 Button b = getButtons().get(i);
@@ -165,8 +149,6 @@ public abstract class Menu implements Screen {
                 b.setSelected(false);
             }
         }
-
-        globalInput();
     }
 
     @Override
@@ -242,23 +224,6 @@ public abstract class Menu implements Screen {
             b.setSelected(isOver);
             if (isOver && Coordinator.getLastInput() == LastInput.KEYBOARD) {
                 stage.setKeyboardFocus(b);
-            }
-        }
-    }
-
-    public void globalInput() {
-        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-            for(var entry : COMBOS.entrySet()) {
-                if(Gdx.input.isKeyJustPressed(entry.getKey())) {
-                    entry.getValue().run();
-                    return;
-                }
-            }
-        } else {
-            for(var entry : ACTIONS.entrySet()) {
-                if(Gdx.input.isKeyJustPressed(entry.getKey())) {
-                    entry.getValue().run();
-                }
             }
         }
     }
