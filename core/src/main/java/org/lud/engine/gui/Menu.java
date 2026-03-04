@@ -121,7 +121,12 @@ public abstract class Menu implements Screen {
 
     public void setGlobalInput(Menu global) {
         this.globalInput = global;
+
+        actions.clear();
+        combos.clear();
+
         if(global != null) {
+            global.loadKeys();
             this.actions.putAll(global.getActions());
             this.combos.putAll(global.getCombos());
         }
@@ -244,9 +249,6 @@ public abstract class Menu implements Screen {
     }
 
     public void globalInput() {
-        if(combos.isEmpty() || actions.isEmpty()) {
-            globalInput.loadKeys();
-        }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
             for(var entry : combos.entrySet()) {
                 if(Gdx.input.isKeyJustPressed(entry.getKey())) {
