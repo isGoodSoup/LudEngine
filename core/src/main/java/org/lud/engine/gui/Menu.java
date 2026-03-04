@@ -204,7 +204,7 @@ public abstract class Menu implements Screen {
             Button selected = buttons.get(index);
             cursor.setPosition(selected.getX() + selected.getWidth()/2f,
                 selected.getY() + selected.getHeight()/2f);
-//            return;
+            return;
         }
 
         Vector2 stageCoords = stage.screenToStageCoordinates
