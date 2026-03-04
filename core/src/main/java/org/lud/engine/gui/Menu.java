@@ -48,6 +48,9 @@ public abstract class Menu implements Screen {
     private Tooltip tooltip;
     private Texture texture;
 
+    private int lastMouseX = -1;
+    private int lastMouseY = -1;
+
     private int selectionIndexY;
     private int selectionIndexX;
 
@@ -119,6 +122,10 @@ public abstract class Menu implements Screen {
     @Override public void show() {
         Gdx.input.setInputProcessor(stage);
         Coordinator.setLastInput(LastInput.MOUSE);
+
+        lastMouseX = Gdx.input.getX();
+        lastMouseY = Gdx.input.getY();
+
         if(!isInit) {
             setup();
             isInit = true;
@@ -199,17 +206,20 @@ public abstract class Menu implements Screen {
     }
 
     public void updateCursor(float delta) {
-        Vector2 stageCoords = stage.screenToStageCoordinates(
-            new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-        float dx = Math.abs(stageCoords.x - cursor.x);
-        float dy = Math.abs(stageCoords.y - cursor.y);
-        boolean mouseMoved = dx > 1f || dy > 1f;
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.input.getY();
+        boolean mouseMoved = (mouseX != lastMouseX) || (mouseY != lastMouseY);
         boolean mouseClicked = Gdx.input.justTouched();
 
         if(mouseMoved || mouseClicked) {
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
+
             if(Coordinator.getLastInput() != LastInput.MOUSE) {
                 Coordinator.setLastInput(LastInput.MOUSE);
             }
+
+            Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(mouseX, mouseY));
             cursor.setPosition(stageCoords.x, stageCoords.y);
             return;
         }
