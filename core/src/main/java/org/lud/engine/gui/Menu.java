@@ -199,23 +199,23 @@ public abstract class Menu implements Screen {
     }
 
     public void updateCursor(float delta) {
-        Vector2 stageCoords = stage.screenToStageCoordinates
-            (new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+        Vector2 stageCoords = stage.screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         boolean mouseMoved = stageCoords.x != cursor.x || stageCoords.y != cursor.y;
         boolean mouseClicked = Gdx.input.justTouched();
 
         if(mouseMoved || mouseClicked) {
-            cursor.setPosition(stageCoords.x, stageCoords.y);
             Coordinator.setLastInput(LastInput.MOUSE);
+            cursor.setPosition(stageCoords.x, stageCoords.y);
+            return;
         }
 
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
             Button selected = buttons.get(index);
-            cursor.setPosition(selected.getX() + selected.getWidth()/2f,
-                selected.getY() + selected.getHeight()/2f);
-        } else {
-            cursor.setPosition(stageCoords.x, stageCoords.y);
+            if(selected != null) {
+                cursor.setPosition(selected.getX() + selected.getWidth()/2f,
+                    selected.getY() + selected.getHeight()/2f);
+            }
         }
     }
 
