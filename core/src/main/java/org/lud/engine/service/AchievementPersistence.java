@@ -2,6 +2,7 @@ package org.lud.engine.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.lud.engine.data.Achievement;
+import org.lud.engine.interfaces.Achieveable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class AchievementPersistence{
         this.file=new File(dir,"achievements.json");
     }
 
-    public void save(Collection<Achievement> achievements){
+    public void save(Collection<Achievement<Achieveable>> achievements){
         try{
             mapper.writeValue(file,achievements);
         } catch(IOException e){
