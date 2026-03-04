@@ -1,9 +1,9 @@
 package org.lud.engine.data;
 
-import org.lud.game.enums.Achievements;
+import org.lud.engine.interfaces.Achieveable;
 
-public record Achievement(Achievements id, boolean unlocked) {
-    public Achievement(Achievements id) {
+public record Achievement(Achieveable id, boolean unlocked) {
+    public Achievement(Achieveable id) {
         this(id, false);
     }
 

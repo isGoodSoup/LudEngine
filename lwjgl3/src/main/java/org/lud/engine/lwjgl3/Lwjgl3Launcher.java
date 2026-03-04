@@ -3,7 +3,7 @@ package org.lud.engine.lwjgl3;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import org.lud.game.core.Chess;
+import org.lud.engine.core.GameFrame;
 
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
@@ -26,6 +26,6 @@ public class Lwjgl3Launcher {
     }
 
     private static void createApplication() {
-        new Lwjgl3Application(new Chess(), getDefaultConfiguration());
+        new Lwjgl3Application(new GameFrame(), getDefaultConfiguration());
     }
 }
