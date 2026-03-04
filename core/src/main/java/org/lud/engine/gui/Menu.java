@@ -119,7 +119,13 @@ public abstract class Menu implements Screen {
 
     public Tooltip getTooltip() { return tooltip; }
 
-    public void setGlobalInput(Menu global) { this.globalInput = global; }
+    public void setGlobalInput(Menu global) {
+        this.globalInput = global;
+        if(global != null) {
+            this.actions.putAll(global.getActions());
+            this.combos.putAll(global.getCombos());
+        }
+    }
     public abstract void setup();
     public abstract void checkInput();
     public abstract void loadKeys();
