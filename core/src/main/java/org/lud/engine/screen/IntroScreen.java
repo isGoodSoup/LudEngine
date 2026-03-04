@@ -10,6 +10,7 @@ import org.lud.engine.core.AudioService;
 import org.lud.engine.service.BoardService;
 import org.lud.engine.service.GameService;
 import org.lud.engine.service.PieceService;
+import org.lud.game.screens.MainMenu;
 
 public class IntroScreen implements Screen {
     private final GameFrame gameFrame;
