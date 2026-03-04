@@ -70,15 +70,15 @@ public abstract class Menu implements Screen {
         this.generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"));
 //        this.generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BoldPixels.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter params = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        params.size = 16;
+        params.size = 24;
         params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
         small = generator.generateFont(params);
 
-        params.size = 24;
+        params.size = 32;
         params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
         medium = generator.generateFont(params);
 
-        params.size = 32;
+        params.size = 40;
         params.characters = FreeTypeFontGenerator.DEFAULT_CHARS + Localization.lang.getAllStrings();
         large = generator.generateFont(params);
         generator.dispose();
