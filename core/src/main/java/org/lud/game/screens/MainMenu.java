@@ -46,14 +46,13 @@ public class MainMenu extends Menu {
 
     public MainMenu(GameService gameService, AudioService audioService,
                     BoardService boardService, PieceService pieceService) {
-        super(gameService, audioService, boardService, pieceService);
+        super();
         this.audioService = audioService;
         this.boardService = boardService;
         this.pieceService = pieceService;
         this.tooltips = new LinkedHashMap<>();
         this.gameService = gameService;
         this.data = new ArrayList<>();
-        addMenu(this);
         loadSprites();
     }
 
@@ -64,11 +63,11 @@ public class MainMenu extends Menu {
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
 
-        data.add(new ButtonData(UIButton.PLAY, () -> slideOut(0), () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.SETTINGS, () -> slideOut(1), () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.ACHIEVEMENTS, () -> slideOut(2), () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.LANG, Lang::nextLang, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.EXIT, () -> fadeOut(3), () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.PLAY, () -> slideOut(0), () -> playFX(0)));
+        data.add(new ButtonData(UIButton.SETTINGS, () -> slideOut(1), () -> playFX(0)));
+        data.add(new ButtonData(UIButton.ACHIEVEMENTS, () -> slideOut(2), () -> playFX(0)));
+        data.add(new ButtonData(UIButton.LANG, Lang::nextLang, () -> playFX(0)));
+        data.add(new ButtonData(UIButton.EXIT, () -> fadeOut(3), () -> playFX(0)));
     }
 
     @Override
@@ -149,6 +148,14 @@ public class MainMenu extends Menu {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             activate();
         }
+    }
+
+    @Override
+    public void loadKeys() {}
+
+    @Override
+    public void playFX(int i) {
+        audioService.playFX(i);
     }
 
     public void slideOut(int i) {

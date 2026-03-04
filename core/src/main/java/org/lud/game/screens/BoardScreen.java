@@ -53,6 +53,8 @@ public class BoardScreen extends Menu {
 
     private final List<ButtonData> data;
 
+    private Piece selectedPiece;
+
     private Group boardGroup;
     private Group uiGroup;
     private Texture baseButton;
@@ -66,7 +68,6 @@ public class BoardScreen extends Menu {
 
     public BoardScreen(BoardService boardService, GameService gameService, PieceService pieceService,
                        AudioService audioService) {
-        super(gameService, audioService, boardService, pieceService);
         this.boardService = boardService;
         this.gameService = gameService;
         this.pieceService = pieceService;
@@ -91,9 +92,9 @@ public class BoardScreen extends Menu {
         String defaultPath = "buttons/";
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
-        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.RESET, gameService::resetBoard, () -> audioService.playFX(0)));
-        data.add(new ButtonData(UIButton.UNDO, boardService::undoMove, () -> audioService.playFX(0)));
+        data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut, () -> playFX(0)));
+        data.add(new ButtonData(UIButton.RESET, gameService::resetBoard, () -> playFX(0)));
+        data.add(new ButtonData(UIButton.UNDO, boardService::undoMove, () -> playFX(0)));
     }
 
     @Override
@@ -264,6 +265,49 @@ public class BoardScreen extends Menu {
             if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) { cursor(Direction.LEFT, true); }
             if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) { cursor(Direction.DOWN, true); }
             if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) { cursor(Direction.RIGHT, true); }
+        }
+    }
+
+    @Override
+    public void loadKeys() {
+
+    }
+
+    @Override
+    public void playFX(int i) {
+        audioService.playFX(i);
+    }
+
+    @Override @SuppressWarnings("StatementWithEmptyBody")
+    public void activate() {
+        if(isCursorActive()) {
+            int cursorCol = getMoveX();
+            int cursorRow = getMoveY();
+
+            Piece underCursor = null;
+            for(Piece p : pieceService.getPieces()) {
+                if(p.getCol() == cursorCol && p.getRow() == cursorRow) {
+                    underCursor = p;
+                    break;
+                }
+            }
+
+            if(selectedPiece == null) {
+                if(underCursor != null) {
+                    selectedPiece = underCursor;
+                }
+            } else {
+                boolean hasMoved = boardService.attemptMove(selectedPiece, cursorCol, cursorRow);
+                if(hasMoved) {
+                    playFX(4);
+                    if(Turn.getTurn() == Turn.DARK) {
+                        boardService.executeAIMove();
+                    }
+                } else {}
+                selectedPiece = null;
+            }
+        } else {
+            super.activate();
         }
     }
 

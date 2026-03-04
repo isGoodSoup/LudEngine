@@ -35,14 +35,13 @@ public class SettingsMenu extends Menu {
 
     public SettingsMenu(GameService gameService, AudioService audioService,
                         BoardService boardService, PieceService pieceService) {
-        super(gameService, audioService, boardService, pieceService);
+        super();
         this.gameService = gameService;
         this.audioService = audioService;
         this.boardService = boardService;
         this.pieceService = pieceService;
         this.data = new ArrayList<>();
         this.runnables = new ArrayList<>();
-        addMenu(this);
         loadSprites();
     }
 
@@ -51,7 +50,7 @@ public class SettingsMenu extends Menu {
         this.baseButton = new Texture(defaultPath + "button_small.png");
         this.frame = new Texture(defaultPath + "button_small_highlighted.png");
         data.add(new ButtonData(UIButton.PREVIOUS_PAGE, this::slideOut,
-            () -> audioService.playFX(0)));
+            () -> playFX(0)));
     }
 
     @Override
@@ -107,6 +106,14 @@ public class SettingsMenu extends Menu {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             activate();
         }
+    }
+
+    @Override
+    public void loadKeys() {}
+
+    @Override
+    public void playFX(int i) {
+        audioService.playFX(i);
     }
 
     public void slideOut() {

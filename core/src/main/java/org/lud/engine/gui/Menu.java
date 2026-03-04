@@ -13,15 +13,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import org.lud.engine.core.AudioService;
 import org.lud.engine.core.Cursor;
+import org.lud.engine.data.ButtonData;
 import org.lud.engine.enums.*;
 import org.lud.engine.input.Coordinator;
 import org.lud.game.actors.Piece;
-import org.lud.engine.data.ButtonData;
-import org.lud.game.service.BoardService;
-import org.lud.game.service.GameService;
-import org.lud.game.service.PieceService;
 import org.lud.game.enums.Achievements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +29,7 @@ public abstract class Menu implements Screen {
     private static final Logger log = LoggerFactory.getLogger(Menu.class);
     private Map<Integer, Runnable> actions;
     private Map<Integer, Runnable> combos;
+    private Menu globalInput;
     private final Cursor cursor;
     private final Stage stage;
     private final SpriteBatch batch;
@@ -41,17 +38,10 @@ public abstract class Menu implements Screen {
     private final List<Toast> toasts;
     private final List<Button> buttons;
 
+    private final FreeTypeFontGenerator generator;
     private final BitmapFont small;
     private final BitmapFont medium;
     private final BitmapFont large;
-
-    private final FreeTypeFontGenerator generator;
-    private final GameService gameService;
-    private final AudioService audioService;
-    private final BoardService boardService;
-    private final PieceService pieceService;
-
-    private Piece selectedPiece;
 
     private Group toastGroup;
 
@@ -67,12 +57,7 @@ public abstract class Menu implements Screen {
     private boolean isCursorActive;
     private boolean isInit;
 
-    public Menu(GameService gameService, AudioService audioService,
-                BoardService boardService, PieceService pieceService) {
-        this.gameService = gameService;
-        this.audioService = audioService;
-        this.boardService = boardService;
-        this.pieceService = pieceService;
+    public Menu() {
         this.cursor = new Cursor();
         this.actions = new LinkedHashMap<>();
         this.combos = new LinkedHashMap<>();
@@ -102,49 +87,24 @@ public abstract class Menu implements Screen {
         this.batch = new SpriteBatch();
         this.stage = new Stage(new ScreenViewport(), batch);
         this.shaper = new ShapeRenderer();
+
+        addMenu(this);
     }
 
-    public Texture getButton(ButtonData data, boolean isHighlighted) {
-        String iconPath = "";
-        if(data.lang() != null) {
-            iconPath = "buttons/button_" + data.type().getSuffix(data.lang()) + ".png";
-        } else {
-            if(isHighlighted) {
-                iconPath = "buttons/button_" + data.type().getSuffix() + "_highlighted.png";
-            } else {
-                iconPath = "buttons/button_" + data.type().getSuffix() + ".png";
-            }
-        }
-        return new Texture(iconPath);
-    }
+    public Cursor getCursor() { return cursor; }
 
-    public Cursor getCursor() {
-        return cursor;
-    }
+    public Map<Integer, Runnable> getActions() { return actions; }
+    public Map<Integer, Runnable> getCombos() { return combos; }
 
-    public void addMenu(Menu... menus) {
-        this.menus.addAll(Arrays.asList(menus));
-    }
-    public List<Menu> getMenus() {
-        return menus;
-    }
+    public void addMenu(Menu... menus) { this.menus.addAll(Arrays.asList(menus)); }
+    public List<Menu> getMenus() { return menus; }
 
-    public void addButton(Button... buttons) {
-        this.buttons.addAll(Arrays.asList(buttons));
-    }
-    public List<Button> getButtons() {
-        return buttons;
-    }
+    public void addButton(Button... buttons) { this.buttons.addAll(Arrays.asList(buttons)); }
+    public List<Button> getButtons() { return buttons; }
 
-    public BitmapFont getSmallFont() {
-        return small;
-    }
-    public BitmapFont getMediumFont() {
-        return medium;
-    }
-    public BitmapFont getLargeFont() {
-        return large;
-    }
+    public BitmapFont getSmallFont() { return small; }
+    public BitmapFont getMediumFont() { return medium; }
+    public BitmapFont getLargeFont() { return large; }
 
     public int getMoveY() { return moveY; }
     public void setMoveY(int moveY) { this.moveY = moveY; }
@@ -152,17 +112,16 @@ public abstract class Menu implements Screen {
     public int getMoveX() { return moveX; }
     public void setMoveX(int moveX) { this.moveX = moveX; }
 
-    public boolean isCursorActive() {
-        return isCursorActive;
-    }
+    public boolean isCursorActive() { return isCursorActive; }
+    public void setCursorActive(boolean cursorActive) { isCursorActive = cursorActive; }
 
-    public void setCursorActive(boolean cursorActive) {
-        isCursorActive = cursorActive;
-    }
+    public Tooltip getTooltip() { return tooltip; }
 
-    public Tooltip getTooltip() {
-        return tooltip;
-    }
+    public void setGlobalInput(Menu global) { this.globalInput = global; }
+    public abstract void setup();
+    public abstract void checkInput();
+    public abstract void loadKeys();
+    public abstract void playFX(int i);
 
     @Override public void show() {
         Gdx.input.setInputProcessor(stage);
@@ -197,6 +156,53 @@ public abstract class Menu implements Screen {
         }
     }
 
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+    }
+    @Override public void pause() {}
+    @Override public void resume() {}
+
+    public Texture getButton(ButtonData data, boolean isHighlighted) {
+        String iconPath = "";
+        if(data.lang() != null) {
+            iconPath = "buttons/button_" + data.type().getSuffix(data.lang()) + ".png";
+        } else {
+            if(isHighlighted) {
+                iconPath = "buttons/button_" + data.type().getSuffix() + "_highlighted.png";
+            } else {
+                iconPath = "buttons/button_" + data.type().getSuffix() + ".png";
+            }
+        }
+        return new Texture(iconPath);
+    }
+
+    public Toast createToast(Difficulty difficulty) {
+        float toastWidth = Gdx.graphics.getWidth()/3f;
+        float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
+
+        Toast toast = new Toast(difficulty.getLabelKey(), difficulty.name(), medium,
+                        centerX, 75f);
+
+        toasts.add(toast);
+        toastGroup.addActor(toast);
+        toastGroup.toFront();
+        return toast;
+    }
+
+    public Toast createToast(Achievements id) {
+        float toastWidth = Gdx.graphics.getWidth()/3f;
+        float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
+
+        Toast toast = new Toast(id.getTitle(), id.getDescription(), medium,
+            centerX, 75f);
+
+        toasts.add(toast);
+        toastGroup.addActor(toast);
+        toastGroup.toFront();
+        return toast;
+    }
+
     public void updateCursor(float delta) {
         if(Coordinator.getLastInput() == LastInput.KEYBOARD) {
             int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
@@ -227,73 +233,9 @@ public abstract class Menu implements Screen {
         }
     }
 
-    @Override
-    public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
-    @Override public void pause() {}
-    @Override public void resume() {}
-
-    public abstract void setup();
-    public abstract void checkInput();
-
-    public Toast createToast(Difficulty difficulty) {
-        float toastWidth = Gdx.graphics.getWidth()/3f;
-        float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
-
-        Toast toast = new Toast(difficulty.getLabelKey(), difficulty.name(), getMediumFont(),
-                        centerX, 75f);
-
-        toasts.add(toast);
-        toastGroup.addActor(toast);
-        toastGroup.toFront();
-        return toast;
-    }
-
-    public Toast createToast(Achievements id) {
-        float toastWidth = Gdx.graphics.getWidth()/3f;
-        float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
-
-        Toast toast = new Toast(id.getTitle(), id.getDescription(), getMediumFont(),
-            centerX, 75f);
-
-        toasts.add(toast);
-        toastGroup.addActor(toast);
-        toastGroup.toFront();
-        return toast;
-    }
-
-    private void loadKeys() {
-        actions.put(Input.Keys.ESCAPE, () -> {
-            gameService.showMainMenu();
-            audioService.playFX(0);
-        });
-        actions.put(Input.Keys.UP, () -> cursor(Direction.UP));
-        actions.put(Input.Keys.DOWN, () -> cursor(Direction.DOWN));
-        actions.put(Input.Keys.M, () -> audioService.toggleMusic());
-        actions.put(Input.Keys.NUMPAD_ADD, () -> audioService.setMusicVolume(0.1f));
-        actions.put(Input.Keys.NUMPAD_SUBTRACT, () -> audioService.setMusicVolume(-0.1f));
-
-        combos.put(Input.Keys.T, () -> {
-            if(gameService.getGameState() == GameState.BOARD) { return; }
-            Colors.nextTheme();
-            audioService.playFX(1);
-        });
-        combos.put(Input.Keys.L, () -> {
-            Lang.nextLang();
-        });
-        combos.put(Input.Keys.D, () -> {
-            Difficulty next = boardService.getDifficulty().nextDifficulty();
-            boardService.switchDifficulties(next);
-            createToast(next);
-            audioService.playFX(2);
-        });
-        combos.put(Input.Keys.Q, Gdx.app::exit);
-    }
-
     public void globalInput() {
         if(combos.isEmpty() || actions.isEmpty()) {
-            loadKeys();
+            globalInput.loadKeys();
         }
         if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
             for(var entry : combos.entrySet()) {
@@ -320,11 +262,11 @@ public abstract class Menu implements Screen {
         switch(dir) {
             case UP -> {
                 selectionIndexY = Math.max(0, selectionIndexY - 1);
-                audioService.playFX(1);
+                playFX(1);
             }
             case DOWN -> {
                 selectionIndexY = Math.min(buttons.size() - 1, selectionIndexY + 1);
-                audioService.playFX(1);
+                playFX(1);
             }
         }
 
@@ -341,60 +283,31 @@ public abstract class Menu implements Screen {
         switch(dir) {
             case UP -> {
                 moveY = Math.min(7, moveY + 1);
-                audioService.playFX(1);
+                playFX(1);
             }
             case LEFT -> {
                 moveX = Math.max(0, moveX - 1);
-                audioService.playFX(1);
+                playFX(1);
             }
             case DOWN -> {
                 moveY = Math.max(0, moveY - 1);
-                audioService.playFX(1);
+                playFX(1);
             }
             case RIGHT -> {
                 moveX = Math.min(7, moveX + 1);
-                audioService.playFX(1);
+                playFX(1);
             }
         }
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     public void activate() {
-        if(isCursorActive) {
-            int cursorCol = getMoveX();
-            int cursorRow = getMoveY();
+        List<Button> buttons = getButtons();
+        if(buttons.isEmpty()) { return; }
+        int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
+        Button selected = buttons.get(index);
 
-            Piece underCursor = null;
-            for(Piece p : pieceService.getPieces()) {
-                if(p.getCol() == cursorCol && p.getRow() == cursorRow) {
-                    underCursor = p;
-                    break;
-                }
-            }
-
-            if(selectedPiece == null) {
-                if(underCursor != null) {
-                    selectedPiece = underCursor;
-                }
-            } else {
-                boolean hasMoved = boardService.attemptMove(selectedPiece, cursorCol, cursorRow);
-                if(hasMoved) {
-                    audioService.playFX(4);
-                    if(Turn.getTurn() == Turn.DARK) {
-                        boardService.executeAIMove();
-                    }
-                } else {}
-                selectedPiece = null;
-            }
-        } else {
-            List<Button> buttons = getButtons();
-            if(buttons.isEmpty()) { return; }
-            int index = Math.max(0, Math.min(selectionIndexY, buttons.size() - 1));
-            Button selected = buttons.get(index);
-
-            if(selected != null) {
-                selected.onClick();
-            }
+        if(selected != null) {
+            selected.onClick();
         }
     }
 

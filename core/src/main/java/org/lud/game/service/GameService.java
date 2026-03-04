@@ -13,10 +13,7 @@ import org.lud.game.actors.Piece;
 import org.lud.game.entities.Board;
 import org.lud.game.enums.TypeID;
 import org.lud.game.moves.MovePiece;
-import org.lud.game.screens.AchievementsMenu;
-import org.lud.game.screens.BoardScreen;
-import org.lud.game.screens.MainMenu;
-import org.lud.game.screens.SettingsMenu;
+import org.lud.game.screens.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +27,7 @@ public class GameService implements Service {
     private final ServiceFactory service;
 
     private Menu activeMenu;
+    private final GlobalScreen globalScreen;
     private final Menu mainMenu;
     private final Menu settingsMenu;
     private final Menu achievementsMenu;
@@ -52,10 +50,16 @@ public class GameService implements Service {
         BoardService board = service.get(BoardService.class);
         AchievementService achievement = service.get(AchievementService.class);
 
+        this.globalScreen = new GlobalScreen(service);
         this.mainMenu = new MainMenu(this, audio, board, piece);
         this.settingsMenu = new SettingsMenu(this, audio, board, piece);
         this.achievementsMenu = new AchievementsMenu(this, audio, board, piece, achievement);
         this.boardScreen = new BoardScreen(board, this, piece, audio);
+
+        mainMenu.setGlobalInput(globalScreen);
+        settingsMenu.setGlobalInput(globalScreen);
+        achievementsMenu.setGlobalInput(globalScreen);
+        boardScreen.setGlobalInput(globalScreen);
 
         activeMenu = mainMenu;
     }
