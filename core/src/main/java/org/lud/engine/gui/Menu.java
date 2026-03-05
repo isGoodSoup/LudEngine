@@ -88,7 +88,7 @@ public abstract class Menu implements Screen {
         generator.dispose();
 
         this.texture = new Texture(Gdx.files.internal("tooltip.png"));
-        this.tooltip = new Tooltip("", small, texture, 16, 4);
+        this.tooltip = new Tooltip("", small, texture, 16);
 
         this.batch = new SpriteBatch();
         this.stage = new Stage(new ScreenViewport(), batch);
@@ -189,7 +189,7 @@ public abstract class Menu implements Screen {
         float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
 
         Toast toast = new Toast(difficulty.getLabelKey(), difficulty.name(), medium,
-                        centerX, 75f);
+                        centerX, 75f, texture, 16);
 
         toasts.add(toast);
         toastGroup.addActor(toast);
@@ -202,7 +202,7 @@ public abstract class Menu implements Screen {
         float centerX = (Gdx.graphics.getWidth() - toastWidth)/2f;
 
         Toast toast = new Toast(id.getTitle(), id.getDescription(), medium,
-            centerX, 75f);
+            centerX, 75f, texture, 16);
 
         toasts.add(toast);
         toastGroup.addActor(toast);
