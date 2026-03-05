@@ -20,6 +20,8 @@ import org.lud.engine.enums.LastInput;
 import org.lud.engine.input.Coordinator;
 import org.lud.engine.input.InputManager;
 import org.lud.engine.interfaces.Achieveable;
+import org.lud.engine.events.AchievementUnlockedEvent;
+import org.lud.engine.service.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,7 @@ import java.util.List;
 public abstract class Menu implements Screen {
     private static final Logger log = LoggerFactory.getLogger(Menu.class);
     private final Cursor cursor;
+    private final EventBus eventBus;
     private final Stage stage;
     private final SpriteBatch batch;
     private final ShapeRenderer shaper;
@@ -60,7 +63,8 @@ public abstract class Menu implements Screen {
     private boolean isCursorActive;
     private boolean isInit;
 
-    public Menu() {
+    public Menu(EventBus eventBus) {
+        this.eventBus = eventBus;
         this.cursor = new Cursor();
         this.menus = new ArrayList<>();
         this.buttons = new ArrayList<>();
@@ -90,6 +94,7 @@ public abstract class Menu implements Screen {
         this.stage = new Stage(new ScreenViewport(), batch);
         this.shaper = new ShapeRenderer();
 
+        eventBus.register(AchievementUnlockedEvent.class, this::onAchievementUnlocked);
         addMenu(this);
     }
 
@@ -203,6 +208,10 @@ public abstract class Menu implements Screen {
         toastGroup.addActor(toast);
         toastGroup.toFront();
         return toast;
+    }
+
+    public void onAchievementUnlocked(AchievementUnlockedEvent event) {
+        createToast(event.id());
     }
 
     public void updateCursor(float delta) {
