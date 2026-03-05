@@ -20,7 +20,6 @@ public class Toast extends Actor {
     private TextureRegion top, bottom, left, right, center;
     private final GlyphLayout layout;
 
-    private float x, y;
     private float width, height;
     private final float padding = 16f;
     private final float duration = 2f;
